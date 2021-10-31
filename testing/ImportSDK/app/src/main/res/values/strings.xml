@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ImportSDK</string>
+    <string name="donewperms">done with permissions, end oncreate</string>
 </resources>
