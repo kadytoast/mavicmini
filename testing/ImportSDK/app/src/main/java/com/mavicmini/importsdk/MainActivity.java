@@ -63,9 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         // When the compile and target version is higher than 22, please request the
         // following permission at runtime to ensure the SDK works well.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            checkAndRequestPermissions();
-        }
+        checkAndRequestPermissions();
 
 
         //Initialize DJI SDK Manager

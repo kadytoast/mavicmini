@@ -8,7 +8,7 @@ android {
     defaultConfig {
         applicationId "com.mavicmini.launchpad"
         minSdk 30
-        targetSdk 31
+        targetSdk 30
         versionCode 1
         versionName "1.0"
 
