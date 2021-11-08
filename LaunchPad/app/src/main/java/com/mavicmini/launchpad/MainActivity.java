@@ -12,15 +12,5 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // set dji perms
-        checkAndRequestPermissions();
-
-        // when done, confirm its prep
-        TextView hellotxt = findViewById(R.id.textHello);
-        hellotxt.setText(R.string.doneperms);
-    }
-
-    public void checkAndRequestPermissions () {
     }
 }
