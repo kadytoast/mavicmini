@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">LaunchPad</string>
     <string name="doneperms">done with perms</string>
+    <string name="registersdk">Register SDK</string>
 </resources>
