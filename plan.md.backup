@@ -15,5 +15,5 @@
 ### SDK Class/Method Tree
 * DJISDKManager
 	* register app
-	
+	* sdk manager instance
 	* get product connection
