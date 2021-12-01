@@ -32,37 +32,38 @@
             android:text="SimulatorDemo"
             android:textColor="@android:color/white"
             android:textSize="19sp" />
+
     </RelativeLayout>
 
     <TextView
-        android:layout_marginTop="70dp"
+        android:id="@+id/textview_simulator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="Simulator is off."
-        android:id="@+id/textview_simulator"/>
+        android:layout_marginTop="70dp"
+        android:text="Simulator is off." />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Enable Virtual Stick"
-        style="@style/common_button"
         android:id="@+id/btn_enable_virtual_stick"
-        android:layout_marginLeft="5dp"
-        android:layout_alignTop="@+id/btn_start_simulator"
-        android:layout_alignStart="@+id/directionJoystickLeft"
-        android:layout_marginTop="0dp" />
-
-    <Button
+        style="@style/common_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Disable Virtual Stick"
-        style="@style/common_button"
+        android:layout_alignStart="@+id/directionJoystickLeft"
+        android:layout_alignTop="@+id/btn_start_simulator"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="0dp"
+        android:text="Enable Virtual Stick" />
+
+    <Button
         android:id="@+id/btn_disable_virtual_stick"
+        style="@style/common_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/btn_enable_virtual_stick"
         android:layout_alignStart="@+id/btn_enable_virtual_stick"
+        android:layout_alignEnd="@+id/btn_enable_virtual_stick"
         android:layout_marginLeft="0dp"
-        android:layout_alignEnd="@+id/btn_enable_virtual_stick" />
+        android:text="Disable Virtual Stick" />
 
     <Button
         android:layout_width="wrap_content"
@@ -77,28 +78,28 @@
 
     <ToggleButton
         android:id="@+id/btn_start_simulator"
+        style="@style/common_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/textview_simulator"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="107dp"
+        android:layout_toEndOf="@+id/btn_enable_virtual_stick"
         android:text="Start Simulator"
         android:textOff="Start Simulator"
-        android:textOn="Stop Simulator"
-        style="@style/common_button"
-        android:layout_below="@+id/textview_simulator"
-        android:layout_toEndOf="@+id/btn_enable_virtual_stick"
-        android:layout_marginTop="107dp"
-        android:layout_marginLeft="10dp" />
+        android:textOn="Stop Simulator" />
 
     <Button
+        android:id="@+id/btn_land"
+        style="@style/common_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Land"
-        style="@style/common_button"
-        android:id="@+id/btn_land"
         android:layout_alignTop="@+id/btn_take_off"
-        android:layout_marginTop="0dp"
         android:layout_alignEnd="@+id/directionJoystickRight"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="0dp"
         android:layout_toEndOf="@+id/btn_take_off"
-        android:layout_marginLeft="10dp" />
+        android:text="Land" />
 
     <com.dji.launchpad.OnScreenJoystick
         android:id="@+id/directionJoystickLeft"
@@ -106,9 +107,9 @@
         android:layout_height="130dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
-        android:background="@mipmap/joystick_bg"/>
+        android:layout_marginBottom="10dp"
+        android:background="@mipmap/joystick_bg" />
 
     <com.dji.launchpad.OnScreenJoystick
         android:id="@+id/directionJoystickRight"
@@ -116,9 +117,35 @@
         android:layout_height="130dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
         android:layout_marginRight="10dp"
-        android:background="@mipmap/joystick_bg"/>
+        android:layout_marginBottom="10dp"
+        android:background="@mipmap/joystick_bg" />
+
+    <Button
+        android:id="@+id/btn_set_home"
+        style="@style/common_button"
+        android:layout_width="112dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_land"
+        android:layout_alignEnd="@+id/btn_land"
+        android:layout_marginStart="10"
+        android:layout_marginEnd="0"
+        android:layout_marginBottom="10dp"
+        android:layout_toEndOf="@+id/btn_start_simulator"
+        android:text="Set Home (to cur location)" />
+
+    <TextView
+        android:id="@+id/textview_homecoords"
+        android:layout_width="114dp"
+        android:layout_height="104dp"
+        android:layout_below="@+id/btn_take_off"
+        android:layout_alignStart="@+id/btn_disable_virtual_stick"
+        android:layout_alignEnd="@+id/btn_land"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="39dp"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:text="home not set"
+        android:textAlignment="center" />
 
 
 </RelativeLayout>

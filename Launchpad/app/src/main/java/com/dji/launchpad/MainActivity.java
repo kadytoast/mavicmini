@@ -554,7 +554,22 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
 
                 break;
+            case R.id.btn_set_home:  // set home case
+                if (mFlightController != null) {
 
+                    mFlightController.setHomeLocationUsingAircraftCurrentLocation(
+                        // nullable callback
+                        djiError -> {
+                            if (djiError != null) {
+                                showToast(djiError.getDescription());
+                            } else {
+                                showToast("Home Set!");
+                                // get new home coordinates and update to textview
+                                // TODO write in home coordinate textview update
+                            }
+                        }
+                    );
+                }
             default:
                 break;
         }
