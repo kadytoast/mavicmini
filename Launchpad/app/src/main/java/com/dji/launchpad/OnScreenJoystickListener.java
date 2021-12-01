@@ -1,4 +1,4 @@
-package com.dji.simulatorDemo;
+package com.dji.launchpad;
 
 /*
  * Copyright (c) 2014 Ville Saarinen

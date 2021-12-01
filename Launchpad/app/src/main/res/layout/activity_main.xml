@@ -100,7 +100,7 @@
         android:layout_toEndOf="@+id/btn_take_off"
         android:layout_marginLeft="10dp" />
 
-    <com.dji.simulatorDemo.OnScreenJoystick
+    <com.dji.launchpad.OnScreenJoystick
         android:id="@+id/directionJoystickLeft"
         android:layout_width="130dp"
         android:layout_height="130dp"
@@ -110,7 +110,7 @@
         android:layout_marginLeft="10dp"
         android:background="@mipmap/joystick_bg"/>
 
-    <com.dji.simulatorDemo.OnScreenJoystick
+    <com.dji.launchpad.OnScreenJoystick
         android:id="@+id/directionJoystickRight"
         android:layout_width="130dp"
         android:layout_height="130dp"

@@ -1,4 +1,4 @@
-package com.dji.simulatorDemo;
+package com.dji.launchpad;
 
 import android.app.Application;
 import android.content.Context;
