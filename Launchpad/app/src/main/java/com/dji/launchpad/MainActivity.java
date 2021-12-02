@@ -12,10 +12,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -23,14 +21,10 @@ import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import dji.common.error.DJISDKError;
 import dji.common.flightcontroller.virtualstick.FlightCoordinateSystem;
-import dji.common.flightcontroller.virtualstick.RollPitchControlMode;
-import dji.common.flightcontroller.virtualstick.VerticalControlMode;
-import dji.common.flightcontroller.virtualstick.YawControlMode;
 import dji.common.model.LocationCoordinate2D;
 import dji.common.util.CommonCallbacks;
 import dji.log.DJILog;
@@ -67,21 +61,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private FlightController mFlightController;
     protected TextView mConnectStatusTextView;
-    private Button mBtnEnableVirtualStick;
-    private Button mBtnDisableVirtualStick;
-    private ToggleButton mBtnSimulator;
-    private Button mBtnTakeOff;
-    private Button mBtnLand;
-
-    private TextView mTextView;
-
-
-    private Timer mSendVirtualStickDataTimer;
-
-    private float mPitch;
-    private float mRoll;
-    private float mYaw;
-    private float mThrottle;
 
     private double homeLat;
     private double homeLong;
@@ -330,9 +309,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
             return;
         } else {
             mFlightController = aircraft.getFlightController();
-            mFlightController.setRollPitchControlMode(RollPitchControlMode.VELOCITY);
-            mFlightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
-            mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
             mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
         }
     }
