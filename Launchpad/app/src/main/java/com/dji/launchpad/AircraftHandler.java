@@ -20,10 +20,10 @@ import dji.sdk.sdkmanager.DJISDKInitEvent;
 import dji.sdk.sdkmanager.DJISDKManager;
 
 // class to run simulator that
-public class DJISimulatorApplication extends Application {
+public class AircraftHandler extends Application {
 
-    private static final String TAG = DJISimulatorApplication.class.getName();
-    public static final String FLAG_CONNECTION_CHANGE = "com_dji_simulatorDemo_connection_change";
+    private static final String TAG = AircraftHandler.class.getName();
+    public static final String FLAG_CONNECTION_CHANGE = "com_dji_launchpad_connection_change";
     private static BaseProduct mProduct;
     private Handler mHandler;
     private DJISDKManager.SDKManagerCallback mDJISDKManagerCallback;
@@ -39,7 +39,7 @@ public class DJISimulatorApplication extends Application {
         return instance;
     }
 
-    public DJISimulatorApplication() {
+    public AircraftHandler() {
 
     }
 

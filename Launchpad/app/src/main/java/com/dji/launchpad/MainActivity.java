@@ -8,14 +8,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -27,19 +24,14 @@ import androidx.core.content.ContextCompat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import dji.common.error.DJISDKError;
-import dji.common.flightcontroller.simulator.InitializationData;
-import dji.common.flightcontroller.simulator.SimulatorState;
-import dji.common.flightcontroller.virtualstick.FlightControlData;
 import dji.common.flightcontroller.virtualstick.FlightCoordinateSystem;
 import dji.common.flightcontroller.virtualstick.RollPitchControlMode;
 import dji.common.flightcontroller.virtualstick.VerticalControlMode;
 import dji.common.flightcontroller.virtualstick.YawControlMode;
 import dji.common.model.LocationCoordinate2D;
-import dji.common.useraccount.UserAccountState;
 import dji.common.util.CommonCallbacks;
 import dji.log.DJILog;
 import dji.sdk.base.BaseComponent;
@@ -100,11 +92,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         checkAndRequestPermissions();
         setContentView(R.layout.activity_main);
 
-        initUI();
-
         // Register the broadcast receiver for receiving the device connection's changes.
         IntentFilter filter = new IntentFilter();
-        filter.addAction(DJISimulatorApplication.FLAG_CONNECTION_CHANGE);
+        filter.addAction(AircraftHandler.FLAG_CONNECTION_CHANGE);
         registerReceiver(mReceiver, filter);
     }
 
@@ -243,11 +233,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void updateTitleBar() {
         if(mConnectStatusTextView == null) return;
         boolean ret = false;
-        BaseProduct product = DJISimulatorApplication.getProductInstance();
+        BaseProduct product = AircraftHandler.getProductInstance();
         if (product != null) {
             if(product.isConnected()) {
                 //The product is connected
-                mConnectStatusTextView.setText(DJISimulatorApplication.getProductInstance().getModel() + " Connected");
+                mConnectStatusTextView.setText(AircraftHandler.getProductInstance().getModel() + " Connected");
                 ret = true;
             } else {
                 if(product instanceof Aircraft) {
@@ -310,15 +300,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
             // callback overrides
             @Override
             public void onSuccess(LocationCoordinate2D locationCoordinate2D) {
+                // update home position class values
                 homeLat = locationCoordinate2D.getLatitude();
                 homeLong = locationCoordinate2D.getLongitude();
 
+                // update the textview with new home position
                 TextView t = findViewById(R.id.textview_homecoords);
                 t.setText("Latitude : " + homeLat + "\nLongitude : " + homeLong + "");
             }
 
             @Override
             public void onFailure(DJIError djiError) {
+                // show toast with error from callback
                 if (djiError != null) {
                     showToast(djiError.getDescription());
                 }
@@ -330,7 +323,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void initFlightController() {
 
-        Aircraft aircraft = DJISimulatorApplication.getAircraftInstance();
+        Aircraft aircraft = AircraftHandler.getAircraftInstance();
         if (aircraft == null || !aircraft.isConnected()) {
             showToast("Disconnected");
             mFlightController = null;
@@ -341,89 +334,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mFlightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
             mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
             mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
-            mFlightController.getSimulator().setStateCallback(new SimulatorState.Callback() {
-                @Override
-                public void onUpdate(final SimulatorState stateData) {
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-
-
-                            String yaw = String.format("%.2f", stateData.getYaw());
-                            String pitch = String.format("%.2f", stateData.getPitch());
-                            String roll = String.format("%.2f", stateData.getRoll());
-                            String positionX = String.format("%.2f", stateData.getPositionX());
-                            String positionY = String.format("%.2f", stateData.getPositionY());
-                            String positionZ = String.format("%.2f", stateData.getPositionZ());
-
-                            mTextView.setText("Yaw : " + yaw + ", Pitch : " + pitch + ", Roll : " + roll + "\n" + ", PosX : " + positionX +
-                                    ", PosY : " + positionY +
-                                    ", PosZ : " + positionZ);
-                        }
-                    });
-                }
-            });
         }
-    }
-
-    private void initUI() {
-
-        mBtnTakeOff = (Button) findViewById(R.id.btn_take_off);
-        mBtnLand = (Button) findViewById(R.id.btn_land);
-        mBtnSimulator = (ToggleButton) findViewById(R.id.btn_start_simulator);
-        mTextView = (TextView) findViewById(R.id.textview_simulator);
-        mConnectStatusTextView = (TextView) findViewById(R.id.ConnectStatusTextView);
-
-        mBtnTakeOff.setOnClickListener(this);
-        mBtnLand.setOnClickListener(this);
-
-        mBtnSimulator.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-
-                    mTextView.setVisibility(View.VISIBLE);
-
-                    if (mFlightController != null) {
-
-                        mFlightController.getSimulator()
-                                .start(InitializationData.createInstance(new LocationCoordinate2D(23, 113), 10, 10),
-                                        new CommonCallbacks.CompletionCallback() {
-                                    @Override
-                                    public void onResult(DJIError djiError) {
-                                        if (djiError != null) {
-                                            showToast(djiError.getDescription());
-                                        }else
-                                        {
-                                            showToast("Start Simulator Success");
-                                        }
-                                    }
-                                });
-                    }
-
-                } else {
-
-                    mTextView.setVisibility(View.INVISIBLE);
-
-                    if (mFlightController != null) {
-                        mFlightController.getSimulator()
-                                .stop(new CommonCallbacks.CompletionCallback() {
-                                            @Override
-                                            public void onResult(DJIError djiError) {
-                                                if (djiError != null) {
-                                                    showToast(djiError.getDescription());
-                                                }else
-                                                {
-                                                    showToast("Stop Simulator Success");
-                                                }
-                                            }
-                                        }
-                                );
-                    }
-                }
-            }
-        });
-
     }
 
     @Override

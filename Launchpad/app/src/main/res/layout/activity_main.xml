@@ -35,54 +35,24 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/textview_simulator"
-        android:layout_width="86dp"
-        android:layout_height="40dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="70dp"
-        android:text="Simulator is off." />
-
     <Button
         android:id="@+id/btn_take_off"
         style="@style/common_button"
-        android:layout_width="wrap_content"
-        android:layout_height="41dp"
-        android:layout_below="@+id/btn_start_simulator"
-        android:layout_alignStart="@+id/btn_start_simulator"
-        android:layout_alignEnd="@+id/btn_start_simulator"
-        android:layout_alignBottom="@+id/btn_disable_virtual_stick"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="-264dp"
-        android:text="Take Off" />
-
-    <ToggleButton
-        android:id="@+id/btn_start_simulator"
-        style="@style/common_button"
-        android:layout_width="178dp"
-        android:layout_height="50dp"
-        android:layout_below="@+id/textview_simulator"
+        android:layout_width="112dp"
+        android:layout_height="66dp"
+        android:layout_below="@+id/textview_homecoords"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="117dp"
-        android:text="Start Simulator"
-        android:textOff="Start Simulator"
-        android:textOn="Stop Simulator" />
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:text="Take Off" />
 
     <Button
         android:id="@+id/btn_land"
         style="@style/common_button"
-        android:layout_width="135dp"
-        android:layout_height="38dp"
         android:layout_alignTop="@+id/btn_take_off"
         android:layout_alignBottom="@+id/btn_take_off"
-        android:layout_alignParentEnd="true"
         android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
         android:layout_marginTop="0dp"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_marginBottom="0dp"
         android:layout_toEndOf="@+id/btn_take_off"
         android:text="Land" />
@@ -92,24 +62,23 @@
         style="@style/common_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btn_land"
-        android:layout_alignTop="@+id/btn_start_simulator"
-        android:layout_alignEnd="@+id/btn_land"
-        android:layout_marginStart="12dp"
+        android:layout_alignTop="@+id/btn_land"
+        android:layout_alignBottom="@+id/btn_land"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="10dp"
-        android:layout_toEndOf="@+id/btn_start_simulator"
+        android:layout_marginBottom="0dp"
+        android:layout_toEndOf="@+id/btn_land"
         android:text="Set Home (to cur location)" />
 
     <TextView
         android:id="@+id/textview_homecoords"
-        android:layout_width="114dp"
-        android:layout_height="104dp"
-        android:layout_below="@+id/btn_land"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:layout_below="@+id/main_title_rl"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="0dp"
         android:text="home not set"
         android:textAlignment="center" />
 
