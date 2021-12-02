@@ -69,7 +69,7 @@ public class DJISimulatorApplication extends Application {
         super.onCreate();
         mHandler = new Handler(Looper.getMainLooper());
 
-
+        
         /**
          * When starting SDK services, an instance of interface DJISDKManager.DJISDKManagerCallback will be used to listen to
          * the SDK Registration result and the product changing.

@@ -348,6 +348,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         @Override
                         public void run() {
 
+
                             String yaw = String.format("%.2f", stateData.getYaw());
                             String pitch = String.format("%.2f", stateData.getPitch());
                             String roll = String.format("%.2f", stateData.getRoll());
