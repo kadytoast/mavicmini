@@ -128,8 +128,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/btn_land"
         android:layout_alignEnd="@+id/btn_land"
-        android:layout_marginStart="10"
-        android:layout_marginEnd="0"
+        android:layout_marginStart="10dp"
         android:layout_marginBottom="10dp"
         android:layout_toEndOf="@+id/btn_start_simulator"
         android:text="Set Home (to cur location)" />
@@ -145,6 +144,31 @@
         android:layout_marginTop="39dp"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:text="home not set"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/textview_left_joystick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textview_homecoords"
+        android:layout_alignStart="@+id/textview_homecoords"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="200dp"
+        android:layout_toStartOf="@+id/textview_right_joystick"
+        android:text="joysticks inactive"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/textview_right_joystick"
+        android:layout_width="175dp"
+        android:layout_height="77dp"
+        android:layout_below="@+id/textview_homecoords"
+        android:layout_alignEnd="@+id/textview_homecoords"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="200dp"
+        android:text="joysticks inactive"
         android:textAlignment="center" />
 
 

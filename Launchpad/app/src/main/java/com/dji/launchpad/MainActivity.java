@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -457,6 +458,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                 mRoll = (float)(rollJoyControlMaxSpeed * pY);
 
+                // update textview for right joystick
+                TextView rightView = findViewById(R.id.textview_right_joystick);
+                rightView.setText("Pitch: " + mPitch + "\nRoll: " + mRoll);
+
                 if (null == mSendVirtualStickDataTimer) {
                     mSendVirtualStickDataTask = new SendVirtualStickDataTask();
                     mSendVirtualStickDataTimer = new Timer();
@@ -483,6 +488,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                 mYaw = (float)(yawJoyControlMaxSpeed * pX);
                 mThrottle = (float)(verticalJoyControlMaxSpeed * pY);
+
+                // update textview for right joystick
+                TextView leftView = findViewById(R.id.textview_left_joystick);
+                leftView.setText("Throttle: " + mThrottle + "\nYaw: " + mYaw);
 
                 if (null == mSendVirtualStickDataTimer) {
                     mSendVirtualStickDataTask = new SendVirtualStickDataTask();
