@@ -1,15 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/framelayout_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center">
-        <include layout="@layout/content_main"/>
-    </FrameLayout>
-</FrameLayout>
+    <RelativeLayout
+        android:id="@+id/main_title_rl"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:background="@color/black_overlay" >
 
+        <ImageButton
+            android:id="@+id/ReturnBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:onClick="onReturn"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_back_button" />
+
+        <TextView
+            android:id="@+id/ConnectStatusTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="SimulatorDemo"
+            android:textColor="@android:color/white"
+            android:textSize="19sp" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/textview_simulator"
+        android:layout_width="86dp"
+        android:layout_height="40dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"
+        android:text="Simulator is off." />
+
+    <Button
+        android:id="@+id/btn_take_off"
+        style="@style/common_button"
+        android:layout_width="wrap_content"
+        android:layout_height="41dp"
+        android:layout_below="@+id/btn_start_simulator"
+        android:layout_alignStart="@+id/btn_start_simulator"
+        android:layout_alignEnd="@+id/btn_start_simulator"
+        android:layout_alignBottom="@+id/btn_disable_virtual_stick"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="-264dp"
+        android:text="Take Off" />
+
+    <ToggleButton
+        android:id="@+id/btn_start_simulator"
+        style="@style/common_button"
+        android:layout_width="178dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/textview_simulator"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="117dp"
+        android:text="Start Simulator"
+        android:textOff="Start Simulator"
+        android:textOn="Stop Simulator" />
+
+    <Button
+        android:id="@+id/btn_land"
+        style="@style/common_button"
+        android:layout_width="135dp"
+        android:layout_height="38dp"
+        android:layout_alignTop="@+id/btn_take_off"
+        android:layout_alignBottom="@+id/btn_take_off"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="0dp"
+        android:layout_toEndOf="@+id/btn_take_off"
+        android:text="Land" />
+
+    <Button
+        android:id="@+id/btn_set_home"
+        style="@style/common_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_land"
+        android:layout_alignTop="@+id/btn_start_simulator"
+        android:layout_alignEnd="@+id/btn_land"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="10dp"
+        android:layout_toEndOf="@+id/btn_start_simulator"
+        android:text="Set Home (to cur location)" />
+
+    <TextView
+        android:id="@+id/textview_homecoords"
+        android:layout_width="114dp"
+        android:layout_height="104dp"
+        android:layout_below="@+id/btn_land"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="28dp"
+        android:text="home not set"
+        android:textAlignment="center" />
+
+
+</RelativeLayout>

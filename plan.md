@@ -17,3 +17,6 @@
 	* register app
 	* sdk manager instance
 	* get product connection
+	
+### Methodology
+* use virtual stick control with position checking to have set forward/backward distance buttons (on button press, set threshold, tilt craft, check until threshold is met, flatten craft, tilt in opposite direction to correct unless craft does this automatically)
