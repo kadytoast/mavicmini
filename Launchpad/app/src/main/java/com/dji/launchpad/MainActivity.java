@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import dji.common.error.DJISDKError;
-import dji.common.flightcontroller.virtualstick.FlightCoordinateSystem;
 import dji.common.model.LocationCoordinate2D;
 import dji.common.util.CommonCallbacks;
 import dji.log.DJILog;
@@ -301,15 +300,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     private void initFlightController() {
-
+        // sets up class var for flightcontroller using isntance from aircrafthandler
         Aircraft aircraft = AircraftHandler.getAircraftInstance();
+        // if aircraft is invalid or not connected
         if (aircraft == null || !aircraft.isConnected()) {
             showToast("Disconnected");
             mFlightController = null;
-            return;
-        } else {
+        } else { // otherwise aircraft is valid and connected, get flightcontroller object
             mFlightController = aircraft.getFlightController();
-            mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
         }
     }
 
