@@ -454,9 +454,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 float pitchJoyControlMaxSpeed = 10;
                 float rollJoyControlMaxSpeed = 10;
 
-                mPitch = (float)(pitchJoyControlMaxSpeed * pX);
+                mPitch = (float)(pitchJoyControlMaxSpeed * -pY);
 
-                mRoll = (float)(rollJoyControlMaxSpeed * pY);
+                mRoll = (float)(rollJoyControlMaxSpeed * pX);
 
                 // update textview for right joystick
                 TextView rightView = findViewById(R.id.textview_right_joystick);
