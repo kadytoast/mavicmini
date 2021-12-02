@@ -19,6 +19,7 @@ import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKInitEvent;
 import dji.sdk.sdkmanager.DJISDKManager;
 
+// class to run simulator that
 public class DJISimulatorApplication extends Application {
 
     private static final String TAG = DJISimulatorApplication.class.getName();

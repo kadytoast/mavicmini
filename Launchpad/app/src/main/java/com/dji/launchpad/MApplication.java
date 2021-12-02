@@ -7,7 +7,7 @@ import com.secneo.sdk.Helper;
 
 
 public class MApplication extends Application {
-
+    // attaches base context to use with dji sdk and loads necessary classes with <Helper>
     private DJISimulatorApplication simulatorApplication;
     @Override
     protected void attachBaseContext(Context paramContext) {

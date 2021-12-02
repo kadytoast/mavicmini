@@ -19,4 +19,9 @@
 	* get product connection
 	
 ### Methodology
-* use virtual stick control with position checking to have set forward/backward distance buttons (on button press, set threshold, tilt craf)
+* use virtual stick control with position checking to have set forward/backward distance buttons (on button press, set threshold, tilt craft, check until threshold is met, flatten craft, tilt in opposite direction to correct unless craft does this automatically)
+
+## Simulator
+### DJI Assistant 2 has Simulator Capability
+* essentially the flight controller on the drone has a built in simulator, and when connected to pc over usb one can test the sdk app
+* try removing the simulator capability in the app as i dont think its necessary for function when connected to dji assistant
