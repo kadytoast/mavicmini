@@ -49,7 +49,6 @@ import dji.sdk.products.Aircraft;
 import dji.common.error.DJIError;
 import dji.sdk.sdkmanager.DJISDKInitEvent;
 import dji.sdk.sdkmanager.DJISDKManager;
-import dji.sdk.useraccount.UserAccountManager;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
@@ -94,6 +93,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private float mRoll;
     private float mYaw;
     private float mThrottle;
+
+    private double homeLat;
+    private double homeLong;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -274,7 +276,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onResume();
         updateTitleBar();
         initFlightController();
-        loginAccount();
 
     }
 
@@ -309,20 +310,31 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onDestroy();
     }
 
-    private void loginAccount(){
 
-        UserAccountManager.getInstance().logIntoDJIUserAccount(this,
-                new CommonCallbacks.CompletionCallbackWith<UserAccountState>() {
-                    @Override
-                    public void onSuccess(final UserAccountState userAccountState) {
-                        Log.e(TAG, "Login Success");
-                    }
-                    @Override
-                    public void onFailure(DJIError error) {
-                        showToast("Login Error:"
-                                + error.getDescription());
-                    }
-                });
+    // method that updates the textview with the current home position
+    private void updateHomePos () {
+        // call function with callback implementation
+        mFlightController.getHomeLocation(new CommonCallbacks.CompletionCallbackWith<LocationCoordinate2D>() {
+
+            // callback overrides
+            @Override
+            public void onSuccess(LocationCoordinate2D locationCoordinate2D) {
+                homeLat = locationCoordinate2D.getLatitude();
+                homeLong = locationCoordinate2D.getLongitude();
+
+                TextView t = findViewById(R.id.textview_homecoords);
+                t.setText("Latitude : " + homeLat + "\nLongitude : " + homeLong + "");
+            }
+
+            @Override
+            public void onFailure(DJIError djiError) {
+                if (djiError != null) {
+                    showToast(djiError.getDescription());
+                }
+            }
+
+        }
+        );
     }
 
     private void initFlightController() {
@@ -565,7 +577,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                             } else {
                                 showToast("Home Set!");
                                 // get new home coordinates and update to textview
-                                // TODO write in home coordinate textview update
+                                updateHomePos();
                             }
                         }
                     );
