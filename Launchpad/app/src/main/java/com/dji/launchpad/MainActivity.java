@@ -494,6 +494,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         });
     }
 
+    /* TODO add in calibration button to ensure drone doesnt drift like last time (unless that was
+        due to virtual sticks) */
+
     @Override
     public void onClick(View v) {
 
