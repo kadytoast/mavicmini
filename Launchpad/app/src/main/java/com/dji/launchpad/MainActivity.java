@@ -83,11 +83,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private TextView mTextView;
 
-    private OnScreenJoystick mScreenJoystickRight;
-    private OnScreenJoystick mScreenJoystickLeft;
 
     private Timer mSendVirtualStickDataTimer;
-    private SendVirtualStickDataTask mSendVirtualStickDataTask;
 
     private float mPitch;
     private float mRoll;
@@ -300,13 +297,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onDestroy() {
         Log.e(TAG, "onDestroy");
         unregisterReceiver(mReceiver);
-        if (null != mSendVirtualStickDataTimer) {
-            mSendVirtualStickDataTask.cancel();
-            mSendVirtualStickDataTask = null;
-            mSendVirtualStickDataTimer.cancel();
-            mSendVirtualStickDataTimer.purge();
-            mSendVirtualStickDataTimer = null;
-        }
+
         super.onDestroy();
     }
 
@@ -376,18 +367,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void initUI() {
 
-        mBtnEnableVirtualStick = (Button) findViewById(R.id.btn_enable_virtual_stick);
-        mBtnDisableVirtualStick = (Button) findViewById(R.id.btn_disable_virtual_stick);
         mBtnTakeOff = (Button) findViewById(R.id.btn_take_off);
         mBtnLand = (Button) findViewById(R.id.btn_land);
         mBtnSimulator = (ToggleButton) findViewById(R.id.btn_start_simulator);
         mTextView = (TextView) findViewById(R.id.textview_simulator);
         mConnectStatusTextView = (TextView) findViewById(R.id.ConnectStatusTextView);
-        mScreenJoystickRight = (OnScreenJoystick)findViewById(R.id.directionJoystickRight);
-        mScreenJoystickLeft = (OnScreenJoystick)findViewById(R.id.directionJoystickLeft);
 
-        mBtnEnableVirtualStick.setOnClickListener(this);
-        mBtnDisableVirtualStick.setOnClickListener(this);
         mBtnTakeOff.setOnClickListener(this);
         mBtnLand.setOnClickListener(this);
 
@@ -438,99 +423,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
         });
 
-        mScreenJoystickRight.setJoystickListener(new OnScreenJoystickListener(){
-
-            @Override
-            public void onTouch(OnScreenJoystick joystick, float pX, float pY) {
-                if(Math.abs(pX) < 0.02 ){
-                    pX = 0;
-                }
-
-                if(Math.abs(pY) < 0.02 ){
-                    pY = 0;
-                }
-
-                float pitchJoyControlMaxSpeed = 10;
-                float rollJoyControlMaxSpeed = 10;
-
-                mPitch = (float)(pitchJoyControlMaxSpeed * pX);
-
-                mRoll = (float)(rollJoyControlMaxSpeed * pY);
-
-                if (null == mSendVirtualStickDataTimer) {
-                    mSendVirtualStickDataTask = new SendVirtualStickDataTask();
-                    mSendVirtualStickDataTimer = new Timer();
-                    mSendVirtualStickDataTimer.schedule(mSendVirtualStickDataTask, 100, 200);
-                }
-
-            }
-
-        });
-
-        mScreenJoystickLeft.setJoystickListener(new OnScreenJoystickListener() {
-
-            @Override
-            public void onTouch(OnScreenJoystick joystick, float pX, float pY) {
-                if(Math.abs(pX) < 0.02 ){
-                    pX = 0;
-                }
-
-                if(Math.abs(pY) < 0.02 ){
-                    pY = 0;
-                }
-                float verticalJoyControlMaxSpeed = 2;
-                float yawJoyControlMaxSpeed = 30;
-
-                mYaw = (float)(yawJoyControlMaxSpeed * pX);
-                mThrottle = (float)(verticalJoyControlMaxSpeed * pY);
-
-                if (null == mSendVirtualStickDataTimer) {
-                    mSendVirtualStickDataTask = new SendVirtualStickDataTask();
-                    mSendVirtualStickDataTimer = new Timer();
-                    mSendVirtualStickDataTimer.schedule(mSendVirtualStickDataTask, 0, 200);
-                }
-
-            }
-        });
     }
 
     @Override
     public void onClick(View v) {
 
         switch (v.getId()) {
-            case R.id.btn_enable_virtual_stick:
-                if (mFlightController != null){
-
-                    mFlightController.setVirtualStickModeEnabled(true, new CommonCallbacks.CompletionCallback() {
-                        @Override
-                        public void onResult(DJIError djiError) {
-                            if (djiError != null){
-                                showToast(djiError.getDescription());
-                            }else
-                            {
-                                showToast("Enable Virtual Stick Success");
-                            }
-                        }
-                    });
-
-                }
-                break;
-
-            case R.id.btn_disable_virtual_stick:
-
-                if (mFlightController != null){
-                    mFlightController.setVirtualStickModeEnabled(false, new CommonCallbacks.CompletionCallback() {
-                        @Override
-                        public void onResult(DJIError djiError) {
-                            if (djiError != null) {
-                                showToast(djiError.getDescription());
-                            } else {
-                                showToast("Disable Virtual Stick Success");
-                            }
-                        }
-                    });
-                }
-                break;
 
             case R.id.btn_take_off:
                 if (mFlightController != null){
@@ -584,23 +482,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
             default:
                 break;
-        }
-    }
-
-    class SendVirtualStickDataTask extends TimerTask {
-
-        @Override
-        public void run() {
-
-            if (mFlightController != null) {
-                mFlightController.sendVirtualStickFlightControlData(
-                        new FlightControlData(
-                                mPitch, mRoll, mYaw, mThrottle
-                        ), djiError -> {
-
-                        }
-                );
-            }
         }
     }
 

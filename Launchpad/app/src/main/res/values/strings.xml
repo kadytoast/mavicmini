@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LaunchPad</string>
+    <string name="app_name">LaunchPad_Blank</string>
     <string name="view_virtual_stick">VirtualStickView</string>
     <string name="sdk_registration_message">SDK Registration Failed. Please check the bundle ID and your network connectivity</string>
     <string name="success">Success</string>

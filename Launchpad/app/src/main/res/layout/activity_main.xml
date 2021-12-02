@@ -37,54 +37,36 @@
 
     <TextView
         android:id="@+id/textview_simulator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="86dp"
+        android:layout_height="40dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="70dp"
         android:text="Simulator is off." />
 
     <Button
-        android:id="@+id/btn_enable_virtual_stick"
-        style="@style/common_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/directionJoystickLeft"
-        android:layout_alignTop="@+id/btn_start_simulator"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="0dp"
-        android:text="Enable Virtual Stick" />
-
-    <Button
-        android:id="@+id/btn_disable_virtual_stick"
-        style="@style/common_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_enable_virtual_stick"
-        android:layout_alignStart="@+id/btn_enable_virtual_stick"
-        android:layout_alignEnd="@+id/btn_enable_virtual_stick"
-        android:layout_marginLeft="0dp"
-        android:text="Disable Virtual Stick" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Take Off"
-        style="@style/common_button"
         android:id="@+id/btn_take_off"
-        android:layout_alignTop="@+id/btn_disable_virtual_stick"
+        style="@style/common_button"
+        android:layout_width="wrap_content"
+        android:layout_height="41dp"
+        android:layout_below="@+id/btn_start_simulator"
         android:layout_alignStart="@+id/btn_start_simulator"
-        android:layout_marginTop="0dp"
-        android:layout_alignEnd="@+id/btn_start_simulator" />
+        android:layout_alignEnd="@+id/btn_start_simulator"
+        android:layout_alignBottom="@+id/btn_disable_virtual_stick"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="-264dp"
+        android:text="Take Off" />
 
     <ToggleButton
         android:id="@+id/btn_start_simulator"
         style="@style/common_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="178dp"
+        android:layout_height="50dp"
         android:layout_below="@+id/textview_simulator"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="107dp"
-        android:layout_toEndOf="@+id/btn_enable_virtual_stick"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="117dp"
         android:text="Start Simulator"
         android:textOff="Start Simulator"
         android:textOn="Stop Simulator" />
@@ -92,44 +74,30 @@
     <Button
         android:id="@+id/btn_land"
         style="@style/common_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="135dp"
+        android:layout_height="38dp"
         android:layout_alignTop="@+id/btn_take_off"
-        android:layout_alignEnd="@+id/directionJoystickRight"
+        android:layout_alignBottom="@+id/btn_take_off"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="0dp"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="0dp"
         android:layout_toEndOf="@+id/btn_take_off"
         android:text="Land" />
-
-    <com.dji.launchpad.OnScreenJoystick
-        android:id="@+id/directionJoystickLeft"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginBottom="10dp"
-        android:background="@mipmap/joystick_bg" />
-
-    <com.dji.launchpad.OnScreenJoystick
-        android:id="@+id/directionJoystickRight"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
-        android:background="@mipmap/joystick_bg" />
 
     <Button
         android:id="@+id/btn_set_home"
         style="@style/common_button"
-        android:layout_width="112dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/btn_land"
+        android:layout_alignTop="@+id/btn_start_simulator"
         android:layout_alignEnd="@+id/btn_land"
-        android:layout_marginStart="10"
-        android:layout_marginEnd="0"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
         android:layout_marginBottom="10dp"
         android:layout_toEndOf="@+id/btn_start_simulator"
         android:text="Set Home (to cur location)" />
@@ -138,12 +106,10 @@
         android:id="@+id/textview_homecoords"
         android:layout_width="114dp"
         android:layout_height="104dp"
-        android:layout_below="@+id/btn_take_off"
-        android:layout_alignStart="@+id/btn_disable_virtual_stick"
-        android:layout_alignEnd="@+id/btn_land"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="39dp"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_below="@+id/btn_land"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="28dp"
         android:text="home not set"
         android:textAlignment="center" />
 
