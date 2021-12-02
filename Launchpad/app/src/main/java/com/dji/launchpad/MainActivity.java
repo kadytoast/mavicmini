@@ -581,6 +581,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.btn_set_home:  // set home case
                 if (mFlightController != null) {
 
+
+
                     mFlightController.setHomeLocationUsingAircraftCurrentLocation(
                         // nullable callback
                         djiError -> {
