@@ -8,21 +8,21 @@ import com.secneo.sdk.Helper;
 
 public class MApplication extends Application {
 
-    private AircraftObjHandler simulatorApplication;
+    private AircraftObjHandler objHandler;
     @Override
     protected void attachBaseContext(Context paramContext) {
         super.attachBaseContext(paramContext);
         Helper.install(MApplication.this);
-        if (simulatorApplication == null) {
-            simulatorApplication = new AircraftObjHandler();
-            simulatorApplication.setContext(this);
+        if (objHandler == null) {
+            objHandler = new AircraftObjHandler();
+            objHandler.setContext(this);
         }
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        simulatorApplication.onCreate();
+        objHandler.onCreate();
     }
 
 }
