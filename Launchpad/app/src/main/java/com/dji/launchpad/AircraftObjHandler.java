@@ -19,9 +19,9 @@ import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKInitEvent;
 import dji.sdk.sdkmanager.DJISDKManager;
 
-public class DJISimulatorApplication extends Application {
+public class AircraftObjHandler extends Application {
 
-    private static final String TAG = DJISimulatorApplication.class.getName();
+    private static final String TAG = AircraftObjHandler.class.getName();
     public static final String FLAG_CONNECTION_CHANGE = "com_dji_simulatorDemo_connection_change";
     private static BaseProduct mProduct;
     private Handler mHandler;
@@ -38,7 +38,7 @@ public class DJISimulatorApplication extends Application {
         return instance;
     }
 
-    public DJISimulatorApplication() {
+    public AircraftObjHandler() {
 
     }
 

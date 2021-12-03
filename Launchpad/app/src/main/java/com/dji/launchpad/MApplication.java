@@ -8,13 +8,13 @@ import com.secneo.sdk.Helper;
 
 public class MApplication extends Application {
 
-    private DJISimulatorApplication simulatorApplication;
+    private AircraftObjHandler simulatorApplication;
     @Override
     protected void attachBaseContext(Context paramContext) {
         super.attachBaseContext(paramContext);
         Helper.install(MApplication.this);
         if (simulatorApplication == null) {
-            simulatorApplication = new DJISimulatorApplication();
+            simulatorApplication = new AircraftObjHandler();
             simulatorApplication.setContext(this);
         }
     }
