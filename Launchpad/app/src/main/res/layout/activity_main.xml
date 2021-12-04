@@ -24,15 +24,13 @@
 
     <TextView
         android:id="@+id/textview_position"
-        android:layout_width="320dp"
+        android:layout_width="178dp"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/textview_homecoords"
-        android:layout_alignBottom="@+id/textview_homecoords"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="-346dp"
-        android:layout_marginTop="123dp"
-        android:layout_marginBottom="-123dp"
-        android:layout_toEndOf="@+id/textview_homecoords"
+        android:layout_below="@+id/textview_homecoords"
+        android:layout_alignStart="@+id/textview_homecoords"
+        android:layout_alignEnd="@+id/textview_homecoords"
+        android:layout_marginTop="-30dp"
+        android:layout_marginEnd="0dp"
         android:text="position not set" />
 
     <Button
@@ -68,13 +66,13 @@
 
     <TextView
         android:id="@+id/textview_homecoords"
-        android:layout_width="179dp"
-        android:layout_height="wrap_content"
+        android:layout_width="178dp"
+        android:layout_height="75dp"
         android:layout_alignTop="@+id/btn_set_home"
         android:layout_alignBottom="@+id/btn_set_home"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="0dp"
+        android:layout_marginBottom="30dp"
         android:layout_toEndOf="@id/btn_set_home"
         android:text="home not set"
         android:textAlignment="viewStart" />
@@ -89,6 +87,28 @@
         android:onClick="onReturn"
         android:scaleType="centerInside"
         android:src="@drawable/selector_back_button" />
+
+    <Button
+        android:id="@+id/tbn_enable_control"
+        style="@style/common_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_land"
+        android:layout_alignStart="@+id/btn_land"
+        android:layout_alignEnd="@+id/btn_land"
+        android:layout_marginTop="10dp"
+        android:text="Enable Control" />
+
+    <Button
+        android:id="@+id/btn_disable_control"
+        style="@style/common_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_set_home"
+        android:layout_alignStart="@+id/btn_set_home"
+        android:layout_alignEnd="@+id/btn_set_home"
+        android:layout_marginTop="10dp"
+        android:text="Disable Control" />
 
 
 </RelativeLayout>

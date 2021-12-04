@@ -75,9 +75,6 @@ public class AircraftController implements View.OnClickListener {
     private FlightController mFlightController;
     public FlightControllerState mFlightControllerState;
     protected TextView mConnectStatusTextView;
-    private Button mBtnTakeOff;
-    private Button mBtnLand;
-    private Button mBtnHome;
 
     private TextView mTextView;
 
@@ -330,6 +327,8 @@ public class AircraftController implements View.OnClickListener {
         );
     }
 
+    // TODO implement movement methods with reference to original example for confirmation, then test
+
     private void initFlightController() {
 
         Aircraft aircraft = AircraftObjHandler.getAircraftInstance();
@@ -339,9 +338,9 @@ public class AircraftController implements View.OnClickListener {
             mFlightControllerState = null;
         } else {
             mFlightController = aircraft.getFlightController();
-            mFlightController.setRollPitchControlMode(RollPitchControlMode.VELOCITY);
+            mFlightController.setRollPitchControlMode(RollPitchControlMode.ANGLE);
             mFlightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
-            mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
+            mFlightController.setVerticalControlMode(VerticalControlMode.POSITION);
             mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
 
             mFlightController.setStateCallback(stateData -> {
@@ -367,11 +366,11 @@ public class AircraftController implements View.OnClickListener {
 
     private void initUI() {
 
-        mBtnTakeOff = (Button) ma.findViewById(R.id.btn_take_off);
-        mBtnLand = (Button) ma.findViewById(R.id.btn_land);
+        Button mBtnTakeOff = (Button) ma.findViewById(R.id.btn_take_off);
+        Button mBtnLand = (Button) ma.findViewById(R.id.btn_land);
         mTextView = (TextView) ma.findViewById(R.id.textview_position);
         mConnectStatusTextView = (TextView) ma.findViewById(R.id.ConnectStatusTextView);
-        mBtnHome = (Button) ma.findViewById(R.id.btn_set_home);
+        Button mBtnHome = (Button) ma.findViewById(R.id.btn_set_home);
 
         mBtnTakeOff.setOnClickListener(this);
         mBtnLand.setOnClickListener(this);
@@ -442,6 +441,7 @@ public class AircraftController implements View.OnClickListener {
 
         @Override
         public void run() {
+            mTextView.setText("virtualstick ran");
 
             if (mFlightController != null) {
                 mFlightController.sendVirtualStickFlightControlData(
