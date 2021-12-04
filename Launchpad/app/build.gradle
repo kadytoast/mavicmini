@@ -10,6 +10,7 @@ android {
     useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
+        // min version 19 is REQUIRED BY SDK; DO NOT TOUCH!!!!
         minSdkVersion 19
         targetSdkVersion 30
         multiDexEnabled true

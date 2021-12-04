@@ -24,13 +24,15 @@
 
     <TextView
         android:id="@+id/textview_position"
-        android:layout_width="wrap_content"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/textview_homecoords"
         android:layout_alignBottom="@+id/textview_homecoords"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="60dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="-346dp"
+        android:layout_marginTop="123dp"
+        android:layout_marginBottom="-123dp"
+        android:layout_toEndOf="@+id/textview_homecoords"
         android:text="position not set" />
 
     <Button
@@ -66,11 +68,14 @@
 
     <TextView
         android:id="@+id/textview_homecoords"
-        android:layout_width="wrap_content"
+        android:layout_width="179dp"
+        android:layout_height="wrap_content"
         android:layout_alignTop="@+id/btn_set_home"
         android:layout_alignBottom="@+id/btn_set_home"
         android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/btn_set_home"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="0dp"
+        android:layout_toEndOf="@id/btn_set_home"
         android:text="home not set"
         android:textAlignment="viewStart" />
 
