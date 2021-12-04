@@ -88,27 +88,27 @@
         android:scaleType="centerInside"
         android:src="@drawable/selector_back_button" />
 
-    <Button
-        android:id="@+id/tbn_enable_control"
-        style="@style/common_button"
+    <ToggleButton
+        android:id="@+id/tog_virtual_sticks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_alignStart="@+id/btn_land"
+        android:layout_alignEnd="@+id/textView"
+        android:layout_marginTop="10dp"
+        android:text="ToggleButton" />
+
+    <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btn_land"
         android:layout_alignStart="@+id/btn_land"
-        android:layout_alignEnd="@+id/btn_land"
-        android:layout_marginTop="10dp"
-        android:text="Enable Control" />
-
-    <Button
-        android:id="@+id/btn_disable_control"
-        style="@style/common_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_set_home"
-        android:layout_alignStart="@+id/btn_set_home"
         android:layout_alignEnd="@+id/btn_set_home"
         android:layout_marginTop="10dp"
-        android:text="Disable Control" />
+        android:text="Virtual Sticks:"
+        android:textSize="16sp"
+        tools:textAlignment="center" />
 
 
 </RelativeLayout>

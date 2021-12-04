@@ -1,17 +1,13 @@
 package com.dji.launchpad;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -32,7 +28,6 @@ import dji.common.error.DJISDKError;
 import dji.common.flightcontroller.Attitude;
 import dji.common.flightcontroller.FlightControllerState;
 import dji.common.flightcontroller.LocationCoordinate3D;
-import dji.common.flightcontroller.simulator.SimulatorState;
 import dji.common.flightcontroller.virtualstick.FlightControlData;
 import dji.common.flightcontroller.virtualstick.FlightCoordinateSystem;
 import dji.common.flightcontroller.virtualstick.RollPitchControlMode;
@@ -76,8 +71,8 @@ public class AircraftController implements View.OnClickListener {
     public FlightControllerState mFlightControllerState;
     protected TextView mConnectStatusTextView;
 
-    private TextView mTextView;
-
+    private TextView mTextViewPosition;
+    private TextView mTextViewHome;
 
     private Timer mSendVirtualStickDataTimer;
     private SendVirtualStickDataTask mSendVirtualStickDataTask;
@@ -311,8 +306,7 @@ public class AircraftController implements View.OnClickListener {
                 homeLong = locationCoordinate2D.getLongitude();
                 homeAlt = mFlightControllerState.getTakeoffLocationAltitude();
 
-                TextView t = ma.findViewById(R.id.textview_homecoords);
-                t.setText("Latitude : " + homeLat + "\nLongitude : " + homeLong + "\nAltitude: " +
+                mTextViewHome.setText("Latitude : " + homeLat + "\nLongitude : " + homeLong + "\nAltitude: " +
                         homeAlt);
             }
 
@@ -342,6 +336,7 @@ public class AircraftController implements View.OnClickListener {
             mFlightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
             mFlightController.setVerticalControlMode(VerticalControlMode.POSITION);
             mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
+            //TODO set max heights as needed for safety in environment
 
             mFlightController.setStateCallback(stateData -> {
 
@@ -355,7 +350,7 @@ public class AircraftController implements View.OnClickListener {
                 String positionY = String.format("%.2f", flightPos.getLongitude());
                 String positionZ = String.format("%.2f", flightPos.getAltitude());
 
-                mTextView.setText("Yaw : " + yaw + ", Pitch : " + pitch + ", Roll : " + roll + "\n" + ", PosX : " + positionX +
+                mTextViewPosition.setText("Yaw : " + yaw + ", Pitch : " + pitch + ", Roll : " + roll + "\n" + ", PosX : " + positionX +
                         ", PosY : " + positionY +
                         ", PosZ : " + positionZ);
             });
@@ -365,16 +360,23 @@ public class AircraftController implements View.OnClickListener {
     }
 
     private void initUI() {
+        // sets up click listener for buttons and global textviews
 
         Button mBtnTakeOff = (Button) ma.findViewById(R.id.btn_take_off);
         Button mBtnLand = (Button) ma.findViewById(R.id.btn_land);
-        mTextView = (TextView) ma.findViewById(R.id.textview_position);
+        mTextViewPosition = (TextView) ma.findViewById(R.id.textview_position);
+        mTextViewHome = ma.findViewById(R.id.textview_homecoords);
         mConnectStatusTextView = (TextView) ma.findViewById(R.id.ConnectStatusTextView);
         Button mBtnHome = (Button) ma.findViewById(R.id.btn_set_home);
+        //TODO add toggle button for virtual sticks with color/text change
+        Button mBtnEnableControl = ma.findViewById(R.id.btn_enable_control);
+        Button mBtnDisableControl = ma.findViewById(R.id.btn_disable_control);
 
         mBtnTakeOff.setOnClickListener(this);
         mBtnLand.setOnClickListener(this);
         mBtnHome.setOnClickListener(this);
+        mBtnEnableControl.setOnClickListener(this);
+        mBtnDisableControl.setOnClickListener(this);
 
     }
 
@@ -432,6 +434,25 @@ public class AircraftController implements View.OnClickListener {
                         }
                     );
                 }
+
+            case R.id.btn_enable_control:
+                if (mFlightController != null) {
+                    mFlightController.setVirtualStickModeEnabled(true, djiError -> {
+                        if (djiError != null) {
+                            showToast(djiError.getDescription());
+                        }
+                    });
+                }
+
+            case R.id.btn_disable_control:
+                if (mFlightController != null) {
+                    mFlightController.setVirtualStickModeEnabled(false, djiError -> {
+                        if (djiError != null) {
+                            showToast(djiError.getDescription());
+                        }
+                    });
+                }
+
             default:
                 break;
         }
@@ -441,7 +462,7 @@ public class AircraftController implements View.OnClickListener {
 
         @Override
         public void run() {
-            mTextView.setText("virtualstick ran");
+            mTextViewPosition.setText("virtualstick ran");
 
             if (mFlightController != null) {
                 mFlightController.sendVirtualStickFlightControlData(
