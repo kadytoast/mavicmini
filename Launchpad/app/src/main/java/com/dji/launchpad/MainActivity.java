@@ -2,6 +2,7 @@ package com.dji.launchpad;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
@@ -10,7 +11,7 @@ import androidx.annotation.NonNull;
 /**
  * Main Activity for all student code -- should mostly interact with AircraftController only
  */
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends Activity implements View.OnClickListener, View.OnTouchListener {
 
     private AircraftController airC;
 
@@ -78,7 +79,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     // onclick method for tracking button presses -- all should be in here
     @Override
-    public void onClick(View view) {
+    public void onClick(View v) {
 
+    }
+
+    @Override
+    public boolean onTouch (View v, MotionEvent motionEvent) {
+
+        return false;
     }
 }

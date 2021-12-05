@@ -9,10 +9,13 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -218,7 +221,6 @@ public class AircraftController implements View.OnClickListener {
     }
 
     protected BroadcastReceiver mReceiver = new BroadcastReceiver() {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             updateTitleBar();
@@ -361,22 +363,41 @@ public class AircraftController implements View.OnClickListener {
 
     private void initUI() {
         // sets up click listener for buttons and global textviews
-
+        // variable definitions for buttons and textviews
         Button mBtnTakeOff = (Button) ma.findViewById(R.id.btn_take_off);
         Button mBtnLand = (Button) ma.findViewById(R.id.btn_land);
         mTextViewPosition = (TextView) ma.findViewById(R.id.textview_position);
         mTextViewHome = ma.findViewById(R.id.textview_homecoords);
         mConnectStatusTextView = (TextView) ma.findViewById(R.id.ConnectStatusTextView);
         Button mBtnHome = (Button) ma.findViewById(R.id.btn_set_home);
-        //TODO add toggle button for virtual sticks with color/text change
-        Button mBtnEnableControl = ma.findViewById(R.id.btn_enable_control);
-        Button mBtnDisableControl = ma.findViewById(R.id.btn_disable_control);
+        ToggleButton mTogVirtualSticks = ma.findViewById(R.id.tog_virtual_sticks);
 
+        // regular button listener for <onClick> method
         mBtnTakeOff.setOnClickListener(this);
         mBtnLand.setOnClickListener(this);
         mBtnHome.setOnClickListener(this);
-        mBtnEnableControl.setOnClickListener(this);
-        mBtnDisableControl.setOnClickListener(this);
+
+        // toggle button for virtual flight control enable/disable
+        mTogVirtualSticks.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (b) { // virtual sticks enabled
+                if (mFlightController != null) {
+                    mFlightController.setVirtualStickModeEnabled(true, djiError -> {
+                        if (djiError != null) {
+                            showToast(djiError.getDescription());
+                        }
+                    });
+                }
+            }
+            else { // virtual sticks disabled
+                if (mFlightController != null) {
+                    mFlightController.setVirtualStickModeEnabled(false, djiError -> {
+                        if (djiError != null) {
+                            showToast(djiError.getDescription());
+                        }
+                    });
+                }
+            }
+        });
 
     }
 
@@ -389,14 +410,11 @@ public class AircraftController implements View.OnClickListener {
             case R.id.btn_take_off:
                 if (mFlightController != null){
                     mFlightController.startTakeoff(
-                            new CommonCallbacks.CompletionCallback() {
-                                @Override
-                                public void onResult(DJIError djiError) {
-                                    if (djiError != null) {
-                                        showToast(djiError.getDescription());
-                                    } else {
-                                        showToast("Take off Success");
-                                    }
+                            djiError -> {
+                                if (djiError != null) {
+                                    showToast(djiError.getDescription());
+                                } else {
+                                    showToast("Takeoff Complete");
                                 }
                             }
                     );
@@ -435,34 +453,32 @@ public class AircraftController implements View.OnClickListener {
                     );
                 }
 
-            case R.id.btn_enable_control:
-                if (mFlightController != null) {
-                    mFlightController.setVirtualStickModeEnabled(true, djiError -> {
-                        if (djiError != null) {
-                            showToast(djiError.getDescription());
-                        }
-                    });
-                }
-
-            case R.id.btn_disable_control:
-                if (mFlightController != null) {
-                    mFlightController.setVirtualStickModeEnabled(false, djiError -> {
-                        if (djiError != null) {
-                            showToast(djiError.getDescription());
-                        }
-                    });
-                }
-
             default:
                 break;
         }
     }
 
+    /**
+     * API Control Methods VVVVV
+     */
+
+    /**
+     * API Control Methods ^^^^
+     */
+
+    private int mval = 0;
+
     class SendVirtualStickDataTask extends TimerTask {
 
         @Override
         public void run() {
-            mTextViewPosition.setText("virtualstick ran");
+            if (mval == 0) {
+                mval = 1;
+            }
+            else {
+                mval = 0;
+            }
+            mTextViewPosition.setText("virtualstick ran" + mval);
 
             if (mFlightController != null) {
                 mFlightController.sendVirtualStickFlightControlData(
