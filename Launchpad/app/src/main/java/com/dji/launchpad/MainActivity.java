@@ -9,11 +9,15 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 
 /**
- * Main Activity for all student code -- should mostly interact with AircraftController only
+ * Main Activity for all student code -- should interact with AircraftController only
  */
-public class MainActivity extends Activity implements View.OnClickListener, View.OnTouchListener {
+public class MainActivity extends Activity {
 
     private AircraftController airC;
+
+    /**
+     * necessary stuff dont touch! VVVVV
+     */
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -25,8 +29,6 @@ public class MainActivity extends Activity implements View.OnClickListener, View
         airC.onCreate();
         loadUI();
     }
-
-    // activity state methods DNT
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -60,32 +62,16 @@ public class MainActivity extends Activity implements View.OnClickListener, View
         super.onDestroy();
     }
 
+    /**
+     * necessary stuff dont touch! ^^^^^
+     */
+
+    /**
+     * your workspace VVVVV
+     */
+
     // method to initialize buttons and add to click listener
     private void loadUI() {
-        /*
-        // update button vars
-        // class vars for buttons
-        Button mHome = findViewById(R.id.btn_set_home);
-        Button mTakeOff = findViewById(R.id.btn_take_off);
-        Button mLand = findViewById(R.id.btn_land);
 
-        // add to click listener
-        mHome.setOnClickListener(this);
-        mTakeOff.setOnClickListener(this);
-        mLand.setOnClickListener(this);
-        */
-
-    }
-
-    // onclick method for tracking button presses -- all should be in here
-    @Override
-    public void onClick(View v) {
-
-    }
-
-    @Override
-    public boolean onTouch (View v, MotionEvent motionEvent) {
-
-        return false;
     }
 }

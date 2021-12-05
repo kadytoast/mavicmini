@@ -9,10 +9,8 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -77,13 +75,14 @@ public class AircraftController implements View.OnClickListener {
     private TextView mTextViewPosition;
     private TextView mTextViewHome;
 
-    private Timer mSendVirtualStickDataTimer;
-    private SendVirtualStickDataTask mSendVirtualStickDataTask;
+    private TimerTask mSendFlightDataTask = null;
+    private Timer mSendFlightDataTimer = null;
 
-    private float mPitch;
-    private float mRoll;
-    private float mYaw;
-    private float mThrottle;
+    public float mPitch = 0;
+    public float mRoll = 0;
+    public float mYaw = 0;
+    public float mThrottle = 0;
+    public boolean mControlState = false;
 
     private double homeLat;
     private double homeLong;
@@ -286,13 +285,7 @@ public class AircraftController implements View.OnClickListener {
     protected void onDestroy() {
         Log.e(TAG, "onDestroy");
         ma.unregisterReceiver(mReceiver);
-        if (null != mSendVirtualStickDataTimer) {
-            mSendVirtualStickDataTask.cancel();
-            mSendVirtualStickDataTask = null;
-            mSendVirtualStickDataTimer.cancel();
-            mSendVirtualStickDataTimer.purge();
-            mSendVirtualStickDataTimer = null;
-        }
+        killSendFlightDataTask();
     }
 
 
@@ -323,8 +316,6 @@ public class AircraftController implements View.OnClickListener {
         );
     }
 
-    // TODO implement movement methods with reference to original example for confirmation, then test
-
     private void initFlightController() {
 
         Aircraft aircraft = AircraftObjHandler.getAircraftInstance();
@@ -336,7 +327,7 @@ public class AircraftController implements View.OnClickListener {
             mFlightController = aircraft.getFlightController();
             mFlightController.setRollPitchControlMode(RollPitchControlMode.ANGLE);
             mFlightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
-            mFlightController.setVerticalControlMode(VerticalControlMode.POSITION);
+            mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
             mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
             //TODO set max heights as needed for safety in environment
 
@@ -380,21 +371,44 @@ public class AircraftController implements View.OnClickListener {
         // toggle button for virtual flight control enable/disable
         mTogVirtualSticks.setOnCheckedChangeListener((compoundButton, b) -> {
             if (b) { // virtual sticks enabled
-                if (mFlightController != null) {
+                if (mFlightController != null && !mControlState) {
                     mFlightController.setVirtualStickModeEnabled(true, djiError -> {
                         if (djiError != null) {
+                            // show error and flip back checked if failed
                             showToast(djiError.getDescription());
+                            mTogVirtualSticks.setChecked(false);
+                        }
+                        else {
+                            // show toast and updated control
+                            mControlState = true;
+                            showToast("Virtual Sticks Enabled");
                         }
                     });
                 }
+                // if flightcontroller is null, set to false
+                else {
+                    mTogVirtualSticks.setChecked(false);
+                }
             }
             else { // virtual sticks disabled
-                if (mFlightController != null) {
+                if (mFlightController != null && mControlState) {
                     mFlightController.setVirtualStickModeEnabled(false, djiError -> {
                         if (djiError != null) {
+                            // show error and flip back checked if failed
                             showToast(djiError.getDescription());
+                            mTogVirtualSticks.setChecked(true);
+                        }
+                        else {
+                            // show toast and updated control
+                            mControlState = false;
+                            showToast("Virtual Sticks Disabled");
+                            killSendFlightDataTask();
                         }
                     });
+                }
+                // if flight controller is null, set to false
+                else {
+                    mTogVirtualSticks.setChecked(false);
                 }
             }
         });
@@ -402,6 +416,7 @@ public class AircraftController implements View.OnClickListener {
     }
 
 
+    // default buttons
     @Override
     public void onClick(View v) {
 
@@ -462,31 +477,83 @@ public class AircraftController implements View.OnClickListener {
      * API Control Methods VVVVV
      */
 
+    public void setPitch (float deg) {
+        /**
+         * input float degree -180 to 180 to set pitch angle of craft
+         */
+        mPitch = deg;
+        startSendFlightDataTask();
+    }
+
+    public void setRoll (float deg) {
+        /**
+         * input float degree -180 to 180 to set roll angle of craft
+         */
+        mRoll = deg;
+        startSendFlightDataTask();
+    }
+
+    public void setYaw (float vel) {
+        /**
+         * input float velocity for deg/second rotation of craft on yaw axis
+         */
+        mYaw = vel;
+        startSendFlightDataTask();
+    }
+
+    public void setThrottle (float vel) {
+        /**
+         * input float value for target velocity on z axis (positive results in craft ascend)
+         */
+        mThrottle = vel;
+        startSendFlightDataTask();
+    }
+
+    public LocationCoordinate3D getLocation () {
+        /**
+         * returns object containing latitude, longitude, and altitude of craft
+         * altitude is relative to home position
+         */
+        return mFlightControllerState.getAircraftLocation();
+    }
+
+    public LocationCoordinate2D getHomeLocation () {
+        /**
+         * returns object containing latitude and longitude for current home
+         */
+        return new LocationCoordinate2D(homeLat, homeLong);
+    }
+
     /**
      * API Control Methods ^^^^
      */
 
-    private int mval = 0;
+    public void startSendFlightDataTask() {
+        if (null == mSendFlightDataTimer) {
+            mSendFlightDataTask = new sendFlightDataTask();
+            mSendFlightDataTimer = new Timer();
+            mSendFlightDataTimer.schedule(mSendFlightDataTask, 0, 100);
+        }
+    }
 
-    class SendVirtualStickDataTask extends TimerTask {
+    public void killSendFlightDataTask () {
+        if (null != mSendFlightDataTimer) {
+            mSendFlightDataTask.cancel();
+            mSendFlightDataTask = null;
+            mSendFlightDataTimer.cancel();
+            mSendFlightDataTimer.purge();
+            mSendFlightDataTimer = null;
+        }
+    }
 
+    class sendFlightDataTask extends TimerTask {
         @Override
         public void run() {
-            if (mval == 0) {
-                mval = 1;
-            }
-            else {
-                mval = 0;
-            }
-            mTextViewPosition.setText("virtualstick ran" + mval);
 
             if (mFlightController != null) {
                 mFlightController.sendVirtualStickFlightControlData(
-                        new FlightControlData(
-                                mPitch, mRoll, mYaw, mThrottle
-                        ), djiError -> {
-
-                        }
+                        new FlightControlData(mPitch, mRoll, mYaw, mThrottle),
+                        djiError -> {}
                 );
             }
         }
