@@ -88,6 +88,8 @@ public class AircraftController implements View.OnClickListener {
     private double homeLong;
     private float homeAlt;
 
+    public double rth_default_height;
+
     private MainActivity ma;
 
     public AircraftController (MainActivity maIn) {

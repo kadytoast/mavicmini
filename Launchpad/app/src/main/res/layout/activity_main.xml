@@ -57,7 +57,7 @@
     <Button
         android:id="@+id/btn_set_home"
         style="@style/common_button"
-        android:layout_width="120dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/btn_take_off"
         android:layout_alignBottom="@+id/btn_land"
@@ -110,6 +110,20 @@
         android:text="Virtual Sticks:"
         android:textSize="16sp"
         tools:textAlignment="center" />
+
+    <Button
+        android:id="@+id/btn_rth"
+        style="@style/common_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/btn_take_off"
+        android:layout_alignBottom="@+id/btn_set_home"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="10dp"
+        android:layout_toEndOf="@+id/btn_set_home"
+        android:text="RTHTEMP" />
 
 
 </RelativeLayout>
