@@ -333,6 +333,8 @@ public class AircraftController implements View.OnClickListener {
 
             mFlightController.setStateCallback(stateData -> {
 
+                mFlightControllerState = stateData;
+
                 LocationCoordinate3D flightPos = stateData.getAircraftLocation();
                 Attitude flightAtt = stateData.getAttitude();
 
@@ -343,11 +345,10 @@ public class AircraftController implements View.OnClickListener {
                 String positionY = String.format("%.2f", flightPos.getLongitude());
                 String positionZ = String.format("%.2f", flightPos.getAltitude());
 
-                mTextViewPosition.setText("Yaw : " + yaw + ", Pitch : " + pitch + ", Roll : " + roll + "\n" + ", PosX : " + positionX +
-                        ", PosY : " + positionY +
-                        ", PosZ : " + positionZ);
+                mTextViewPosition.setText(
+                        "Yaw : " + yaw + ", Pitch : " + pitch + ", Roll : " + roll + "\n" +
+                        ", PosX : " + positionX + ", PosY : " + positionY + ", PosZ : " + positionZ);
             });
-            mFlightControllerState = mFlightController.getState();
 
         }
     }
@@ -473,58 +474,63 @@ public class AircraftController implements View.OnClickListener {
         }
     }
 
-    /**
+    /*
      * API Control Methods VVVVV
      */
-
+    /**
+     * input float degree -180 to 180 to set pitch angle of craft
+     */
     public void setPitch (float deg) {
-        /**
-         * input float degree -180 to 180 to set pitch angle of craft
-         */
         mPitch = deg;
         startSendFlightDataTask();
     }
 
+    /**
+     * input float degree -180 to 180 to set roll angle of craft
+     */
     public void setRoll (float deg) {
-        /**
-         * input float degree -180 to 180 to set roll angle of craft
-         */
         mRoll = deg;
         startSendFlightDataTask();
     }
 
+    /**
+     *  input float velocity for deg/second rotation of craft on yaw axis
+     */
     public void setYaw (float vel) {
-        /**
-         * input float velocity for deg/second rotation of craft on yaw axis
-         */
         mYaw = vel;
         startSendFlightDataTask();
     }
 
+    /**
+     * input float value for target velocity on z axis (positive results in craft ascend)
+     */
     public void setThrottle (float vel) {
-        /**
-         * input float value for target velocity on z axis (positive results in craft ascend)
-         */
         mThrottle = vel;
         startSendFlightDataTask();
     }
-
+    /**
+     * returns object containing latitude, longitude, and altitude of craft
+     * altitude is relative to home position
+     */
     public LocationCoordinate3D getLocation () {
-        /**
-         * returns object containing latitude, longitude, and altitude of craft
-         * altitude is relative to home position
-         */
         return mFlightControllerState.getAircraftLocation();
     }
-
+    /**
+     * returns object containing latitude and longitude for current home
+     */
     public LocationCoordinate2D getHomeLocation () {
-        /**
-         * returns object containing latitude and longitude for current home
-         */
         return new LocationCoordinate2D(homeLat, homeLong);
     }
 
     /**
+     * call to return to home location, pass height in meters for craft altitude while returning
+     * to home (relative to takeoff location)
+     */
+    /*TODO write smarter return to home protocol, fly at specified altitude back to home point
+        through cardinal directions and return to takeoff attitude (including yaw),
+        because default RTH has minimum height of 20m, check with winter if this is wanted*/
+
+    /*
      * API Control Methods ^^^^
      */
 
