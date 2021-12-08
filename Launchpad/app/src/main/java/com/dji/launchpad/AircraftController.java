@@ -331,7 +331,6 @@ public class AircraftController implements View.OnClickListener {
             mFlightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
             mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
             mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
-            //TODO set max heights as needed for safety in environment
 
             mFlightController.setStateCallback(stateData -> {
 
@@ -531,6 +530,10 @@ public class AircraftController implements View.OnClickListener {
     /*TODO write smarter return to home protocol, fly at specified altitude back to home point
         through cardinal directions and return to takeoff attitude (including yaw),
         because default RTH has minimum height of 20m, check with winter if this is wanted*/
+
+    // TODO write indoor/outdoor toggle switch to set return to home height
+
+    // TODO write forward/back method for basic movement in base app
 
     /*
      * API Control Methods ^^^^

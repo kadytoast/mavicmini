@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 /**
  * Main Activity for all student code -- should interact with AircraftController only
  */
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements View.OnClickListener {
 
     private AircraftController airC;
 
@@ -72,6 +72,11 @@ public class MainActivity extends Activity {
 
     // method to initialize buttons and add to click listener
     private void loadUI() {
+        // findViewById().setOnClickListener(this);
+    }
 
+    @Override
+    public void onClick(View view) {
+        // switch (view.getId()) {}
     }
 }
