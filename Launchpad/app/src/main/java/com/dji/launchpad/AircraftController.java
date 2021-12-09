@@ -436,7 +436,6 @@ public class AircraftController implements View.OnClickListener {
                             }
                     );
                 }
-
                 break;
 
             case R.id.btn_land:
@@ -450,10 +449,9 @@ public class AircraftController implements View.OnClickListener {
                                 }
                             }
                     );
-
                 }
-
                 break;
+
             case R.id.btn_set_home:  // set home case
                 if (mFlightController != null) {
                     mFlightController.setHomeLocationUsingAircraftCurrentLocation(
@@ -468,6 +466,12 @@ public class AircraftController implements View.OnClickListener {
                             }
                         }
                     );
+                }
+                break;
+
+            case R.id.btn_rth: // special return to home
+                if (mFlightController != null) {
+
                 }
 
             default:

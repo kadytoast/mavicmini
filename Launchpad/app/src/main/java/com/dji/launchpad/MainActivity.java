@@ -78,5 +78,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         // switch (view.getId()) {}
+            // case (button id):
+    }
+
+    private void flyForwardSixFeet () {
+
+    }
+
+    private void flyBackwardSixFeet () {
+
     }
 }
