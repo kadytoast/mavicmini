@@ -81,11 +81,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
             // case (button id):
     }
 
-    private void flyForwardSixFeet () {
-
-    }
-
-    private void flyBackwardSixFeet () {
+    /**
+     * sets all aircraft position values to zero, cancels current movements
+     */
+    private void setCraftFlat() {
 
     }
 }
