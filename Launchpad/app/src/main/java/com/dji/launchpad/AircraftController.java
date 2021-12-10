@@ -370,11 +370,11 @@ public class AircraftController implements View.OnClickListener {
         Button mBtnTakeOff = (Button) ma.findViewById(R.id.btn_take_off);
         Button mBtnLand = (Button) ma.findViewById(R.id.btn_land);
         Button mBtnReset = ma.findViewById(R.id.btn_set_craft_flat);
+        Button mBtnHome = (Button) ma.findViewById(R.id.btn_set_home);
+        ToggleButton mTogVirtualSticks = ma.findViewById(R.id.tog_virtual_sticks);
         mTextViewPosition = (TextView) ma.findViewById(R.id.textview_position);
         mTextViewHome = ma.findViewById(R.id.textview_homecoords);
         mConnectStatusTextView = (TextView) ma.findViewById(R.id.ConnectStatusTextView);
-        Button mBtnHome = (Button) ma.findViewById(R.id.btn_set_home);
-        ToggleButton mTogVirtualSticks = ma.findViewById(R.id.tog_virtual_sticks);
 
         // regular button listener for <onClick> method
         mBtnTakeOff.setOnClickListener(this);
@@ -385,7 +385,7 @@ public class AircraftController implements View.OnClickListener {
         // toggle button for virtual flight control enable/disable
         mTogVirtualSticks.setOnCheckedChangeListener((compoundButton, b) -> {
             if (b) { // virtual sticks enabled
-                if (mFlightController != null && !mVirtualStickControlState) {
+                if (ifFlightController() && !mVirtualStickControlState) {
                     mFlightController.setVirtualStickModeEnabled(true, djiError -> {
                         if (djiError != null) {
                             // show error and flip back checked if failed
@@ -405,7 +405,7 @@ public class AircraftController implements View.OnClickListener {
                 }
             }
             else { // virtual sticks disabled
-                if (mFlightController != null && mVirtualStickControlState) {
+                if (ifFlightController() && mVirtualStickControlState) {
                     mFlightController.setVirtualStickModeEnabled(false, djiError -> {
                         if (djiError != null) {
                             // show error and flip back checked if failed
@@ -437,7 +437,7 @@ public class AircraftController implements View.OnClickListener {
         switch (v.getId()) {
 
             case R.id.btn_take_off:
-                if (mFlightController != null){
+                if (ifFlightController()){
                     mFlightController.startTakeoff(
                             djiError -> {
                                 if (djiError != null) {
@@ -451,7 +451,7 @@ public class AircraftController implements View.OnClickListener {
                 break;
 
             case R.id.btn_land:
-                if (mFlightController != null){
+                if (ifFlightController()){
                     mFlightController.startLanding(
                             djiError -> {
                                 if (djiError != null) {
@@ -465,7 +465,7 @@ public class AircraftController implements View.OnClickListener {
                 break;
 
             case R.id.btn_set_home:  // set home case
-                if (mFlightController != null) {
+                if (ifFlightController()) {
                     mFlightController.setHomeLocationUsingAircraftCurrentLocation(
                         // nullable callback
                         djiError -> {
@@ -482,50 +482,14 @@ public class AircraftController implements View.OnClickListener {
                 break;
 
             case R.id.btn_rth: // special return to home
-                if (mFlightController != null) {
-
+                if (ifFlightController()) {
+                    //TODO write this lmao
                 }
                 break;
 
             case R.id.btn_set_craft_flat:
-                if (mFlightController != null) {
+                if (ifFlightController()) {
                     resetAircraftOrientation();
-                }
-                break;
-
-            case R.id.btn_fly_forward_1m:
-                if (mFlightController != null) {
-                    // reset attitude before starting
-                    resetAircraftOrientation();
-
-                    // get current data, compute new lat long, then update class targ val
-                    AircraftPositionalData locData = getLocation();
-                    LatLng curLatLng = new LatLng(locData.getAircraftLatitude(),
-                            locData.getAircraftLongitude());
-                    double curHeading = locData.getAircraftYaw();
-                    double targOffset = 1;
-                    mTargetFuturePosition = SphericalUtil.computeOffset(curLatLng, targOffset, curHeading);
-
-                    // set pitch to fly forward, management task should stop when point is reached
-                    setPitch(-3);
-                }
-                break;
-
-            case R.id.btn_fly_backward_1m:
-                if (mFlightController != null) {
-                    // reset attitude before starting
-                    resetAircraftOrientation();
-
-                    // get current data, compute new lat long, then update class targ val
-                    AircraftPositionalData locData = getLocation();
-                    LatLng curLatLng = new LatLng(locData.getAircraftLatitude(),
-                            locData.getAircraftLongitude());
-                    double curHeading = abs(locData.getAircraftYaw() - 360); // with opposite heading for backwards
-                    double targOffset = 1;
-                    mTargetFuturePosition = SphericalUtil.computeOffset(curLatLng, targOffset, curHeading);
-
-                    // set pitch to fly backward, management task should stop when point is reached
-                    setPitch(3);
                 }
                 break;
 
@@ -581,12 +545,26 @@ public class AircraftController implements View.OnClickListener {
     }
 
     /**
+     * checks to ensure a valid flight controller object is active, use before interaction
+     */
+    public boolean ifFlightController() {
+        return mFlightController != null;
+    }
+
+    /**
      * returns object containing latitude, longitude, altitude of craft, and home latitude and longitude
      * altitude is relative to home position
      */
     public AircraftPositionalData getLocation () {
         return new AircraftPositionalData(mFlightControllerState.getAircraftLocation(),
                 mFlightControllerState.getAttitude(), new LocationCoordinate2D(homeLat, homeLong));
+    }
+
+    /**
+     * set target future position value with LatLng class
+     */
+    public void setmTargetFuturePosition (LatLng target) {
+        mTargetFuturePosition = target;
     }
 
     /**
@@ -685,7 +663,7 @@ public class AircraftController implements View.OnClickListener {
         @Override
         public void run() {
 
-            if (mFlightController != null) {
+            if (ifFlightController()) {
                 mFlightController.sendVirtualStickFlightControlData(
                         new FlightControlData(mPitch, mRoll, mYaw, mThrottle),
                         djiError -> {}
@@ -698,7 +676,7 @@ public class AircraftController implements View.OnClickListener {
         @Override
         public void run() {
 
-            if (mFlightController != null) {
+            if (ifFlightController()) {
                 // check position, act accordingly, use current targetpos class vars
             }
         }
