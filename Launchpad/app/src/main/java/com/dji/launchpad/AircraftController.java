@@ -96,6 +96,7 @@ public class AircraftController implements View.OnClickListener {
 
     private double homeLat;
     private double homeLong;
+    private double homeHeading;
     private float homeAlt_refSeaLevel;
 
     public double rth_default_height;
@@ -312,6 +313,7 @@ public class AircraftController implements View.OnClickListener {
                 homeLat = locationCoordinate2D.getLatitude();
                 homeLong = locationCoordinate2D.getLongitude();
                 homeAlt_refSeaLevel = mFlightControllerState.getTakeoffLocationAltitude();
+                homeHeading = getLocation().getAircraftYaw();
 
                 mTextViewHome.setText("Latitude : " + homeLat + "\nLongitude : " + homeLong + "\nAltitude: " +
                         homeAlt_refSeaLevel);
@@ -346,23 +348,32 @@ public class AircraftController implements View.OnClickListener {
 
                 mFlightControllerState = stateData;
 
-                LocationCoordinate3D flightPos = stateData.getAircraftLocation();
-                Attitude flightAtt = stateData.getAttitude();
+                AircraftPositionalData flight = getLocation();
 
-                String yaw = String.format("%.2f", flightAtt.yaw);
-                String pitch = String.format("%.2f", flightAtt.pitch);
-                String roll = String.format("%.2f", flightAtt.roll);
+                // calculate x/y offset in meters
+                LatLng homePosObj = new LatLng(homeLat, homeLong);
+                LatLng currentPosObj = new LatLng(flight.getAircraftLatitude(), flight.getAircraftLongitude());
+                double distanceAsCrowFlies = SphericalUtil.computeDistanceBetween(homePosObj, currentPosObj);
+                double headingAsCrowFlies = SphericalUtil.computeHeading(homePosObj, currentPosObj);
 
-                String positionX = String.format("%.2f", flightPos.getLatitude());
-                String positionY = String.format("%.2f", flightPos.getLongitude());
+                String pitch = String.format("%.2f", flight.getAircraftPitch());
+                String roll = String.format("%.2f", flight.getAircraftRoll());
+                String yaw = String.format("%.2f", flight.getAircraftYaw());
+
+                String positionX = String.format("%.2f", );
+                String positionY = String.format("%.2f", );
                 String positionZ = String.format("%.2f", flightPos.getAltitude());
 
-                mTextViewPosition.setText("ADJUSTED VALUES:\n" +
-                        "Yaw : " + yaw + "\nPitch : " + pitch + "\nRoll : " + roll +
+                mTextViewPosition.setText("RAW VALUES:\n" +
+                        "Pitch : " + pitch + "\nRoll : " + roll + "\nYaw : " + yaw +
                         "\nPosX : " + positionX + "\nPosY : "  + positionY + "\nPosZ : " + positionZ);
             });
 
         }
+    }
+
+    private double combinantDegree (double droneHeading, double crowHeading) {
+        return 0;
     }
 
     private void initUI() {
