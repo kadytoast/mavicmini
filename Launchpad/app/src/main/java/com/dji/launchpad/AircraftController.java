@@ -352,13 +352,14 @@ public class AircraftController implements View.OnClickListener {
                 String yaw = String.format("%.2f", flightAtt.yaw);
                 String pitch = String.format("%.2f", flightAtt.pitch);
                 String roll = String.format("%.2f", flightAtt.roll);
+
                 String positionX = String.format("%.2f", flightPos.getLatitude());
                 String positionY = String.format("%.2f", flightPos.getLongitude());
                 String positionZ = String.format("%.2f", flightPos.getAltitude());
 
-                mTextViewPosition.setText(
-                        "Yaw : " + yaw + ", Pitch : " + pitch + ", Roll : " + roll + "\n" +
-                        ", PosX : " + positionX + ", PosY : " + positionY + ", PosZ : " + positionZ);
+                mTextViewPosition.setText("ADJUSTED VALUES:\n" +
+                        "Yaw : " + yaw + "\nPitch : " + pitch + "\nRoll : " + roll +
+                        "\nPosX : " + positionX + "\nPosY : "  + positionY + "\nPosZ : " + positionZ);
             });
 
         }
