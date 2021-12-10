@@ -76,6 +76,7 @@ dependencies {
         //exclude module: 'fly-safe-database'
     })
     implementation 'com.google.android.material:material:1.4.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
     compileOnly 'com.dji:dji-sdk-provided:4.15'
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
@@ -84,4 +85,5 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.annotation:annotation:1.2.0'
+    implementation 'com.google.maps.android:android-maps-utils:2.3.0'
 }

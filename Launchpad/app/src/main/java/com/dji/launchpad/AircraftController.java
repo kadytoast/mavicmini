@@ -1,5 +1,7 @@
 package com.dji.launchpad;
 
+import static java.lang.Math.abs;
+
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,6 +16,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.SphericalUtil;
+
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -78,22 +84,26 @@ public class AircraftController implements View.OnClickListener {
     private TimerTask mSendFlightDataTask = null;
     private Timer mSendFlightDataTimer = null;
 
-    public float mPitch = 0;
-    public float mRoll = 0;
-    public float mYaw = 0;
-    public float mThrottle = 0;
-    public boolean mControlState = false;
+    private TimerTask mCheckFlightPositionTask = null;
+    private Timer mCheckFlightPositionTimer = null;
+
+    private float mPitch = 0;
+    private float mRoll = 0;
+    private float mYaw = 0;
+    private float mThrottle = 0;
+    private boolean mVirtualStickControlState = false;
+    private LatLng mTargetFuturePosition = null;
 
     private double homeLat;
     private double homeLong;
-    private float homeAlt;
+    private float homeAlt_refSeaLevel;
 
     public double rth_default_height;
 
-    private MainActivity ma;
+    private final MainActivity ma;
 
-    public AircraftController (MainActivity maIn) {
-        ma = maIn;
+    public AircraftController (MainActivity maIN) {
+        ma = maIN;
     }
 
     protected void onCreate() {
@@ -287,7 +297,7 @@ public class AircraftController implements View.OnClickListener {
     protected void onDestroy() {
         Log.e(TAG, "onDestroy");
         ma.unregisterReceiver(mReceiver);
-        killSendFlightDataTask();
+        killFlightManagementTasks();
     }
 
 
@@ -301,10 +311,10 @@ public class AircraftController implements View.OnClickListener {
             public void onSuccess(LocationCoordinate2D locationCoordinate2D) {
                 homeLat = locationCoordinate2D.getLatitude();
                 homeLong = locationCoordinate2D.getLongitude();
-                homeAlt = mFlightControllerState.getTakeoffLocationAltitude();
+                homeAlt_refSeaLevel = mFlightControllerState.getTakeoffLocationAltitude();
 
                 mTextViewHome.setText("Latitude : " + homeLat + "\nLongitude : " + homeLong + "\nAltitude: " +
-                        homeAlt);
+                        homeAlt_refSeaLevel);
             }
 
             @Override
@@ -359,6 +369,7 @@ public class AircraftController implements View.OnClickListener {
         // variable definitions for buttons and textviews
         Button mBtnTakeOff = (Button) ma.findViewById(R.id.btn_take_off);
         Button mBtnLand = (Button) ma.findViewById(R.id.btn_land);
+        Button mBtnReset = ma.findViewById(R.id.btn_set_craft_flat);
         mTextViewPosition = (TextView) ma.findViewById(R.id.textview_position);
         mTextViewHome = ma.findViewById(R.id.textview_homecoords);
         mConnectStatusTextView = (TextView) ma.findViewById(R.id.ConnectStatusTextView);
@@ -369,11 +380,12 @@ public class AircraftController implements View.OnClickListener {
         mBtnTakeOff.setOnClickListener(this);
         mBtnLand.setOnClickListener(this);
         mBtnHome.setOnClickListener(this);
+        mBtnReset.setOnClickListener(this);
 
         // toggle button for virtual flight control enable/disable
         mTogVirtualSticks.setOnCheckedChangeListener((compoundButton, b) -> {
             if (b) { // virtual sticks enabled
-                if (mFlightController != null && !mControlState) {
+                if (mFlightController != null && !mVirtualStickControlState) {
                     mFlightController.setVirtualStickModeEnabled(true, djiError -> {
                         if (djiError != null) {
                             // show error and flip back checked if failed
@@ -382,7 +394,7 @@ public class AircraftController implements View.OnClickListener {
                         }
                         else {
                             // show toast and updated control
-                            mControlState = true;
+                            mVirtualStickControlState = true;
                             showToast("Virtual Sticks Enabled");
                         }
                     });
@@ -393,7 +405,7 @@ public class AircraftController implements View.OnClickListener {
                 }
             }
             else { // virtual sticks disabled
-                if (mFlightController != null && mControlState) {
+                if (mFlightController != null && mVirtualStickControlState) {
                     mFlightController.setVirtualStickModeEnabled(false, djiError -> {
                         if (djiError != null) {
                             // show error and flip back checked if failed
@@ -402,9 +414,9 @@ public class AircraftController implements View.OnClickListener {
                         }
                         else {
                             // show toast and updated control
-                            mControlState = false;
+                            mVirtualStickControlState = false;
                             showToast("Virtual Sticks Disabled");
-                            killSendFlightDataTask();
+                            killFlightManagementTasks();
                         }
                     });
                 }
@@ -473,6 +485,49 @@ public class AircraftController implements View.OnClickListener {
                 if (mFlightController != null) {
 
                 }
+                break;
+
+            case R.id.btn_set_craft_flat:
+                if (mFlightController != null) {
+                    resetAircraftOrientation();
+                }
+                break;
+
+            case R.id.btn_fly_forward_1m:
+                if (mFlightController != null) {
+                    // reset attitude before starting
+                    resetAircraftOrientation();
+
+                    // get current data, compute new lat long, then update class targ val
+                    AircraftPositionalData locData = getLocation();
+                    LatLng curLatLng = new LatLng(locData.getAircraftLatitude(),
+                            locData.getAircraftLongitude());
+                    double curHeading = locData.getAircraftYaw();
+                    double targOffset = 1;
+                    mTargetFuturePosition = SphericalUtil.computeOffset(curLatLng, targOffset, curHeading);
+
+                    // set pitch to fly forward, management task should stop when point is reached
+                    setPitch(-3);
+                }
+                break;
+
+            case R.id.btn_fly_backward_1m:
+                if (mFlightController != null) {
+                    // reset attitude before starting
+                    resetAircraftOrientation();
+
+                    // get current data, compute new lat long, then update class targ val
+                    AircraftPositionalData locData = getLocation();
+                    LatLng curLatLng = new LatLng(locData.getAircraftLatitude(),
+                            locData.getAircraftLongitude());
+                    double curHeading = abs(locData.getAircraftYaw() - 360); // with opposite heading for backwards
+                    double targOffset = 1;
+                    mTargetFuturePosition = SphericalUtil.computeOffset(curLatLng, targOffset, curHeading);
+
+                    // set pitch to fly backward, management task should stop when point is reached
+                    setPitch(3);
+                }
+                break;
 
             default:
                 break;
@@ -487,7 +542,7 @@ public class AircraftController implements View.OnClickListener {
      */
     public void setPitch (float deg) {
         mPitch = deg;
-        startSendFlightDataTask();
+        startFlightManagementTasks();
     }
 
     /**
@@ -495,7 +550,7 @@ public class AircraftController implements View.OnClickListener {
      */
     public void setRoll (float deg) {
         mRoll = deg;
-        startSendFlightDataTask();
+        startFlightManagementTasks();
     }
 
     /**
@@ -503,7 +558,7 @@ public class AircraftController implements View.OnClickListener {
      */
     public void setYaw (float vel) {
         mYaw = vel;
-        startSendFlightDataTask();
+        startFlightManagementTasks();
     }
 
     /**
@@ -511,20 +566,27 @@ public class AircraftController implements View.OnClickListener {
      */
     public void setThrottle (float vel) {
         mThrottle = vel;
-        startSendFlightDataTask();
+        startFlightManagementTasks();
     }
+
     /**
-     * returns object containing latitude, longitude, and altitude of craft
+     * resets craft orientation on pitch roll yaw and throttle
+     */
+    public void resetAircraftOrientation () {
+        mPitch = 0;
+        mRoll = 0;
+        mYaw = 0;
+        mThrottle = 0;
+        startFlightManagementTasks();
+    }
+
+    /**
+     * returns object containing latitude, longitude, altitude of craft, and home latitude and longitude
      * altitude is relative to home position
      */
-    public LocationCoordinate3D getLocation () {
-        return mFlightControllerState.getAircraftLocation();
-    }
-    /**
-     * returns object containing latitude and longitude for current home
-     */
-    public LocationCoordinate2D getHomeLocation () {
-        return new LocationCoordinate2D(homeLat, homeLong);
+    public AircraftPositionalData getLocation () {
+        return new AircraftPositionalData(mFlightControllerState.getAircraftLocation(),
+                mFlightControllerState.getAttitude(), new LocationCoordinate2D(homeLat, homeLong));
     }
 
     /**
@@ -543,21 +605,79 @@ public class AircraftController implements View.OnClickListener {
      * API Control Methods ^^^^
      */
 
-    public void startSendFlightDataTask() {
+    // class to hold all aircraft positional data, including home data
+    class AircraftPositionalData {
+        private final LocationCoordinate3D aircraftCurrentLocation;
+        private final Attitude aircraftCurrentAttitude;
+        private final LocationCoordinate2D aircraftHomeLocation;
+
+        public AircraftPositionalData (LocationCoordinate3D aircraftCurrentLocationIN,
+                                       Attitude aircraftCurrentAttitudeIN,
+                                       LocationCoordinate2D aircraftHomeLocationIN) {
+            // define class vars
+            aircraftCurrentLocation = aircraftCurrentLocationIN;
+            aircraftCurrentAttitude = aircraftCurrentAttitudeIN;
+            aircraftHomeLocation = aircraftHomeLocationIN;
+        }
+
+        public double getAircraftLatitude () { return aircraftCurrentLocation.getLatitude(); }
+        public double getAircraftLongitude () { return aircraftCurrentLocation.getLongitude(); }
+        public float getAircraftAltitude () { return aircraftCurrentLocation.getAltitude(); }
+
+        public double getAircraftPitch () { return aircraftCurrentAttitude.pitch; }
+        public double getAircraftRoll () { return aircraftCurrentAttitude.roll; }
+
+        /**
+         * @return single positive value in degrees clockwise from true north
+         */
+        public double getAircraftYaw () {
+            // make yaw single positive value clockwise from true north
+            double yaw;
+            if (aircraftCurrentAttitude.yaw < 0) {
+                yaw = 360 - aircraftCurrentAttitude.yaw;
+            }
+            else {
+                yaw = aircraftCurrentAttitude.yaw;
+            }
+            return yaw;
+        }
+
+        public double getHomeLatitude () { return aircraftHomeLocation.getLatitude(); }
+        public double getHomeLongitude () { return aircraftHomeLocation.getLongitude(); }
+    }
+
+
+    public void startFlightManagementTasks() {
+        // starting send flight data
         if (null == mSendFlightDataTimer) {
             mSendFlightDataTask = new sendFlightDataTask();
             mSendFlightDataTimer = new Timer();
             mSendFlightDataTimer.schedule(mSendFlightDataTask, 0, 100);
         }
+        // starting check flight data
+        if (null == mCheckFlightPositionTimer) {
+            mCheckFlightPositionTask = new checkFlightPositionTask();
+            mCheckFlightPositionTimer = new Timer();
+            mCheckFlightPositionTimer.schedule(mCheckFlightPositionTask, 0, 50);
+        }
     }
 
-    public void killSendFlightDataTask () {
+    public void killFlightManagementTasks() {
+        // killing send flight data
         if (null != mSendFlightDataTimer) {
             mSendFlightDataTask.cancel();
             mSendFlightDataTask = null;
             mSendFlightDataTimer.cancel();
             mSendFlightDataTimer.purge();
             mSendFlightDataTimer = null;
+        }
+        // killing check flight data
+        if (null != mCheckFlightPositionTimer) {
+            mCheckFlightPositionTask.cancel();
+            mCheckFlightPositionTask = null;
+            mCheckFlightPositionTimer.cancel();
+            mCheckFlightPositionTimer.purge();
+            mCheckFlightPositionTimer = null;
         }
     }
 
@@ -570,6 +690,16 @@ public class AircraftController implements View.OnClickListener {
                         new FlightControlData(mPitch, mRoll, mYaw, mThrottle),
                         djiError -> {}
                 );
+            }
+        }
+    }
+
+    class checkFlightPositionTask extends TimerTask {
+        @Override
+        public void run() {
+
+            if (mFlightController != null) {
+                // check position, act accordingly, use current targetpos class vars
             }
         }
     }
