@@ -347,22 +347,16 @@ public class AircraftController implements View.OnClickListener {
             mFlightController.setStateCallback(stateData -> {
 
                 mFlightControllerState = stateData;
-
                 AircraftPositionalData flight = getLocation();
 
-                // calculate x/y offset in meters
-                LatLng homePosObj = new LatLng(homeLat, homeLong);
-                LatLng currentPosObj = new LatLng(flight.getAircraftLatitude(), flight.getAircraftLongitude());
-                double distanceAsCrowFlies = SphericalUtil.computeDistanceBetween(homePosObj, currentPosObj);
-                double headingAsCrowFlies = SphericalUtil.computeHeading(homePosObj, currentPosObj);
 
                 String pitch = String.format("%.2f", flight.getAircraftPitch());
                 String roll = String.format("%.2f", flight.getAircraftRoll());
                 String yaw = String.format("%.2f", flight.getAircraftYaw());
 
-                String positionX = String.format("%.2f", );
-                String positionY = String.format("%.2f", );
-                String positionZ = String.format("%.2f", flightPos.getAltitude());
+                String positionX = String.format("%.2f", flight.getAicraftXOffset());
+                String positionY = String.format("%.2f", flight.getAircraftYOffset());
+                String positionZ = String.format("%.2f", flight.getAircraftAltitude());
 
                 mTextViewPosition.setText("RAW VALUES:\n" +
                         "Pitch : " + pitch + "\nRoll : " + roll + "\nYaw : " + yaw +
@@ -600,6 +594,8 @@ public class AircraftController implements View.OnClickListener {
         private final LocationCoordinate3D aircraftCurrentLocation;
         private final Attitude aircraftCurrentAttitude;
         private final LocationCoordinate2D aircraftHomeLocation;
+        public final LatLng aircraftLatLng;
+        public final LatLng homeLatLng;
 
         public AircraftPositionalData (LocationCoordinate3D aircraftCurrentLocationIN,
                                        Attitude aircraftCurrentAttitudeIN,
@@ -608,6 +604,11 @@ public class AircraftController implements View.OnClickListener {
             aircraftCurrentLocation = aircraftCurrentLocationIN;
             aircraftCurrentAttitude = aircraftCurrentAttitudeIN;
             aircraftHomeLocation = aircraftHomeLocationIN;
+
+            aircraftLatLng = new LatLng(aircraftCurrentLocation.getLatitude(),
+                    aircraftCurrentLocation.getLongitude());
+            homeLatLng = new LatLng(aircraftHomeLocation.getLatitude(),
+                    aircraftHomeLocation.getLongitude());
         }
 
         public double getAircraftLatitude () { return aircraftCurrentLocation.getLatitude(); }
@@ -634,6 +635,25 @@ public class AircraftController implements View.OnClickListener {
 
         public double getHomeLatitude () { return aircraftHomeLocation.getLatitude(); }
         public double getHomeLongitude () { return aircraftHomeLocation.getLongitude(); }
+
+        /**
+         * @return double value in meters of current position relative to home (from right of craft)
+         */
+        public double getAicraftXOffset() {
+
+
+
+            return 0;
+        }
+
+        /**
+         * @return double value in meters of current position relative to home (from front of craft)
+         */
+        public double getAircraftYOffset() {
+
+
+            return 0;
+        }
     }
 
 
