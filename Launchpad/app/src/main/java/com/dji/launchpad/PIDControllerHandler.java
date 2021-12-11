@@ -1,6 +1,6 @@
 package com.dji.launchpad;
 
-public class PIDController {
+public class PIDControllerHandler {
     /*
     error_prior = 0
     integral_prior = 0

@@ -1,6 +1,8 @@
 package com.dji.launchpad;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -96,7 +98,7 @@ public class AircraftController implements View.OnClickListener {
 
     private double homeLat;
     private double homeLong;
-    private double homeHeading;
+    private double aircraftHomeHeading;
     private float homeAlt_refSeaLevel;
 
     public double rth_default_height;
@@ -313,7 +315,7 @@ public class AircraftController implements View.OnClickListener {
                 homeLat = locationCoordinate2D.getLatitude();
                 homeLong = locationCoordinate2D.getLongitude();
                 homeAlt_refSeaLevel = mFlightControllerState.getTakeoffLocationAltitude();
-                homeHeading = getLocation().getAircraftYaw();
+                aircraftHomeHeading = getLocation().getAircraftYaw();
 
                 mTextViewHome.setText("Latitude : " + homeLat + "\nLongitude : " + homeLong + "\nAltitude: " +
                         homeAlt_refSeaLevel);
@@ -352,13 +354,15 @@ public class AircraftController implements View.OnClickListener {
 
                 String pitch = String.format("%.2f", flight.getAircraftPitch());
                 String roll = String.format("%.2f", flight.getAircraftRoll());
-                String yaw = String.format("%.2f", flight.getAircraftYaw());
+                String yaw = String.format("%.2f", flight.getAircraftHeadingRefHome());
 
-                String positionX = String.format("%.2f", flight.getAicraftXOffset());
-                String positionY = String.format("%.2f", flight.getAircraftYOffset());
+                XYValues offset = flight.getAicraftMeterOffsetFromHome();
+
+                String positionX = String.format("%.2f", offset.X);
+                String positionY = String.format("%.2f", offset.Y);
                 String positionZ = String.format("%.2f", flight.getAircraftAltitude());
 
-                mTextViewPosition.setText("RAW VALUES:\n" +
+                mTextViewPosition.setText("ADJUSTED VALUES:\n" +
                         "Pitch : " + pitch + "\nRoll : " + roll + "\nYaw : " + yaw +
                         "\nPosX : " + positionX + "\nPosY : "  + positionY + "\nPosZ : " + positionZ);
             });
@@ -563,7 +567,7 @@ public class AircraftController implements View.OnClickListener {
      */
     public AircraftPositionalData getLocation () {
         return new AircraftPositionalData(mFlightControllerState.getAircraftLocation(),
-                mFlightControllerState.getAttitude(), new LocationCoordinate2D(homeLat, homeLong));
+                mFlightControllerState.getAttitude(), new LocationCoordinate2D(homeLat, homeLong), aircraftHomeHeading);
     }
 
     /**
@@ -594,16 +598,19 @@ public class AircraftController implements View.OnClickListener {
         private final LocationCoordinate3D aircraftCurrentLocation;
         private final Attitude aircraftCurrentAttitude;
         private final LocationCoordinate2D aircraftHomeLocation;
+        private final double aircraftHomeHeading;
         public final LatLng aircraftLatLng;
         public final LatLng homeLatLng;
 
         public AircraftPositionalData (LocationCoordinate3D aircraftCurrentLocationIN,
                                        Attitude aircraftCurrentAttitudeIN,
-                                       LocationCoordinate2D aircraftHomeLocationIN) {
+                                       LocationCoordinate2D aircraftHomeLocationIN,
+                                       double homeHeadingIN) {
             // define class vars
             aircraftCurrentLocation = aircraftCurrentLocationIN;
             aircraftCurrentAttitude = aircraftCurrentAttitudeIN;
             aircraftHomeLocation = aircraftHomeLocationIN;
+            aircraftHomeHeading = homeHeadingIN;
 
             aircraftLatLng = new LatLng(aircraftCurrentLocation.getLatitude(),
                     aircraftCurrentLocation.getLongitude());
@@ -633,29 +640,115 @@ public class AircraftController implements View.OnClickListener {
             return yaw;
         }
 
+        /**
+         * @return double value of aircraft yaw from its home heading (pos/neg 180deg)
+         */
+        public double getAircraftHeadingRefHome() {
+            double heading = calcHeadingDifference(aircraftHomeHeading, getAircraftYaw());
+
+            if (aircraftHomeHeading < getAircraftYaw()) {
+
+            }
+
+            return heading;
+        }
+
         public double getHomeLatitude () { return aircraftHomeLocation.getLatitude(); }
         public double getHomeLongitude () { return aircraftHomeLocation.getLongitude(); }
+        public double getHomeHeading () { return aircraftHomeHeading;}
 
         /**
          * @return double value in meters of current position relative to home (from right of craft)
          */
-        public double getAicraftXOffset() {
-
-
-
-            return 0;
+        public XYValues getAicraftMeterOffsetFromHome() {
+            return getXYOffsetBetweenPointsNormalToOriginHeading(
+                    homeLatLng, aircraftHomeHeading, aircraftLatLng);
         }
 
-        /**
-         * @return double value in meters of current position relative to home (from front of craft)
-         */
-        public double getAircraftYOffset() {
+    }
 
+    /**
+     * simple class to hold two x y offset values (used for positioning offsets)
+     */
+    class XYValues {
 
-            return 0;
+        public final double X;
+        public final double Y;
+
+        public XYValues (double xIN, double yIN) {
+            X = xIN;
+            Y = yIN;
         }
     }
 
+    /**
+     * @param baseRef the heading to reference second heading from
+     * @param secRef the heading to calculate offset of from baseRef
+     * @return double value of difference between two headings that are (originally) referenced to true north
+     */
+    public double calcHeadingDifference(double baseRef, double secRef) {
+        double finalOut = 0;
+
+        if (baseRef < secRef) {
+            finalOut = secRef - baseRef;
+        }
+        else if (baseRef > secRef) {
+            finalOut = baseRef - secRef;
+        }// returns 0 as default of they are exactly equal (somehow lmao)
+
+        // correct finalout if clockwise interpretation creates obtuse ref angles & flip for left angle
+        if (finalOut > 180) {
+            finalOut = 360 - finalOut;
+            finalOut *= -1;
+        }
+
+        return finalOut;
+    }
+
+    /**
+     * @return double value in meters between origin point and target point with header
+     */
+    public XYValues getXYOffsetBetweenPointsNormalToOriginHeading (LatLng origin, double originHeading, LatLng target) {
+        // output values
+        double x = 0;
+        double y = 0;
+
+        // x and y quadrant correction (set to 1 or -1 ONLY by correction conditionals)
+        int xCorrector = 1;
+        int yCorrector = 1;
+
+        // calculate hypotenuse
+        double hypotenuseDistance = SphericalUtil.computeDistanceBetween(origin, target);
+        double hypotenuseHeading = SphericalUtil.computeHeading(origin, target);
+
+        // raw heading difference
+        double rawHeadingDifference = calcHeadingDifference(originHeading, hypotenuseHeading);
+        double correctedHeadingDifference = rawHeadingDifference;
+
+        // heading difference calculations to normalize for different quadrants
+        /* quadrant notations [0] = x, [1] = y, P = positive, N = negative
+            NP    |    PP
+                  ^
+          ----- drone -----
+                  |
+            NN    |    PN
+         */
+        // if hypotenuse heading is less than originheading (raw), negative xCorrector (NX quadrants)
+        if (hypotenuseHeading < originHeading) {
+            xCorrector = -1;
+        }
+        // if heading difference is greater than 90, negative yCorrector (XN quadrants)
+        if (rawHeadingDifference > 90) {
+            yCorrector = -1;
+            correctedHeadingDifference -= 90;
+        }
+        // otherwise defaults (PP quadrant)
+
+        x = xCorrector * (sin(correctedHeadingDifference) * hypotenuseDistance);
+        y = yCorrector * (cos(correctedHeadingDifference) * hypotenuseDistance);
+
+        return new XYValues(x, y);
+    }
 
     public void startFlightManagementTasks() {
         // starting send flight data
