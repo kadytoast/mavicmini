@@ -336,10 +336,11 @@ public class AircraftController implements View.OnClickListener {
 
         Aircraft aircraft = AircraftObjHandler.getAircraftInstance();
         if (aircraft == null || !aircraft.isConnected()) {
-            showToast("Disconnected");
+            //showToast("Disconnected");
             mFlightController = null;
             mFlightControllerState = null;
         } else {
+            updateTitleBar();
             mFlightController = aircraft.getFlightController();
             mFlightController.setRollPitchControlMode(RollPitchControlMode.ANGLE);
             mFlightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
@@ -366,7 +367,6 @@ public class AircraftController implements View.OnClickListener {
                         "Pitch : " + pitch + "\nRoll : " + roll + "\nYaw : " + yaw +
                         "\nPosX : " + positionX + "\nPosY : "  + positionY + "\nPosZ : " + positionZ);
             });
-
         }
     }
 
@@ -380,17 +380,23 @@ public class AircraftController implements View.OnClickListener {
         Button mBtnTakeOff = (Button) ma.findViewById(R.id.btn_take_off);
         Button mBtnLand = (Button) ma.findViewById(R.id.btn_land);
         Button mBtnReset = ma.findViewById(R.id.btn_set_craft_flat);
-        Button mBtnHome = (Button) ma.findViewById(R.id.btn_set_home);
-        ToggleButton mTogVirtualSticks = ma.findViewById(R.id.tog_virtual_sticks);
-        mTextViewPosition = (TextView) ma.findViewById(R.id.textview_position);
-        mTextViewHome = ma.findViewById(R.id.textview_homecoords);
-        mConnectStatusTextView = (TextView) ma.findViewById(R.id.ConnectStatusTextView);
+        Button mBtnSetHome = (Button) ma.findViewById(R.id.btn_set_home);
+        Button mBtnGoHome = ma.findViewById(R.id.btn_rth);
+        Button mBtnReload = ma.findViewById(R.id.btn_reload);
 
         // regular button listener for <onClick> method
         mBtnTakeOff.setOnClickListener(this);
         mBtnLand.setOnClickListener(this);
-        mBtnHome.setOnClickListener(this);
+        mBtnSetHome.setOnClickListener(this);
         mBtnReset.setOnClickListener(this);
+        mBtnGoHome.setOnClickListener(this);
+        mBtnReload.setOnClickListener(this);
+
+
+        ToggleButton mTogVirtualSticks = ma.findViewById(R.id.tog_virtual_sticks);
+        mTextViewPosition = (TextView) ma.findViewById(R.id.textview_position);
+        mTextViewHome = ma.findViewById(R.id.textview_homecoords);
+        mConnectStatusTextView = (TextView) ma.findViewById(R.id.ConnectStatusTextView);
 
         // toggle button for virtual flight control enable/disable
         mTogVirtualSticks.setOnCheckedChangeListener((compoundButton, b) -> {
@@ -501,6 +507,10 @@ public class AircraftController implements View.OnClickListener {
                 if (ifFlightController()) {
                     resetAircraftOrientation();
                 }
+                break;
+
+            case R.id.btn_reload:
+                    initFlightController();
                 break;
 
             default:
@@ -644,13 +654,7 @@ public class AircraftController implements View.OnClickListener {
          * @return double value of aircraft yaw from its home heading (pos/neg 180deg)
          */
         public double getAircraftHeadingRefHome() {
-            double heading = calcHeadingDifference(aircraftHomeHeading, getAircraftYaw());
-
-            if (aircraftHomeHeading < getAircraftYaw()) {
-
-            }
-
-            return heading;
+            return calcHeadingDifference(aircraftHomeHeading, getAircraftYaw());
         }
 
         public double getHomeLatitude () { return aircraftHomeLocation.getLatitude(); }
@@ -685,21 +689,16 @@ public class AircraftController implements View.OnClickListener {
      * @param baseRef the heading to reference second heading from
      * @param secRef the heading to calculate offset of from baseRef
      * @return double value of difference between two headings that are (originally) referenced to true north
+     * return is within +/- 180 to have full range and denote quadrant
      */
     public double calcHeadingDifference(double baseRef, double secRef) {
         double finalOut = 0;
 
-        if (baseRef < secRef) {
-            finalOut = secRef - baseRef;
-        }
-        else if (baseRef > secRef) {
-            finalOut = baseRef - secRef;
-        }// returns 0 as default of they are exactly equal (somehow lmao)
+        finalOut = secRef - baseRef;
 
-        // correct finalout if clockwise interpretation creates obtuse ref angles & flip for left angle
+        // flip angle for finalOut if greater than 180 for clockwise angling issue
         if (finalOut > 180) {
-            finalOut = 360 - finalOut;
-            finalOut *= -1;
+            finalOut -= 360;
         }
 
         return finalOut;
@@ -733,14 +732,18 @@ public class AircraftController implements View.OnClickListener {
                   |
             NN    |    PN
          */
-        // if hypotenuse heading is less than originheading (raw), negative xCorrector (NX quadrants)
-        if (hypotenuseHeading < originHeading) {
+        // if rawheading dif angle is negative (raw), negative xCorrector (Nx quadrants)
+        if (rawHeadingDifference < 0) {
             xCorrector = -1;
         }
-        // if heading difference is greater than 90, negative yCorrector (XN quadrants)
+        // if heading difference is more than +/-90, negative yCorrector (xN quadrants)
         if (rawHeadingDifference > 90) {
             yCorrector = -1;
             correctedHeadingDifference -= 90;
+        }
+        else if (rawHeadingDifference < -90) {
+            yCorrector = -1;
+            correctedHeadingDifference += 90;
         }
         // otherwise defaults (PP quadrant)
 
