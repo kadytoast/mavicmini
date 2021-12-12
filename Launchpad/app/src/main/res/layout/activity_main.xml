@@ -54,12 +54,12 @@
 
     <TextView
         android:id="@+id/textview_position"
-        android:layout_width="123dp"
-        android:layout_height="205dp"
+        android:layout_width="119dp"
+        android:layout_height="wrap_content"
         android:layout_alignTop="@+id/textview_homecoords"
         android:layout_alignBottom="@+id/textview_homecoords"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="-100dp"
+        android:layout_marginBottom="-180dp"
         android:text="position not set" />
 
     <Button

@@ -85,6 +85,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        /*
         switch (view.getId()) {
 
             case R.id.btn_fly_forward_1m:
@@ -123,6 +124,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
                 break;
         }
+        */
     }
 
 }

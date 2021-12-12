@@ -3,6 +3,7 @@ package com.dji.launchpad;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+import static java.lang.Math.toRadians;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -363,9 +364,19 @@ public class AircraftController implements View.OnClickListener {
                 String positionY = String.format("%.2f", offset.Y);
                 String positionZ = String.format("%.2f", flight.getAircraftAltitude());
 
-                mTextViewPosition.setText("ADJUSTED VALUES:\n" +
-                        "Pitch : " + pitch + "\nRoll : " + roll + "\nYaw : " + yaw +
-                        "\nPosX : " + positionX + "\nPosY : "  + positionY + "\nPosZ : " + positionZ);
+                // necessary components for the xyoffset func, readout for testing
+                double hypotenuseDistance = SphericalUtil.computeDistanceBetween(flight.homeLatLng, flight.aircraftLatLng);
+                double hypotenuseHeading = SphericalUtil.computeHeading(flight.homeLatLng, flight.aircraftLatLng);
+                double rawHeadingDifference = calcHeadingDifference(flight.getHomeHeading(), hypotenuseHeading);
+
+                String hypDis = String.format("%.2f", hypotenuseDistance);
+                String hypHea = String.format("%.2f", hypotenuseHeading);
+                String heaDif = String.format("%.2f", rawHeadingDifference);
+
+                mTextViewPosition.setText(
+                        "\nPitch : " + pitch + "\nRoll : " + roll + "\nYaw : " + yaw +
+                        "\nPosX : " + positionX + "\nPosY : "  + positionY + "\nPosZ : " + positionZ +
+                        "\nHypDis : " + hypDis + "\nHypHea : " + hypHea + "\nheaDif : " + heaDif);
             });
         }
     }
@@ -733,7 +744,7 @@ public class AircraftController implements View.OnClickListener {
 
         // raw heading difference
         double rawHeadingDifference = calcHeadingDifference(originHeading, hypotenuseHeading);
-        double correctedHeadingDifference = rawHeadingDifference;
+        double correctedHeadingDifference = abs(rawHeadingDifference);
 
         // heading difference calculations to normalize for different quadrants
         /* quadrant notations [0] = x, [1] = y, P = positive, N = negative
@@ -747,19 +758,15 @@ public class AircraftController implements View.OnClickListener {
         if (rawHeadingDifference < 0) {
             xCorrector = -1;
         }
-        // if heading difference is more than +/-90, negative yCorrector (xN quadrants)
-        if (rawHeadingDifference > 90) {
+        // if heading difference is more than 90, negative yCorrector (xN quadrants)
+        if (correctedHeadingDifference > 90) {
             yCorrector = -1;
             correctedHeadingDifference -= 90;
         }
-        else if (rawHeadingDifference < -90) {
-            yCorrector = -1;
-            correctedHeadingDifference += 90;
-        }
         // otherwise defaults (PP quadrant)
 
-        x = xCorrector * (sin(correctedHeadingDifference) * hypotenuseDistance);
-        y = yCorrector * (cos(correctedHeadingDifference) * hypotenuseDistance);
+        x = xCorrector * (sin(toRadians(correctedHeadingDifference)) * hypotenuseDistance);
+        y = yCorrector * (cos(toRadians(correctedHeadingDifference)) * hypotenuseDistance);
 
         return new XYValues(x, y);
     }
