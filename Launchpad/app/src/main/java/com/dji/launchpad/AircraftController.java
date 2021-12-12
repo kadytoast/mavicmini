@@ -12,6 +12,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -340,7 +341,6 @@ public class AircraftController implements View.OnClickListener {
             mFlightController = null;
             mFlightControllerState = null;
         } else {
-            updateTitleBar();
             mFlightController = aircraft.getFlightController();
             mFlightController.setRollPitchControlMode(RollPitchControlMode.ANGLE);
             mFlightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
@@ -510,7 +510,18 @@ public class AircraftController implements View.OnClickListener {
                 break;
 
             case R.id.btn_reload:
+                    Button reload = ma.findViewById(R.id.btn_reload);
+                    reload.setText("...");
+                    updateTitleBar();
                     initFlightController();
+
+                    Handler awaitReload = new Handler();
+                    awaitReload.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            reload.setText("reload");
+                        }
+                    }, 500);
                 break;
 
             default:
