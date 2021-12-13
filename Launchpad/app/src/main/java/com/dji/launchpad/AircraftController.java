@@ -354,13 +354,13 @@ public class AircraftController implements View.OnClickListener {
 
                 mFlightControllerState = stateData;
                 AircraftPositionalData flight = getLocation();
+                XYValues offset = flight.getAircraftMeterOffsetFromHome();
 
 
                 String pitch = String.format("%.2f", flight.getAircraftPitch());
                 String roll = String.format("%.2f", flight.getAircraftRoll());
                 String yaw = String.format("%.2f", flight.getAircraftHeadingRefHome());
 
-                XYValues offset = flight.getAicraftMeterOffsetFromHome();
 
                 String positionX = String.format("%.2f", offset.X);
                 String positionY = String.format("%.2f", offset.Y);
@@ -381,10 +381,6 @@ public class AircraftController implements View.OnClickListener {
                         "\nHypDis : " + hypDis + "\nHypHea : " + hypHea + "\nheaDif : " + heaDif);
             });
         }
-    }
-
-    private double combinantDegree (double droneHeading, double crowHeading) {
-        return 0;
     }
 
     private void initUI() {
@@ -485,6 +481,7 @@ public class AircraftController implements View.OnClickListener {
 
             case R.id.btn_take_off:
                 if (ifFlightController()){
+                    showToast("Takeoff Started");
                     mFlightController.startTakeoff(
                             djiError -> {
                                 if (djiError != null) {
@@ -499,6 +496,7 @@ public class AircraftController implements View.OnClickListener {
 
             case R.id.btn_land:
                 if (ifFlightController()){
+                    showToast("Landing Started");
                     mFlightController.startLanding(
                             djiError -> {
                                 if (djiError != null) {
@@ -706,7 +704,7 @@ public class AircraftController implements View.OnClickListener {
         /**
          * @return double value in meters of current position relative to home (from right of craft)
          */
-        public XYValues getAicraftMeterOffsetFromHome() {
+        public XYValues getAircraftMeterOffsetFromHome() {
             return getXYOffsetBetweenPointsNormalToOriginHeading(
                     homeLatLng, aircraftHomeHeading, aircraftLatLng);
         }
