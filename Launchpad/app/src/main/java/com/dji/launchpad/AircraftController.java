@@ -96,6 +96,8 @@ public class AircraftController implements View.OnClickListener {
     private float mYaw = 0;
     private float mThrottle = 0;
     private boolean mVirtualStickControlState = false;
+    private boolean mTakeoffEnabledState = false;
+
     private LatLng mTargetFuturePosition = null;
 
     private double homeLat;
@@ -403,8 +405,12 @@ public class AircraftController implements View.OnClickListener {
         mBtnGoHome.setOnClickListener(this);
         mBtnReload.setOnClickListener(this);
 
+        mTakeoffEnabledState = false;
+        mBtnTakeOff.setVisibility(Button.INVISIBLE);
+        mBtnLand.setVisibility(Button.INVISIBLE);
 
         ToggleButton mTogVirtualSticks = ma.findViewById(R.id.tog_virtual_sticks);
+        ToggleButton mTogTakeoffEnable = ma.findViewById(R.id.tog_takeoff_enable);
         mTextViewPosition = (TextView) ma.findViewById(R.id.textview_position);
         mTextViewHome = ma.findViewById(R.id.textview_homecoords);
         mConnectStatusTextView = (TextView) ma.findViewById(R.id.ConnectStatusTextView);
@@ -453,6 +459,20 @@ public class AircraftController implements View.OnClickListener {
                 }
             }
         });
+
+
+        mTogTakeoffEnable.setOnCheckedChangeListener(((compoundButton, b) -> {
+            if (b) {
+                mTakeoffEnabledState = true;
+                mBtnTakeOff.setVisibility(Button.VISIBLE);
+                mBtnLand.setVisibility(Button.VISIBLE);
+            }
+            else {
+                mTakeoffEnabledState = false;
+                mBtnTakeOff.setVisibility(Button.INVISIBLE);
+                mBtnLand.setVisibility(Button.INVISIBLE);
+            }
+        }));
 
     }
 

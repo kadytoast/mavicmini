@@ -256,5 +256,17 @@
         android:text="Set Angle"
         android:textSize="15sp" />
 
+    <ToggleButton
+        android:id="@+id/tog_takeoff_enable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_land"
+        android:layout_alignStart="@+id/btn_land"
+        android:layout_alignEnd="@+id/btn_land"
+        android:layout_marginTop="10dp"
+        android:text="ToggleButton"
+        android:textOff="takeoff disabled"
+        android:textOn="takeoff enabled" />
+
 
 </RelativeLayout>
