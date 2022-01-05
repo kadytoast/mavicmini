@@ -337,7 +337,6 @@ public class AircraftController implements View.OnClickListener {
     }
 
     private void initFlightController() {
-
         Aircraft aircraft = AircraftObjHandler.getAircraftInstance();
         if (aircraft == null || !aircraft.isConnected()) {
             //showToast("Disconnected");
@@ -541,6 +540,7 @@ public class AircraftController implements View.OnClickListener {
             case R.id.btn_reload:
                     Button reload = ma.findViewById(R.id.btn_reload);
                     reload.setText("...");
+                    //TODO figure out which method call is causing crashes and debug
                     updateTitleBar();
                     initFlightController();
 
