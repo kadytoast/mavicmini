@@ -103,7 +103,6 @@ public class AircraftController implements View.OnClickListener {
     private double homeLat;
     private double homeLong;
     private double aircraftHomeHeading;
-    private float homeAlt_refSeaLevel;
 
     public double rth_default_height;
 
@@ -254,7 +253,7 @@ public class AircraftController implements View.OnClickListener {
     }
 
     private void updateTitleBar() {
-        if(mConnectStatusTextView == null) return;
+        if (mConnectStatusTextView == null) return;
         boolean ret = false;
         BaseProduct product = AircraftObjHandler.getProductInstance();
         if (product != null) {
@@ -318,11 +317,10 @@ public class AircraftController implements View.OnClickListener {
             public void onSuccess(LocationCoordinate2D locationCoordinate2D) {
                 homeLat = locationCoordinate2D.getLatitude();
                 homeLong = locationCoordinate2D.getLongitude();
-                homeAlt_refSeaLevel = mFlightControllerState.getTakeoffLocationAltitude();
                 aircraftHomeHeading = getLocation().getAircraftYaw();
 
                 mTextViewHome.setText("Latitude : " + homeLat + "\nLongitude : " + homeLong + "\nAltitude: " +
-                        homeAlt_refSeaLevel);
+                            "Home ref to North : " + aircraftHomeHeading);
             }
 
             @Override
@@ -342,13 +340,18 @@ public class AircraftController implements View.OnClickListener {
             //showToast("Disconnected");
             mFlightController = null;
             mFlightControllerState = null;
-        } else {
-            mFlightController = aircraft.getFlightController();
-            mFlightController.setRollPitchControlMode(RollPitchControlMode.ANGLE);
-            mFlightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
-            mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
-            mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
+        }
+        else {
+            // reinit flight controller only if needed
+            if (mFlightController == null) {
+                mFlightController = aircraft.getFlightController();
+                mFlightController.setRollPitchControlMode(RollPitchControlMode.ANGLE);
+                mFlightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
+                mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
+                mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
+            }
 
+            // reload state callback and ui updates
             mFlightController.setStateCallback(stateData -> {
 
                 mFlightControllerState = stateData;
@@ -454,7 +457,6 @@ public class AircraftController implements View.OnClickListener {
                 }
             }
         });
-
 
         mTogTakeoffEnable.setOnCheckedChangeListener(((compoundButton, b) -> {
             if (b) {
@@ -615,7 +617,7 @@ public class AircraftController implements View.OnClickListener {
      * returns object containing latitude, longitude, altitude of craft, and home latitude and longitude
      * altitude is relative to home position
      */
-    public AircraftPositionalData getLocation () {
+    public synchronized AircraftPositionalData getLocation () {
         return new AircraftPositionalData(mFlightControllerState.getAircraftLocation(),
                 mFlightControllerState.getAttitude(), new LocationCoordinate2D(homeLat, homeLong), aircraftHomeHeading);
     }
