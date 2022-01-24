@@ -1,6 +1,12 @@
 from time import sleep
 import asyncio
 
+class velocitySim ():
+    def __init__(self):
+        self.angle = 0
+    
+    async def runloop (self):
+        pass
 
 class PIDTesting ():
     PTERM = 0.5
