@@ -22,5 +22,11 @@
 * use virtual stick control with position checking to have set forward/backward distance buttons (on button press, set threshold, tilt craft, check until threshold is met, flatten craft, tilt in opposite direction to correct unless craft does this automatically)
 
 
-# Make simpler api
+### Make simpler api
 * tilt functionality and return position relative to home, simplistic and clean, abstract test out to other classes 
+
+
+### PID class structure
+
+* client instantiates pidcontrollerhandler object, register variables for pid control through handler obj, calling cycle on handler will then operate on all variables
+*  

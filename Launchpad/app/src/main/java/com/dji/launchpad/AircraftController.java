@@ -91,10 +91,15 @@ public class AircraftController implements View.OnClickListener {
     private TimerTask mCheckFlightPositionTask = null;
     private Timer mCheckFlightPositionTimer = null;
 
+    /**
+     * static flight control variables deprecated for FlightControlData and PID handler, but active
+     */
     private float mPitch = 0;
     private float mRoll = 0;
     private float mYaw = 0;
     private float mThrottle = 0;
+
+    private FlightControlData flightControlData = null;
     private boolean mVirtualStickControlState = false;
     private boolean mTakeoffEnabledState = false;
 
@@ -565,6 +570,7 @@ public class AircraftController implements View.OnClickListener {
      */
     /**
      * input float degree -180 to 180 to set pitch angle of craft
+     * deprecated in lieu of FlightControlData and PID control
      */
     public void setPitch (float deg) {
         mPitch = deg;
@@ -573,6 +579,7 @@ public class AircraftController implements View.OnClickListener {
 
     /**
      * input float degree -180 to 180 to set roll angle of craft
+     * deprecated in lieu of FlightControlData and PID control
      */
     public void setRoll (float deg) {
         mRoll = deg;
@@ -580,7 +587,8 @@ public class AircraftController implements View.OnClickListener {
     }
 
     /**
-     *  input float velocity for deg/second rotation of craft on yaw axis
+     * input float velocity for deg/second rotation of craft on yaw axis
+     * deprecated in lieu of FlightControlData and PID control
      */
     public void setYaw (float vel) {
         mYaw = vel;
@@ -589,6 +597,7 @@ public class AircraftController implements View.OnClickListener {
 
     /**
      * input float value for target velocity on z axis (positive results in craft ascend)
+     * deprecated in lieu of FlightControlData and PID control
      */
     public void setThrottle (float vel) {
         mThrottle = vel;
@@ -830,10 +839,18 @@ public class AircraftController implements View.OnClickListener {
         public void run() {
 
             if (ifFlightController()) {
-                mFlightController.sendVirtualStickFlightControlData(
-                        new FlightControlData(mPitch, mRoll, mYaw, mThrottle),
-                        djiError -> {}
-                );
+                // pass flight control data (set by pid handler), otherwise create new with zeroes
+                if(flightControlData != null) {
+                    mFlightController.sendVirtualStickFlightControlData(flightControlData,
+                            djiError -> {}
+                    );
+                }
+                else {
+                    mFlightController.sendVirtualStickFlightControlData(
+                            new FlightControlData(mPitch, mRoll, mYaw, mThrottle),
+                            djiError -> {}
+                    );
+                }
             }
         }
     }
@@ -844,6 +861,7 @@ public class AircraftController implements View.OnClickListener {
 
             if (ifFlightController()) {
                 // check position, act accordingly, use current targetpos class vars
+
             }
         }
     }
