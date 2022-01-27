@@ -693,7 +693,7 @@ public class AircraftController implements View.OnClickListener {
             // make yaw single positive value clockwise from true north
             double yaw;
             if (aircraftCurrentAttitude.yaw < 0) {
-                yaw = 360 - aircraftCurrentAttitude.yaw;
+                yaw = 360 + aircraftCurrentAttitude.yaw; // add here because negative value for subtract
             }
             else {
                 yaw = aircraftCurrentAttitude.yaw;
