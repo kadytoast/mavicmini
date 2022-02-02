@@ -113,6 +113,8 @@ public class AircraftController implements View.OnClickListener {
 
     private final MainActivity ma;
 
+    public SocketDebugger sDB;
+
     public AircraftController (MainActivity maIN) {
         ma = maIN;
     }
@@ -126,6 +128,8 @@ public class AircraftController implements View.OnClickListener {
         IntentFilter filter = new IntentFilter();
         filter.addAction(AircraftObjHandler.FLAG_CONNECTION_CHANGE);
         ma.registerReceiver(mReceiver, filter);
+
+        sDB = new SocketDebugger();
     }
 
     /**
@@ -309,6 +313,8 @@ public class AircraftController implements View.OnClickListener {
         Log.e(TAG, "onDestroy");
         ma.unregisterReceiver(mReceiver);
         killFlightManagementTasks();
+
+        sDB.closeSocket();
     }
 
 
