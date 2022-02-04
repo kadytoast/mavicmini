@@ -14,9 +14,11 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -29,11 +31,13 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
 
 import dji.common.error.DJISDKError;
 import dji.common.flightcontroller.Attitude;
@@ -113,7 +117,7 @@ public class AircraftController implements View.OnClickListener {
 
     private final MainActivity ma;
 
-    public SocketDebugger sDB;
+    public SocketDebugger debug;
 
     public AircraftController (MainActivity maIN) {
         ma = maIN;
@@ -129,7 +133,7 @@ public class AircraftController implements View.OnClickListener {
         filter.addAction(AircraftObjHandler.FLAG_CONNECTION_CHANGE);
         ma.registerReceiver(mReceiver, filter);
 
-        sDB = new SocketDebugger();
+        debug = new SocketDebugger();
     }
 
     /**
@@ -314,7 +318,7 @@ public class AircraftController implements View.OnClickListener {
         ma.unregisterReceiver(mReceiver);
         killFlightManagementTasks();
 
-        sDB.closeSocket();
+        debug.closeSocket();
     }
 
 
@@ -405,6 +409,7 @@ public class AircraftController implements View.OnClickListener {
         Button mBtnSetHome = (Button) ma.findViewById(R.id.btn_set_home);
         Button mBtnGoHome = ma.findViewById(R.id.btn_rth);
         Button mBtnReload = ma.findViewById(R.id.btn_reload);
+        Button mBtnDebug = ma.findViewById(R.id.btn_debugenter);
 
         // regular button listener for <onClick> method
         mBtnTakeOff.setOnClickListener(this);
@@ -413,6 +418,7 @@ public class AircraftController implements View.OnClickListener {
         mBtnReset.setOnClickListener(this);
         mBtnGoHome.setOnClickListener(this);
         mBtnReload.setOnClickListener(this);
+        mBtnDebug.setOnClickListener(this);
 
         mTakeoffEnabledState = false;
         mBtnTakeOff.setVisibility(Button.INVISIBLE);
@@ -551,19 +557,58 @@ public class AircraftController implements View.OnClickListener {
                 break;
 
             case R.id.btn_reload:
-                    Button reload = ma.findViewById(R.id.btn_reload);
-                    reload.setText("...");
-                    //TODO figure out which method call is causing crashes and debug
-                    updateTitleBar();
-                    initFlightController();
+                Button reload = ma.findViewById(R.id.btn_reload);
+                reload.setText("...");
+                //TODO figure out which method call is causing crashes and debug
+                updateTitleBar();
+                initFlightController();
 
-                    Handler awaitReload = new Handler();
-                    awaitReload.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
+                Handler awaitReload = new Handler();
+                awaitReload.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
                             reload.setText("reload");
                         }
-                    }, 500);
+                }, 500);
+                break;
+
+            case R.id.btn_debugenter:
+                System.out.println("debugenter pressed");
+                EditText entry = ma.findViewById(R.id.editText_debugaddress);
+                String address = entry.getText().toString();
+                System.out.println("address content " + address);
+
+                try {
+                    if (!address.isEmpty()) {
+                        // get and validate ip address
+                        String ip = address.substring(0, address.indexOf(':'));
+                        String zeroTo255
+                                = "(\\d{1,2}|(0|1)\\"
+                                + "d{2}|2[0-4]\\d|25[0-5])";
+                        String regex
+                                = zeroTo255 + "\\."
+                                + zeroTo255 + "\\."
+                                + zeroTo255 + "\\."
+                                + zeroTo255;
+                        boolean ifip = Pattern.matches(regex, ip);
+                        System.out.println(ifip);
+
+                        // get and validate port number
+                        String port = address.substring(address.indexOf(':') + 1);
+                        boolean ifport = (0 < Integer.parseInt(port) && Integer.parseInt(port) <= 65535);
+                        System.out.println(ifport);
+
+                        if (ifip && ifport) {
+                            debug.createSocket(ip, port);
+                            debug.log("Opened Debugger" + LocalDateTime.now());
+                        }
+                    }
+
+                }
+                catch (Error e){
+                    System.out.println("debugenter button caught : " + e.getMessage());
+                }
+
                 break;
 
             default:

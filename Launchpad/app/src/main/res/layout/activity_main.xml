@@ -221,10 +221,10 @@
         android:text="L" />
 
     <EditText
-        android:id="@+id/editNum_tilt_angle"
+        android:id="@+id/editText_debugaddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/text_tiltangle"
+        android:layout_below="@+id/text_debug"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_toStartOf="@+id/textview_position"
@@ -233,7 +233,7 @@
         android:inputType="number" />
 
     <TextView
-        android:id="@+id/text_tiltangle"
+        android:id="@+id/text_debug"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/textview_homecoords"
@@ -245,13 +245,13 @@
         android:textSize="18sp" />
 
     <Button
-        android:id="@+id/button7"
+        android:id="@+id/btn_debugenter"
         style="@style/common_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editNum_tilt_angle"
-        android:layout_alignStart="@+id/editNum_tilt_angle"
-        android:layout_alignEnd="@+id/editNum_tilt_angle"
+        android:layout_below="@+id/editText_debugaddress"
+        android:layout_alignStart="@+id/editText_debugaddress"
+        android:layout_alignEnd="@+id/editText_debugaddress"
         android:layout_alignBottom="@+id/textview_homecoords"
         android:text="Set Angle"
         android:textSize="15sp" />

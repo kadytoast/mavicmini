@@ -2,10 +2,11 @@ package com.dji.launchpad;
 
 import android.text.TextUtils;
 
-import java.net.URISyntaxException;
+import java.net.URI;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 /**
  * class for interacting with custom socketio based wireless debug client
@@ -27,10 +28,29 @@ public class SocketDebugger {
         closeSocket();
         try {
             //
-            mSocket = IO.socket("http://" + uri + ":" + port);
+            System.out.println(uri);
+            System.out.println(port);
+            mSocket = IO.socket(URI.create("http://" + uri + ":" + port));
             mSocket.connect();
+            System.out.println("socket created");
+            // testing fucking shoot me
+            mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    System.out.println(mSocket.connected()); // true
+                }
+            });
+
+            mSocket.on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    System.out.println("socket failed to connect");
+                }
+            });
+
             return true;
-        } catch (URISyntaxException e) {
+        } catch (Error e) {
+            System.out.println("createSocket caught : " + e.getMessage());
             mSocket = null;
             return false;
         }
@@ -51,12 +71,14 @@ public class SocketDebugger {
      * @param message string to be sent back over ws
      * @return boolean if sending succeeds or if message is valid (false if empty or mSocket not setup)
      */
-    public boolean sendDebug(String message) {
+    public boolean log(String message) {
         if (TextUtils.isEmpty(message) || mSocket == null) {
+            System.out.println("false from debug log");
             return false;
         }
         String event = "debug";
         mSocket.emit(event, message);
+        System.out.println("true from debug log");
         return true;
     }
 
