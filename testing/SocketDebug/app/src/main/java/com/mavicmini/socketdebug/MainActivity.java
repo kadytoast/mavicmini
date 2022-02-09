@@ -12,14 +12,14 @@ import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private SocketDebug debug;
+    private DebugClient debug;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        debug = new SocketDebug();
+        debug = new DebugClient(this.getBaseContext());
 
         initUI();
     }
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         System.out.println(ifport);
 
                         if (ifip && ifport) {
-                            debug.createSocket(ip, port);
+                            debug.setPath(ip, port);
                             debug.log("Opened Debugger" + LocalDateTime.now());
                         }
                     }
