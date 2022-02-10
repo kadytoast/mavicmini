@@ -20,6 +20,7 @@ import com.google.maps.android.SphericalUtil;
 public class MainActivity extends Activity implements View.OnClickListener {
 
     private AircraftController airC;
+    public DebugClient debug;
 
     /**
      * necessary stuff dont touch! VVVVV
@@ -35,6 +36,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         airC.onCreate();
         loadUI();
+        debug = new DebugClient(this.getBaseContext());
     }
 
     @Override

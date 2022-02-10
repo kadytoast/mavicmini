@@ -117,8 +117,6 @@ public class AircraftController implements View.OnClickListener {
 
     private final MainActivity ma;
 
-    public SocketDebugger debug;
-
     public AircraftController (MainActivity maIN) {
         ma = maIN;
     }
@@ -133,7 +131,6 @@ public class AircraftController implements View.OnClickListener {
         filter.addAction(AircraftObjHandler.FLAG_CONNECTION_CHANGE);
         ma.registerReceiver(mReceiver, filter);
 
-        debug = new SocketDebugger();
     }
 
     /**
@@ -317,8 +314,6 @@ public class AircraftController implements View.OnClickListener {
         Log.e(TAG, "onDestroy");
         ma.unregisterReceiver(mReceiver);
         killFlightManagementTasks();
-
-        debug.closeSocket();
     }
 
 
@@ -599,8 +594,8 @@ public class AircraftController implements View.OnClickListener {
                         System.out.println(ifport);
 
                         if (ifip && ifport) {
-                            debug.createSocket(ip, port);
-                            debug.log("Opened Debugger" + LocalDateTime.now());
+                            ma.debug.setPath(ip, port);
+                            ma.debug.log("Opened Debugger: " + LocalDateTime.now());
                         }
                     }
 
@@ -704,6 +699,74 @@ public class AircraftController implements View.OnClickListener {
     /*
      * API Control Methods ^^^^
      */
+
+
+
+    public void startFlightManagementTasks() {
+        // starting send flight data
+        if (null == mSendFlightDataTimer) {
+            mSendFlightDataTask = new sendFlightDataTask();
+            mSendFlightDataTimer = new Timer();
+            mSendFlightDataTimer.schedule(mSendFlightDataTask, 0, 100);
+        }
+        // starting check flight data
+        if (null == mCheckFlightPositionTimer) {
+            mCheckFlightPositionTask = new checkFlightPositionTask();
+            mCheckFlightPositionTimer = new Timer();
+            mCheckFlightPositionTimer.schedule(mCheckFlightPositionTask, 0, 50);
+        }
+    }
+
+    public void killFlightManagementTasks() {
+        // killing send flight data
+        if (null != mSendFlightDataTimer) {
+            mSendFlightDataTask.cancel();
+            mSendFlightDataTask = null;
+            mSendFlightDataTimer.cancel();
+            mSendFlightDataTimer.purge();
+            mSendFlightDataTimer = null;
+        }
+        // killing check flight data
+        if (null != mCheckFlightPositionTimer) {
+            mCheckFlightPositionTask.cancel();
+            mCheckFlightPositionTask = null;
+            mCheckFlightPositionTimer.cancel();
+            mCheckFlightPositionTimer.purge();
+            mCheckFlightPositionTimer = null;
+        }
+    }
+
+    class sendFlightDataTask extends TimerTask {
+        @Override
+        public void run() {
+
+            if (ifFlightController()) {
+                // pass flight control data (set by pid handler), otherwise create new with zeroes
+                if(flightControlData != null) {
+                    mFlightController.sendVirtualStickFlightControlData(flightControlData,
+                            djiError -> {}
+                    );
+                }
+                else {
+                    mFlightController.sendVirtualStickFlightControlData(
+                            new FlightControlData(mPitch, mRoll, mYaw, mThrottle),
+                            djiError -> {}
+                    );
+                }
+            }
+        }
+    }
+
+    class checkFlightPositionTask extends TimerTask {
+        @Override
+        public void run() {
+
+            if (ifFlightController()) {
+                // check position, act accordingly, use current targetpos class vars
+
+            }
+        }
+    }
 
     // class to hold all aircraft positional data, including home data
     class AircraftPositionalData {
@@ -849,72 +912,6 @@ public class AircraftController implements View.OnClickListener {
         y = yCorrector * (cos(toRadians(correctedHeadingDifference)) * hypotenuseDistance);
 
         return new XYValues(x, y);
-    }
-
-    public void startFlightManagementTasks() {
-        // starting send flight data
-        if (null == mSendFlightDataTimer) {
-            mSendFlightDataTask = new sendFlightDataTask();
-            mSendFlightDataTimer = new Timer();
-            mSendFlightDataTimer.schedule(mSendFlightDataTask, 0, 100);
-        }
-        // starting check flight data
-        if (null == mCheckFlightPositionTimer) {
-            mCheckFlightPositionTask = new checkFlightPositionTask();
-            mCheckFlightPositionTimer = new Timer();
-            mCheckFlightPositionTimer.schedule(mCheckFlightPositionTask, 0, 50);
-        }
-    }
-
-    public void killFlightManagementTasks() {
-        // killing send flight data
-        if (null != mSendFlightDataTimer) {
-            mSendFlightDataTask.cancel();
-            mSendFlightDataTask = null;
-            mSendFlightDataTimer.cancel();
-            mSendFlightDataTimer.purge();
-            mSendFlightDataTimer = null;
-        }
-        // killing check flight data
-        if (null != mCheckFlightPositionTimer) {
-            mCheckFlightPositionTask.cancel();
-            mCheckFlightPositionTask = null;
-            mCheckFlightPositionTimer.cancel();
-            mCheckFlightPositionTimer.purge();
-            mCheckFlightPositionTimer = null;
-        }
-    }
-
-    class sendFlightDataTask extends TimerTask {
-        @Override
-        public void run() {
-
-            if (ifFlightController()) {
-                // pass flight control data (set by pid handler), otherwise create new with zeroes
-                if(flightControlData != null) {
-                    mFlightController.sendVirtualStickFlightControlData(flightControlData,
-                            djiError -> {}
-                    );
-                }
-                else {
-                    mFlightController.sendVirtualStickFlightControlData(
-                            new FlightControlData(mPitch, mRoll, mYaw, mThrottle),
-                            djiError -> {}
-                    );
-                }
-            }
-        }
-    }
-
-    class checkFlightPositionTask extends TimerTask {
-        @Override
-        public void run() {
-
-            if (ifFlightController()) {
-                // check position, act accordingly, use current targetpos class vars
-
-            }
-        }
     }
 
 }
