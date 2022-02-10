@@ -3,15 +3,9 @@ const app = express()
 const port = 8080
 
 app.get('/debug', (req, res) => {
-    res.send('Hello World!')
-    console.log("headers: ")
-    console.log(req.headers)
-    console.log("ip: ")
-    console.log(req.ip)
-    console.log("body: ")
-    console.log(req.body)
-    console.log("params: ")
-    console.log(req.params)
+    res.send("msg logged")
+    console.log("query: ")
+    console.log(req.query)
 })
 
 app.listen(port, () => {

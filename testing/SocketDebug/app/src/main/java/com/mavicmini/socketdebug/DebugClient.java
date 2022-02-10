@@ -77,7 +77,7 @@ public class DebugClient {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        System.out.println("in response listener: " + response);
+                        //System.out.println("in response listener: " + response);
                     }
                 }, new Response.ErrorListener() {
             @Override
