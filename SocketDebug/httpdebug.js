@@ -16,7 +16,7 @@ let year = date_ob.getFullYear();
 
 // instantiate filesystem variables
 const fs = require('fs')
-var logstream = fs.createWriteStream("logs/" + month + "-" + date + "-" + year, 
+var logstream = fs.createWriteStream("mavic_logs/" + month + "-" + date + "-" + year, 
     {flags: "a", autoClose: true})
 
 app.post('/debug', (req, res) => {
