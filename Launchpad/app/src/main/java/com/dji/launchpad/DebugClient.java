@@ -11,6 +11,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 
 /**
  * class for interacting with custom socketio based wireless debug client
@@ -21,7 +27,7 @@ import com.android.volley.toolbox.Volley;
 public class DebugClient {
 
     private Uri basepath = null;
-    private RequestQueue queue = null;
+    private RequestQueue queue;
 
     /**
      * sets up debugclient and instantiates volley request queue
@@ -53,27 +59,23 @@ public class DebugClient {
     }
 
     /**
-     * sends passed text with event "debug"
-     * @param message string to be sent back over ws
-     * @return boolean if sending succeeds or if message is valid (false if empty or mSocket not setup)
+     * sends passed text to set path in post body
+     * @param message string to be sent back over http
      */
-    public boolean log(String message) {
-        if (TextUtils.isEmpty(message)) {
+    public void log(String message) {
+        if (TextUtils.isEmpty(message) || basepath == null) {
             System.out.println("false from debug log");
-            return false;
+            return;
         }
         // setting key for query parameter
         String key = "msg";
-        // building onto basepath with logbuild as a copy
-        Uri.Builder logbuild = basepath.buildUpon();
-        logbuild.appendQueryParameter(key, message);
-        // exporting logbuild to string url
-        String url = logbuild.build().toString();
+        // exporting basepath to string url
+        String url = basepath.toString();
 
         System.out.println(url);
 
         // building new request to add to volley queue
-        StringRequest request = new StringRequest(Request.Method.GET, url,
+        StringRequest request = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -85,13 +87,39 @@ public class DebugClient {
                 System.out.println("in error listener: " + error.getMessage());
                 System.out.println("in error listener: " + error.getCause());
             }
-        });
+        })
+        {
+            // override getparams method of request to add post body
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> body = new HashMap<>();
+                body.put(key, LocalDateTime.now() + " : " + message);
+                return body;
+            }
+        };
 
         // add constructed request to volley queue
         queue.add(request);
-
         System.out.println("true from debug log");
-        return true;
+    }
+
+    /**
+     * simpler method to abstract error logging
+     * calls internal log method with stack trace and message/cause
+     * @param e exception to pass
+     */
+    public void errlog(Exception e) {
+        String cause = "";
+        try {
+            cause = Objects.requireNonNull(e.getCause()).getMessage();
+        }
+        catch (NullPointerException n) {
+            cause = "no cause found";
+        }
+
+        this.log(Arrays.toString(e.getStackTrace()) + "\n" +
+                e.getMessage() + "\n" +
+                cause);
     }
 
 }

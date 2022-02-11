@@ -33,6 +33,7 @@ import androidx.core.content.ContextCompat;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -363,34 +364,38 @@ public class AircraftController implements View.OnClickListener {
 
             // reload state callback and ui updates
             mFlightController.setStateCallback(stateData -> {
-
-                mFlightControllerState = stateData;
-                AircraftPositionalData flight = getLocation();
-                XYValues offset = flight.getAircraftMeterOffsetFromHome();
-
-
-                String pitch = String.format("%.2f", flight.getAircraftPitch());
-                String roll = String.format("%.2f", flight.getAircraftRoll());
-                String yaw = String.format("%.2f", flight.getAircraftHeadingRefHome());
+                try {
+                    mFlightControllerState = stateData;
+                    AircraftPositionalData flight = getLocation();
+                    XYValues offset = flight.getAircraftMeterOffsetFromHome();
 
 
-                String positionX = String.format("%.2f", offset.X);
-                String positionY = String.format("%.2f", offset.Y);
-                String positionZ = String.format("%.2f", flight.getAircraftAltitude());
+                    String pitch = String.format("%.2f", flight.getAircraftPitch());
+                    String roll = String.format("%.2f", flight.getAircraftRoll());
+                    String yaw = String.format("%.2f", flight.getAircraftHeadingRefHome());
 
-                // necessary components for the xyoffset func, readout for testing
-                double hypotenuseDistance = SphericalUtil.computeDistanceBetween(flight.homeLatLng, flight.aircraftLatLng);
-                double hypotenuseHeading = SphericalUtil.computeHeading(flight.homeLatLng, flight.aircraftLatLng);
-                double rawHeadingDifference = calcHeadingDifference(flight.getHomeHeading(), hypotenuseHeading);
 
-                String hypDis = String.format("%.2f", hypotenuseDistance);
-                String hypHea = String.format("%.2f", hypotenuseHeading);
-                String heaDif = String.format("%.2f", rawHeadingDifference);
+                    String positionX = String.format("%.2f", offset.X);
+                    String positionY = String.format("%.2f", offset.Y);
+                    String positionZ = String.format("%.2f", flight.getAircraftAltitude());
 
-                mTextViewPosition.setText(
-                        "\nPitch : " + pitch + "\nRoll : " + roll + "\nYaw : " + yaw +
-                        "\nPosX : " + positionX + "\nPosY : "  + positionY + "\nPosZ : " + positionZ +
-                        "\nHypDis : " + hypDis + "\nHypHea : " + hypHea + "\nheaDif : " + heaDif);
+                    // necessary components for the xyoffset func, readout for testing
+                    double hypotenuseDistance = SphericalUtil.computeDistanceBetween(flight.homeLatLng, flight.aircraftLatLng);
+                    double hypotenuseHeading = SphericalUtil.computeHeading(flight.homeLatLng, flight.aircraftLatLng);
+                    double rawHeadingDifference = calcHeadingDifference(flight.getHomeHeading(), hypotenuseHeading);
+
+                    String hypDis = String.format("%.2f", hypotenuseDistance);
+                    String hypHea = String.format("%.2f", hypotenuseHeading);
+                    String heaDif = String.format("%.2f", rawHeadingDifference);
+
+                    mTextViewPosition.setText(
+                            "\nPitch : " + pitch + "\nRoll : " + roll + "\nYaw : " + yaw +
+                                    "\nPosX : " + positionX + "\nPosY : " + positionY + "\nPosZ : " + positionZ +
+                                    "\nHypDis : " + hypDis + "\nHypHea : " + hypHea + "\nheaDif : " + heaDif);
+                }
+                catch (Exception e) {
+                    ma.debug.errlog(e);
+                }
             });
         }
     }
@@ -523,19 +528,24 @@ public class AircraftController implements View.OnClickListener {
                 break;
 
             case R.id.btn_set_home:  // set home case
-                if (ifFlightController()) {
-                    mFlightController.setHomeLocationUsingAircraftCurrentLocation(
-                        // nullable callback
-                        djiError -> {
-                            if (djiError != null) {
-                                showToast(djiError.getDescription());
-                            } else {
-                                showToast("Home Set!");
-                                // get new home coordinates and update to textview
-                                updateHomePos();
-                            }
-                        }
-                    );
+                try {
+                    if (ifFlightController()) {
+                        mFlightController.setHomeLocationUsingAircraftCurrentLocation(
+                                // nullable callback
+                                djiError -> {
+                                    if (djiError != null) {
+                                        showToast(djiError.getDescription());
+                                    } else {
+                                        showToast("Home Set!");
+                                        // get new home coordinates and update to textview
+                                        updateHomePos();
+                                    }
+                                }
+                        );
+                    }
+                }
+                catch (Exception e) {
+                    ma.debug.errlog(e);
                 }
                 break;
 
@@ -552,19 +562,25 @@ public class AircraftController implements View.OnClickListener {
                 break;
 
             case R.id.btn_reload:
-                Button reload = ma.findViewById(R.id.btn_reload);
-                reload.setText("...");
-                //TODO figure out which method call is causing crashes and debug
-                updateTitleBar();
-                initFlightController();
+                try {
+                    Button reload = ma.findViewById(R.id.btn_reload);
+                    reload.setText("...");
+                    //TODO figure out which method call is causing crashes and debug
+                    updateTitleBar();
+                    initFlightController();
 
-                Handler awaitReload = new Handler();
-                awaitReload.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+                    Handler awaitReload = new Handler();
+                    awaitReload.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
                             reload.setText("reload");
                         }
-                }, 500);
+                    }, 500);
+                }
+                catch (Exception e) {
+                    ma.debug.errlog(e);
+                }
+
                 break;
 
             case R.id.btn_debugenter:
@@ -595,7 +611,7 @@ public class AircraftController implements View.OnClickListener {
 
                         if (ifip && ifport) {
                             ma.debug.setPath(ip, port);
-                            ma.debug.log("Opened Debugger: " + LocalDateTime.now());
+                            ma.debug.log("Opened Debugger");
                         }
                     }
 
@@ -848,6 +864,14 @@ public class AircraftController implements View.OnClickListener {
             X = xIN;
             Y = yIN;
         }
+
+        @Override
+        public String toString() {
+            return "XYValues{" +
+                    "X = " + X +
+                    ", Y = " + Y +
+                    '}';
+        }
     }
 
     /**
@@ -873,45 +897,63 @@ public class AircraftController implements View.OnClickListener {
      * @return double value in meters between origin point and target point with header
      */
     public XYValues getXYOffsetBetweenPointsNormalToOriginHeading (LatLng origin, double originHeading, LatLng target) {
-        // output values
-        double x = 0;
-        double y = 0;
+        try {
+            // output values
+            double x = 0;
+            double y = 0;
 
-        // x and y quadrant correction (set to 1 or -1 ONLY by correction conditionals)
-        int xCorrector = 1;
-        int yCorrector = 1;
+            // x and y quadrant correction (set to 1 or -1 ONLY by correction conditionals)
+            int xCorrector = 1;
+            int yCorrector = 1;
 
-        // calculate hypotenuse
-        double hypotenuseDistance = SphericalUtil.computeDistanceBetween(origin, target);
-        double hypotenuseHeading = SphericalUtil.computeHeading(origin, target);
+            // calculate hypotenuse
+            double hypotenuseDistance = SphericalUtil.computeDistanceBetween(origin, target);
+            double hypotenuseHeading = SphericalUtil.computeHeading(origin, target);
 
-        // raw heading difference
-        double rawHeadingDifference = calcHeadingDifference(originHeading, hypotenuseHeading);
-        double correctedHeadingDifference = abs(rawHeadingDifference);
+            // raw heading difference
+            double rawHeadingDifference = calcHeadingDifference(originHeading, hypotenuseHeading);
+            double correctedHeadingDifference = abs(rawHeadingDifference);
 
-        // heading difference calculations to normalize for different quadrants
-        /* quadrant notations [0] = x, [1] = y, P = positive, N = negative
-            NP    |    PP
-                  ^
-          ----- drone -----
-                  |
-            NN    |    PN
-         */
-        // if rawheading dif angle is negative (raw), negative xCorrector (Nx quadrants)
-        if (rawHeadingDifference < 0) {
-            xCorrector = -1;
+            // heading difference calculations to normalize for different quadrants
+            /* quadrant notations [0] = x, [1] = y, P = positive, N = negative
+                NP    |    PP
+                      ^
+              ----- drone -----
+                      |
+                NN    |    PN
+             */
+            // if rawheading dif angle is negative (raw), negative xCorrector (Nx quadrants)
+            if (rawHeadingDifference < 0) {
+                xCorrector = -1;
+            }
+            // if heading difference is more than 90, negative yCorrector (xN quadrants)
+            if (correctedHeadingDifference > 90) {
+                yCorrector = -1;
+                correctedHeadingDifference -= 90;
+            }
+            // otherwise defaults (PP quadrant)
+
+            x = xCorrector * (sin(toRadians(correctedHeadingDifference)) * hypotenuseDistance);
+            y = yCorrector * (cos(toRadians(correctedHeadingDifference)) * hypotenuseDistance);
+
+            if (LocalDateTime.now().getSecond() % 10 == 0) {
+                ma.debug.log("IN : \n" +
+                        "origin lat = " + origin.latitude + "\n" +
+                        "origin lon = " + origin.longitude + "\n" +
+                        "originheading = " + originHeading + "\n" +
+                        "target lat = " + target.latitude + "\n" +
+                        "target lon = " + target.longitude + "\n" +
+                        "OUT : \n" +
+                        "X = " + x + "\n" +
+                        "Y = " + y + "\n");
+            }
+
+            return new XYValues(x, y);
         }
-        // if heading difference is more than 90, negative yCorrector (xN quadrants)
-        if (correctedHeadingDifference > 90) {
-            yCorrector = -1;
-            correctedHeadingDifference -= 90;
+        catch (Exception e) {
+            ma.debug.errlog(e);
         }
-        // otherwise defaults (PP quadrant)
-
-        x = xCorrector * (sin(toRadians(correctedHeadingDifference)) * hypotenuseDistance);
-        y = yCorrector * (cos(toRadians(correctedHeadingDifference)) * hypotenuseDistance);
-
-        return new XYValues(x, y);
+        return new XYValues(0, 0);
     }
 
 }
