@@ -67,8 +67,6 @@ public class DebugClient {
             System.out.println("false from debug log");
             return;
         }
-        // setting key for query parameter
-        String key = "msg";
         // exporting basepath to string url
         String url = basepath.toString();
 
@@ -93,7 +91,8 @@ public class DebugClient {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> body = new HashMap<>();
-                body.put(key, LocalDateTime.now() + " : " + message);
+                body.put("time", LocalDateTime.now().toString());
+                body.put("msg",  message);
                 return body;
             }
         };
@@ -104,11 +103,32 @@ public class DebugClient {
     }
 
     /**
-     * simpler method to abstract error logging
+     * simpler method to handle error logging
      * calls internal log method with stack trace and message/cause
      * @param e exception to pass
      */
     public void errlog(Exception e) {
+        // ensure cause information is non-null
+        String cause = "";
+        try {
+            cause = Objects.requireNonNull(e.getCause()).getMessage();
+        }
+        catch (NullPointerException n) {
+            cause = "no cause found";
+        }
+        // append sanitized information
+        this.log(Arrays.toString(e.getStackTrace()) + "\n" +
+                e.getMessage() + "\n" +
+                cause);
+    }
+
+    /**
+     * simpler method to handle error logging with extra message
+     * @param e error to be passed
+     * @param msg msg to be tagged with error (location etc)
+     */
+    public void errlog(Exception e, String msg) {
+        // ensure cause information is non-null
         String cause = "";
         try {
             cause = Objects.requireNonNull(e.getCause()).getMessage();
@@ -117,7 +137,9 @@ public class DebugClient {
             cause = "no cause found";
         }
 
-        this.log(Arrays.toString(e.getStackTrace()) + "\n" +
+        // append sanitized information
+        this.log("WITH " + msg + " : \n" +
+                Arrays.toString(e.getStackTrace()) + "\n" +
                 e.getMessage() + "\n" +
                 cause);
     }

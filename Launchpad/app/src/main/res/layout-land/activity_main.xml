@@ -230,7 +230,7 @@
         android:layout_toStartOf="@+id/textview_position"
         android:layout_toEndOf="@+id/textview_homecoords"
         android:ems="10"
-        android:inputType="textShortMessage" />
+        android:inputType="text" />
 
     <TextView
         android:id="@+id/text_debug"

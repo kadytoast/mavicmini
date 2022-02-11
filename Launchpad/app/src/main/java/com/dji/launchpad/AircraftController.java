@@ -264,29 +264,34 @@ public class AircraftController implements View.OnClickListener {
     }
 
     private void updateTitleBar() {
-        if (mConnectStatusTextView == null) return;
-        boolean ret = false;
-        BaseProduct product = AircraftObjHandler.getProductInstance();
-        if (product != null) {
-            if(product.isConnected()) {
-                //The product is connected
-                mConnectStatusTextView.setText(AircraftObjHandler.getProductInstance().getModel() + " Connected");
-                ret = true;
-            } else {
-                if(product instanceof Aircraft) {
-                    Aircraft aircraft = (Aircraft)product;
-                    if(aircraft.getRemoteController() != null && aircraft.getRemoteController().isConnected()) {
-                        // The product is not connected, but the remote controller is connected
-                        mConnectStatusTextView.setText("only RC Connected");
-                        ret = true;
+        try {
+            if (mConnectStatusTextView == null) return;
+            boolean ret = false;
+            BaseProduct product = AircraftObjHandler.getProductInstance();
+            if (product != null) {
+                if (product.isConnected()) {
+                    //The product is connected
+                    mConnectStatusTextView.setText(AircraftObjHandler.getProductInstance().getModel() + " Connected");
+                    ret = true;
+                } else {
+                    if (product instanceof Aircraft) {
+                        Aircraft aircraft = (Aircraft) product;
+                        if (aircraft.getRemoteController() != null && aircraft.getRemoteController().isConnected()) {
+                            // The product is not connected, but the remote controller is connected
+                            mConnectStatusTextView.setText("only RC Connected");
+                            ret = true;
+                        }
                     }
                 }
             }
-        }
 
-        if(!ret) {
-            // The product or the remote controller are not connected.
-            mConnectStatusTextView.setText("Disconnected");
+            if (!ret) {
+                // The product or the remote controller are not connected.
+                mConnectStatusTextView.setText("Disconnected");
+            }
+        }
+        catch (Exception e) {
+            ma.debug.errlog(e, "updatetitlebar");
         }
     }
 
@@ -320,51 +325,56 @@ public class AircraftController implements View.OnClickListener {
 
     // method that updates the textview with the current home position
     private void updateHomePos () {
-        // call function with callback implementation
-        mFlightController.getHomeLocation(new CommonCallbacks.CompletionCallbackWith<LocationCoordinate2D>() {
+        try {
+            // call function with callback implementation
+            mFlightController.getHomeLocation(
+                    new CommonCallbacks.CompletionCallbackWith<LocationCoordinate2D>() {
 
-            // callback overrides
-            @Override
-            public void onSuccess(LocationCoordinate2D locationCoordinate2D) {
-                homeLat = locationCoordinate2D.getLatitude();
-                homeLong = locationCoordinate2D.getLongitude();
-                aircraftHomeHeading = getLocation().getAircraftYaw();
+                        // callback overrides
+                        @Override
+                        public void onSuccess(LocationCoordinate2D locationCoordinate2D) {
+                            homeLat = locationCoordinate2D.getLatitude();
+                            homeLong = locationCoordinate2D.getLongitude();
+                            aircraftHomeHeading = getLocation().getAircraftYaw();
 
-                mTextViewHome.setText("Latitude : " + homeLat + "\nLongitude : " + homeLong + "\nAltitude: " +
-                            "Home ref to North : " + aircraftHomeHeading);
-            }
+                            mTextViewHome.setText("Latitude : " + homeLat + "\nLongitude : " + homeLong + "\nAltitude: " +
+                                    "Home ref to North : " + aircraftHomeHeading);
+                        }
 
-            @Override
-            public void onFailure(DJIError djiError) {
-                if (djiError != null) {
-                    showToast(djiError.getDescription());
-                }
-            }
+                        @Override
+                        public void onFailure(DJIError djiError) {
+                            if (djiError != null) {
+                                showToast(djiError.getDescription());
+                            }
+                        }
 
+                    }
+            );
         }
-        );
+        catch (Exception e) {
+            ma.debug.errlog(e, "updatehomepos");
+        }
     }
 
     private void initFlightController() {
-        Aircraft aircraft = AircraftObjHandler.getAircraftInstance();
-        if (aircraft == null || !aircraft.isConnected()) {
-            //showToast("Disconnected");
-            mFlightController = null;
-            mFlightControllerState = null;
-        }
-        else {
-            // reinit flight controller only if needed
-            if (mFlightController == null) {
-                mFlightController = aircraft.getFlightController();
-                mFlightController.setRollPitchControlMode(RollPitchControlMode.ANGLE);
-                mFlightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
-                mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
-                mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
-            }
+        try {
+            Aircraft aircraft = AircraftObjHandler.getAircraftInstance();
+            if (aircraft == null || !aircraft.isConnected()) {
+                //showToast("Disconnected");
+                mFlightController = null;
+                mFlightControllerState = null;
+            } else {
+                // reinit flight controller only if needed
+                if (mFlightController == null) {
+                    mFlightController = aircraft.getFlightController();
+                    mFlightController.setRollPitchControlMode(RollPitchControlMode.ANGLE);
+                    mFlightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
+                    mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
+                    mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
+                }
 
-            // reload state callback and ui updates
-            mFlightController.setStateCallback(stateData -> {
-                try {
+                // reload state callback and ui updates
+                mFlightController.setStateCallback(stateData -> {
                     mFlightControllerState = stateData;
                     AircraftPositionalData flight = getLocation();
                     XYValues offset = flight.getAircraftMeterOffsetFromHome();
@@ -392,11 +402,12 @@ public class AircraftController implements View.OnClickListener {
                             "\nPitch : " + pitch + "\nRoll : " + roll + "\nYaw : " + yaw +
                                     "\nPosX : " + positionX + "\nPosY : " + positionY + "\nPosZ : " + positionZ +
                                     "\nHypDis : " + hypDis + "\nHypHea : " + hypHea + "\nheaDif : " + heaDif);
-                }
-                catch (Exception e) {
-                    ma.debug.errlog(e);
-                }
-            });
+
+                });
+            }
+        }
+        catch (Exception e) {
+            ma.debug.errlog(e, "initflightcontroller");
         }
     }
 
@@ -545,7 +556,7 @@ public class AircraftController implements View.OnClickListener {
                     }
                 }
                 catch (Exception e) {
-                    ma.debug.errlog(e);
+                    ma.debug.errlog(e, "sethome");
                 }
                 break;
 
@@ -578,7 +589,7 @@ public class AircraftController implements View.OnClickListener {
                     }, 500);
                 }
                 catch (Exception e) {
-                    ma.debug.errlog(e);
+                    ma.debug.errlog(e, "btn_reload");
                 }
 
                 break;
@@ -951,7 +962,7 @@ public class AircraftController implements View.OnClickListener {
             return new XYValues(x, y);
         }
         catch (Exception e) {
-            ma.debug.errlog(e);
+            ma.debug.errlog(e, "xyoffsetcalc");
         }
         return new XYValues(0, 0);
     }

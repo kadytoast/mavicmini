@@ -8,8 +8,7 @@ const port = 8080
 
 app.post('/debug', (req, res) => {
     res.send("msg logged")
-    console.log("body: ")
-    console.log(req.body)
+    console.log(req.body["time"] + " : " + req.body["msg"])
 })
 
 app.listen(port, () => {
