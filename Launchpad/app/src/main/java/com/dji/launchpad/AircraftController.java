@@ -14,7 +14,6 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
-import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -33,7 +32,6 @@ import androidx.core.content.ContextCompat;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -110,9 +108,9 @@ public class AircraftController implements View.OnClickListener {
 
     private LatLng mTargetFuturePosition = null;
 
-    private double homeLat;
-    private double homeLong;
-    private double aircraftHomeHeading;
+    private double mHomeLat;
+    private double mHomeLong;
+    private double mAircraftHomeHeading;
 
     public double rth_default_height;
 
@@ -323,7 +321,7 @@ public class AircraftController implements View.OnClickListener {
     }
 
 
-    // method that updates the textview with the current home position
+    // method that updates the textview with the current home position, as well as global vars
     private void updateHomePos () {
         try {
             // call function with callback implementation
@@ -333,12 +331,17 @@ public class AircraftController implements View.OnClickListener {
                         // callback overrides
                         @Override
                         public void onSuccess(LocationCoordinate2D locationCoordinate2D) {
-                            homeLat = locationCoordinate2D.getLatitude();
-                            homeLong = locationCoordinate2D.getLongitude();
-                            aircraftHomeHeading = getLocation().getAircraftYaw();
+                            try {
+                                mHomeLat = locationCoordinate2D.getLatitude();
+                                mHomeLong = locationCoordinate2D.getLongitude();
+                                mAircraftHomeHeading = getLocation().getAircraftYaw();
 
-                            mTextViewHome.setText("Latitude : " + homeLat + "\nLongitude : " + homeLong + "\nAltitude: " +
-                                    "Home ref to North : " + aircraftHomeHeading);
+                                mTextViewHome.setText("Latitude : " + mHomeLat + "\nLongitude : " + mHomeLong + "\nAltitude: " +
+                                        "Home ref to North : " + mAircraftHomeHeading);
+                            }
+                            catch (Exception e) {
+                                ma.debug.errlog(e, "update home pos success");
+                            }
                         }
 
                         @Override
@@ -373,42 +376,50 @@ public class AircraftController implements View.OnClickListener {
                     mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
                 }
 
-                // reload state callback and ui updates
-                mFlightController.setStateCallback(stateData -> {
-                    mFlightControllerState = stateData;
-                    AircraftPositionalData flight = getLocation();
-                    XYValues offset = flight.getAircraftMeterOffsetFromHome();
-
-
-                    String pitch = String.format("%.2f", flight.getAircraftPitch());
-                    String roll = String.format("%.2f", flight.getAircraftRoll());
-                    String yaw = String.format("%.2f", flight.getAircraftHeadingRefHome());
-
-
-                    String positionX = String.format("%.2f", offset.X);
-                    String positionY = String.format("%.2f", offset.Y);
-                    String positionZ = String.format("%.2f", flight.getAircraftAltitude());
-
-                    // necessary components for the xyoffset func, readout for testing
-                    double hypotenuseDistance = SphericalUtil.computeDistanceBetween(flight.homeLatLng, flight.aircraftLatLng);
-                    double hypotenuseHeading = SphericalUtil.computeHeading(flight.homeLatLng, flight.aircraftLatLng);
-                    double rawHeadingDifference = calcHeadingDifference(flight.getHomeHeading(), hypotenuseHeading);
-
-                    String hypDis = String.format("%.2f", hypotenuseDistance);
-                    String hypHea = String.format("%.2f", hypotenuseHeading);
-                    String heaDif = String.format("%.2f", rawHeadingDifference);
-
-                    mTextViewPosition.setText(
-                            "\nPitch : " + pitch + "\nRoll : " + roll + "\nYaw : " + yaw +
-                                    "\nPosX : " + positionX + "\nPosY : " + positionY + "\nPosZ : " + positionZ +
-                                    "\nHypDis : " + hypDis + "\nHypHea : " + hypHea + "\nheaDif : " + heaDif);
-
-                });
+                setFlightControllerStateCallback();
             }
         }
         catch (Exception e) {
             ma.debug.errlog(e, "initflightcontroller");
         }
+    }
+
+    private void setFlightControllerStateCallback() {
+        // reload state callback and ui updates
+        mFlightController.setStateCallback(stateData -> {
+            try {
+                mFlightControllerState = stateData;
+                AircraftPositionalData flight = getLocation();
+                XYValues offset = flight.getAircraftMeterOffsetFromHome();
+
+
+                String pitch = String.format("%.2f", flight.getAircraftPitch());
+                String roll = String.format("%.2f", flight.getAircraftRoll());
+                String yaw = String.format("%.2f", flight.getAircraftHeadingRefHome());
+
+
+                String positionX = String.format("%.2f", offset.X);
+                String positionY = String.format("%.2f", offset.Y);
+                String positionZ = String.format("%.2f", flight.getAircraftAltitude());
+
+                // necessary components for the xyoffset func, readout for testing
+                double hypotenuseDistance = SphericalUtil.computeDistanceBetween(flight.homeLatLng, flight.aircraftLatLng);
+                double hypotenuseHeading = SphericalUtil.computeHeading(flight.homeLatLng, flight.aircraftLatLng);
+                double rawHeadingDifference = calcHeadingDifference(flight.getHomeHeading(), hypotenuseHeading);
+
+                String hypDis = String.format("%.2f", hypotenuseDistance);
+                String hypHea = String.format("%.2f", hypotenuseHeading);
+                String heaDif = String.format("%.2f", rawHeadingDifference);
+
+                mTextViewPosition.setText(
+                        "\nPitch : " + pitch + "\nRoll : " + roll + "\nYaw : " + yaw +
+                                "\nPosX : " + positionX + "\nPosY : " + positionY + "\nPosZ : " + positionZ +
+                                "\nHypDis : " + hypDis + "\nHypHea : " + hypHea + "\nheaDif : " + heaDif);
+            }
+            catch (Exception e) {
+                ma.debug.errlog(e, "fc state callback");
+            }
+        });
     }
 
     private void initUI() {
@@ -576,9 +587,9 @@ public class AircraftController implements View.OnClickListener {
                 try {
                     Button reload = ma.findViewById(R.id.btn_reload);
                     reload.setText("...");
-                    //TODO figure out which method call is causing crashes and debug
+
                     updateTitleBar();
-                    initFlightController();
+                    setFlightControllerStateCallback();
 
                     Handler awaitReload = new Handler();
                     awaitReload.postDelayed(new Runnable() {
@@ -701,13 +712,13 @@ public class AircraftController implements View.OnClickListener {
      */
     public synchronized AircraftPositionalData getLocation () {
         return new AircraftPositionalData(mFlightControllerState.getAircraftLocation(),
-                mFlightControllerState.getAttitude(), new LocationCoordinate2D(homeLat, homeLong), aircraftHomeHeading);
+                mFlightControllerState.getAttitude(), new LocationCoordinate2D(mHomeLat, mHomeLong), mAircraftHomeHeading);
     }
 
     /**
      * set target future position value with LatLng class
      */
-    public void setmTargetFuturePosition (LatLng target) {
+    public void setTargetFuturePosition (LatLng target) {
         mTargetFuturePosition = target;
     }
 
