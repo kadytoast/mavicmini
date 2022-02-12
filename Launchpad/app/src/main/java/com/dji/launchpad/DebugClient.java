@@ -63,8 +63,12 @@ public class DebugClient {
      * @param message string to be sent back over http
      */
     public void log(String message) {
-        if (TextUtils.isEmpty(message) || basepath == null) {
-            System.out.println("false from debug log");
+        if (TextUtils.isEmpty(message)) {
+            System.out.println("empty msg");
+            return;
+        }
+        else if (basepath == null) {
+            System.out.println(message);
             return;
         }
         // exporting basepath to string url

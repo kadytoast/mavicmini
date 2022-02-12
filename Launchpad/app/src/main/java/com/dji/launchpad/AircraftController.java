@@ -112,6 +112,8 @@ public class AircraftController implements View.OnClickListener {
     private double mHomeLong;
     private double mAircraftHomeHeading;
 
+    private boolean mXYIfLogValues = true;
+
     public double rth_default_height;
 
     private final MainActivity ma;
@@ -589,7 +591,7 @@ public class AircraftController implements View.OnClickListener {
                     reload.setText("...");
 
                     updateTitleBar();
-                    setFlightControllerStateCallback();
+                    initFlightController();
 
                     Handler awaitReload = new Handler();
                     awaitReload.postDelayed(new Runnable() {
@@ -958,8 +960,14 @@ public class AircraftController implements View.OnClickListener {
             x = xCorrector * (sin(toRadians(correctedHeadingDifference)) * hypotenuseDistance);
             y = yCorrector * (cos(toRadians(correctedHeadingDifference)) * hypotenuseDistance);
 
-            if (LocalDateTime.now().getSecond() % 10 == 0) {
-                ma.debug.log("IN : \n" +
+            LocalDateTime now = LocalDateTime.now();
+            int secBetweenLogs = 10;
+            // set of ifs to ensure values are only logged once in the 5 seconds (func is called 10x/s)
+            if (now.getSecond() % secBetweenLogs != 0 && !mXYIfLogValues) {
+                mXYIfLogValues = true;
+            }
+            else if (now.getSecond() % secBetweenLogs == 0 && mXYIfLogValues) {
+                ma.debug.log("\nIN : \n" +
                         "origin lat = " + origin.latitude + "\n" +
                         "origin lon = " + origin.longitude + "\n" +
                         "originheading = " + originHeading + "\n" +
@@ -968,6 +976,7 @@ public class AircraftController implements View.OnClickListener {
                         "OUT : \n" +
                         "X = " + x + "\n" +
                         "Y = " + y + "\n");
+                mXYIfLogValues = false;
             }
 
             return new XYValues(x, y);
