@@ -961,7 +961,7 @@ public class AircraftController implements View.OnClickListener {
             y = yCorrector * (cos(toRadians(correctedHeadingDifference)) * hypotenuseDistance);
 
             LocalDateTime now = LocalDateTime.now();
-            int secBetweenLogs = 10;
+            int secBetweenLogs = 2;
             // set of ifs to ensure values are only logged once in the 5 seconds (func is called 10x/s)
             if (now.getSecond() % secBetweenLogs != 0 && !mXYIfLogValues) {
                 mXYIfLogValues = true;
