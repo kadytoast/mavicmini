@@ -1,9 +1,8 @@
 package com.dji.launchpad;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-import static java.lang.Math.toRadians;
+import static com.dji.launchpad.PosUtils.Calc.calcHeadingDifference;
+import com.dji.launchpad.PosUtils.XYValues;
+import com.dji.launchpad.PosUtils.AircraftPositionalData;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -58,7 +57,8 @@ import dji.common.error.DJIError;
 import dji.sdk.sdkmanager.DJISDKInitEvent;
 import dji.sdk.sdkmanager.DJISDKManager;
 
-public class AircraftController implements View.OnClickListener {
+
+public class AircraftController {
 
     private static final String TAG = AircraftController.class.getName();
 
@@ -81,12 +81,12 @@ public class AircraftController implements View.OnClickListener {
     private AtomicBoolean isRegistrationInProgress = new AtomicBoolean(false);
     private static final int REQUEST_PERMISSION_CODE = 12345;
 
-    private FlightController mFlightController;
+    public FlightController mFlightController;
     public FlightControllerState mFlightControllerState;
     protected TextView mConnectStatusTextView;
 
-    private TextView mTextViewPosition;
-    private TextView mTextViewHome;
+    public TextView mTextViewPosition;
+    public TextView mTextViewHome;
 
     private TimerTask mSendFlightDataTask = null;
     private Timer mSendFlightDataTimer = null;
@@ -103,8 +103,6 @@ public class AircraftController implements View.OnClickListener {
     private float mThrottle = 0;
 
     private FlightControlData flightControlData = null;
-    private boolean mVirtualStickControlState = false;
-    private boolean mTakeoffEnabledState = false;
 
     private LatLng mTargetFuturePosition = null;
 
@@ -112,9 +110,9 @@ public class AircraftController implements View.OnClickListener {
     private double mHomeLong;
     private double mAircraftHomeHeading;
 
-    private boolean mXYIfLogValues = true;
-
     public double rth_default_height;
+
+    private static boolean mXYIfLogValues = true;
 
     private final MainActivity ma;
 
@@ -125,13 +123,10 @@ public class AircraftController implements View.OnClickListener {
     protected void onCreate() {
         checkAndRequestPermissions();
 
-        initUI();
-
         // Register the broadcast receiver for receiving the device connection's changes.
         IntentFilter filter = new IntentFilter();
         filter.addAction(AircraftObjHandler.FLAG_CONNECTION_CHANGE);
         ma.registerReceiver(mReceiver, filter);
-
     }
 
     /**
@@ -263,7 +258,7 @@ public class AircraftController implements View.OnClickListener {
         });
     }
 
-    private void updateTitleBar() {
+    void updateTitleBar() {
         try {
             if (mConnectStatusTextView == null) return;
             boolean ret = false;
@@ -324,7 +319,7 @@ public class AircraftController implements View.OnClickListener {
 
 
     // method that updates the textview with the current home position, as well as global vars
-    private void updateHomePos () {
+    void updateHomePos() {
         try {
             // call function with callback implementation
             mFlightController.getHomeLocation(
@@ -361,7 +356,7 @@ public class AircraftController implements View.OnClickListener {
         }
     }
 
-    private void initFlightController() {
+    void initFlightController() {
         try {
             Aircraft aircraft = AircraftObjHandler.getAircraftInstance();
             if (aircraft == null || !aircraft.isConnected()) {
@@ -417,6 +412,25 @@ public class AircraftController implements View.OnClickListener {
                         "\nPitch : " + pitch + "\nRoll : " + roll + "\nYaw : " + yaw +
                                 "\nPosX : " + positionX + "\nPosY : " + positionY + "\nPosZ : " + positionZ +
                                 "\nHypDis : " + hypDis + "\nHypHea : " + hypHea + "\nheaDif : " + heaDif);
+
+                LocalDateTime now = LocalDateTime.now();
+                int secBetweenLogs = 2;
+                // set of ifs to ensure values are only logged once in the 5 seconds (func is called 10x/s)
+                if (now.getSecond() % secBetweenLogs != 0 && !mXYIfLogValues) {
+                    mXYIfLogValues = true;
+                }
+                else if (now.getSecond() % secBetweenLogs == 0 && mXYIfLogValues) {
+                    ma.debug.log("\nIN : \n" +
+                            "origin lat = " + flight.homeLatLng.latitude + "\n" +
+                            "origin lon = " + flight.homeLatLng.longitude + "\n" +
+                            "originheading = " + mAircraftHomeHeading + "\n" +
+                            "target lat = " + flight.aircraftLatLng.latitude + "\n" +
+                            "target lon = " + flight.aircraftLatLng.longitude + "\n" +
+                            "OUT : \n" +
+                            "X = " + offset.X + "\n" +
+                            "Y = " + offset.Y + "\n");
+                    mXYIfLogValues = false;
+                }
             }
             catch (Exception e) {
                 ma.debug.errlog(e, "fc state callback");
@@ -424,232 +438,7 @@ public class AircraftController implements View.OnClickListener {
         });
     }
 
-    private void initUI() {
-        // sets up click listener for buttons and global textviews
-        // variable definitions for buttons and textviews
-        Button mBtnTakeOff = (Button) ma.findViewById(R.id.btn_take_off);
-        Button mBtnLand = (Button) ma.findViewById(R.id.btn_land);
-        Button mBtnReset = ma.findViewById(R.id.btn_set_craft_flat);
-        Button mBtnSetHome = (Button) ma.findViewById(R.id.btn_set_home);
-        Button mBtnGoHome = ma.findViewById(R.id.btn_rth);
-        Button mBtnReload = ma.findViewById(R.id.btn_reload);
-        Button mBtnDebug = ma.findViewById(R.id.btn_debugenter);
 
-        // regular button listener for <onClick> method
-        mBtnTakeOff.setOnClickListener(this);
-        mBtnLand.setOnClickListener(this);
-        mBtnSetHome.setOnClickListener(this);
-        mBtnReset.setOnClickListener(this);
-        mBtnGoHome.setOnClickListener(this);
-        mBtnReload.setOnClickListener(this);
-        mBtnDebug.setOnClickListener(this);
-
-        mTakeoffEnabledState = false;
-        mBtnTakeOff.setVisibility(Button.INVISIBLE);
-        mBtnLand.setVisibility(Button.INVISIBLE);
-
-        ToggleButton mTogVirtualSticks = ma.findViewById(R.id.tog_virtual_sticks);
-        ToggleButton mTogTakeoffEnable = ma.findViewById(R.id.tog_takeoff_enable);
-        mTextViewPosition = (TextView) ma.findViewById(R.id.textview_position);
-        mTextViewHome = ma.findViewById(R.id.textview_homecoords);
-        mConnectStatusTextView = (TextView) ma.findViewById(R.id.ConnectStatusTextView);
-
-        // toggle button for virtual flight control enable/disable
-        mTogVirtualSticks.setOnCheckedChangeListener((compoundButton, b) -> {
-            if (b) { // virtual sticks enabled
-                if (ifFlightController() && !mVirtualStickControlState) {
-                    mFlightController.setVirtualStickModeEnabled(true, djiError -> {
-                        if (djiError != null) {
-                            // show error and flip back checked if failed
-                            showToast(djiError.getDescription());
-                            mTogVirtualSticks.setChecked(false);
-                        }
-                        else {
-                            // show toast and updated control
-                            mVirtualStickControlState = true;
-                            showToast("Virtual Sticks Enabled");
-                        }
-                    });
-                }
-                // if flightcontroller is null, set to false
-                else {
-                    mTogVirtualSticks.setChecked(false);
-                }
-            }
-            else { // virtual sticks disabled
-                if (ifFlightController() && mVirtualStickControlState) {
-                    mFlightController.setVirtualStickModeEnabled(false, djiError -> {
-                        if (djiError != null) {
-                            // show error and flip back checked if failed
-                            showToast(djiError.getDescription());
-                            mTogVirtualSticks.setChecked(true);
-                        }
-                        else {
-                            // show toast and updated control
-                            mVirtualStickControlState = false;
-                            showToast("Virtual Sticks Disabled");
-                            killFlightManagementTasks();
-                        }
-                    });
-                }
-                // if flight controller is null, set to false
-                else {
-                    mTogVirtualSticks.setChecked(false);
-                }
-            }
-        });
-
-        mTogTakeoffEnable.setOnCheckedChangeListener(((compoundButton, b) -> {
-            if (b) {
-                mTakeoffEnabledState = true;
-                mBtnTakeOff.setVisibility(Button.VISIBLE);
-                mBtnLand.setVisibility(Button.VISIBLE);
-            }
-            else {
-                mTakeoffEnabledState = false;
-                mBtnTakeOff.setVisibility(Button.INVISIBLE);
-                mBtnLand.setVisibility(Button.INVISIBLE);
-            }
-        }));
-
-    }
-
-
-    // default buttons
-    @Override
-    public void onClick(View v) {
-
-        switch (v.getId()) {
-
-            case R.id.btn_take_off:
-                if (ifFlightController()){
-                    showToast("Takeoff Started");
-                    mFlightController.startTakeoff(
-                            djiError -> {
-                                if (djiError != null) {
-                                    showToast(djiError.getDescription());
-                                } else {
-                                    showToast("Takeoff Complete");
-                                }
-                            }
-                    );
-                }
-                break;
-
-            case R.id.btn_land:
-                if (ifFlightController()){
-                    showToast("Landing Started");
-                    mFlightController.startLanding(
-                            djiError -> {
-                                if (djiError != null) {
-                                    showToast(djiError.getDescription());
-                                } else {
-                                    showToast("Start Landing");
-                                }
-                            }
-                    );
-                }
-                break;
-
-            case R.id.btn_set_home:  // set home case
-                try {
-                    if (ifFlightController()) {
-                        mFlightController.setHomeLocationUsingAircraftCurrentLocation(
-                                // nullable callback
-                                djiError -> {
-                                    if (djiError != null) {
-                                        showToast(djiError.getDescription());
-                                    } else {
-                                        showToast("Home Set!");
-                                        // get new home coordinates and update to textview
-                                        updateHomePos();
-                                    }
-                                }
-                        );
-                    }
-                }
-                catch (Exception e) {
-                    ma.debug.errlog(e, "sethome");
-                }
-                break;
-
-            case R.id.btn_rth: // special return to home
-                if (ifFlightController()) {
-                    //TODO write this lmao
-                }
-                break;
-
-            case R.id.btn_set_craft_flat:
-                if (ifFlightController()) {
-                    resetAircraftOrientation();
-                }
-                break;
-
-            case R.id.btn_reload:
-                try {
-                    Button reload = ma.findViewById(R.id.btn_reload);
-                    reload.setText("...");
-
-                    updateTitleBar();
-                    initFlightController();
-
-                    Handler awaitReload = new Handler();
-                    awaitReload.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            reload.setText("reload");
-                        }
-                    }, 500);
-                }
-                catch (Exception e) {
-                    ma.debug.errlog(e, "btn_reload");
-                }
-
-                break;
-
-            case R.id.btn_debugenter:
-                System.out.println("debugenter pressed");
-                EditText entry = ma.findViewById(R.id.editText_debugaddress);
-                String address = entry.getText().toString();
-                System.out.println("address content " + address);
-
-                try {
-                    if (!address.isEmpty()) {
-                        // get and validate ip address
-                        String ip = address.substring(0, address.indexOf(':'));
-                        String zeroTo255
-                                = "(\\d{1,2}|(0|1)\\"
-                                + "d{2}|2[0-4]\\d|25[0-5])";
-                        String regex
-                                = zeroTo255 + "\\."
-                                + zeroTo255 + "\\."
-                                + zeroTo255 + "\\."
-                                + zeroTo255;
-                        boolean ifip = Pattern.matches(regex, ip);
-                        System.out.println(ifip);
-
-                        // get and validate port number
-                        String port = address.substring(address.indexOf(':') + 1);
-                        boolean ifport = (0 < Integer.parseInt(port) && Integer.parseInt(port) <= 65535);
-                        System.out.println(ifport);
-
-                        if (ifip && ifport) {
-                            ma.debug.setPath(ip, port);
-                            ma.debug.log("Opened Debugger");
-                        }
-                    }
-
-                }
-                catch (Error e){
-                    System.out.println("debugenter button caught : " + e.getMessage());
-                }
-
-                break;
-
-            default:
-                break;
-        }
-    }
 
     /*
      * API Control Methods VVVVV
@@ -806,185 +595,6 @@ public class AircraftController implements View.OnClickListener {
 
             }
         }
-    }
-
-    // class to hold all aircraft positional data, including home data
-    class AircraftPositionalData {
-        private final LocationCoordinate3D aircraftCurrentLocation;
-        private final Attitude aircraftCurrentAttitude;
-        private final LocationCoordinate2D aircraftHomeLocation;
-        private final double aircraftHomeHeading;
-        public final LatLng aircraftLatLng;
-        public final LatLng homeLatLng;
-
-        public AircraftPositionalData (LocationCoordinate3D aircraftCurrentLocationIN,
-                                       Attitude aircraftCurrentAttitudeIN,
-                                       LocationCoordinate2D aircraftHomeLocationIN,
-                                       double homeHeadingIN) {
-            // define class vars
-            aircraftCurrentLocation = aircraftCurrentLocationIN;
-            aircraftCurrentAttitude = aircraftCurrentAttitudeIN;
-            aircraftHomeLocation = aircraftHomeLocationIN;
-            aircraftHomeHeading = homeHeadingIN;
-
-            aircraftLatLng = new LatLng(aircraftCurrentLocation.getLatitude(),
-                    aircraftCurrentLocation.getLongitude());
-            homeLatLng = new LatLng(aircraftHomeLocation.getLatitude(),
-                    aircraftHomeLocation.getLongitude());
-        }
-
-        public double getAircraftLatitude () { return aircraftCurrentLocation.getLatitude(); }
-        public double getAircraftLongitude () { return aircraftCurrentLocation.getLongitude(); }
-        public float getAircraftAltitude () { return aircraftCurrentLocation.getAltitude(); }
-
-        public double getAircraftPitch () { return aircraftCurrentAttitude.pitch; }
-        public double getAircraftRoll () { return aircraftCurrentAttitude.roll; }
-
-        /**
-         * @return single positive value in degrees clockwise from true north
-         */
-        public double getAircraftYaw () {
-            // make yaw single positive value clockwise from true north
-            double yaw;
-            if (aircraftCurrentAttitude.yaw < 0) {
-                yaw = 360 + aircraftCurrentAttitude.yaw; // add here because negative value for subtract
-            }
-            else {
-                yaw = aircraftCurrentAttitude.yaw;
-            }
-            return yaw;
-        }
-
-        /**
-         * @return double value of aircraft yaw from its home heading (pos/neg 180deg)
-         */
-        public double getAircraftHeadingRefHome() {
-            return calcHeadingDifference(aircraftHomeHeading, getAircraftYaw());
-        }
-
-        public double getHomeLatitude () { return aircraftHomeLocation.getLatitude(); }
-        public double getHomeLongitude () { return aircraftHomeLocation.getLongitude(); }
-        public double getHomeHeading () { return aircraftHomeHeading;}
-
-        /**
-         * @return double value in meters of current position relative to home (from right of craft)
-         */
-        public XYValues getAircraftMeterOffsetFromHome() {
-            return getXYOffsetBetweenPointsNormalToOriginHeading(
-                    homeLatLng, aircraftHomeHeading, aircraftLatLng);
-        }
-
-    }
-
-    /**
-     * simple class to hold two x y offset values (used for positioning offsets)
-     */
-    class XYValues {
-
-        public final double X;
-        public final double Y;
-
-        public XYValues (double xIN, double yIN) {
-            X = xIN;
-            Y = yIN;
-        }
-
-        @Override
-        public String toString() {
-            return "XYValues{" +
-                    "X = " + X +
-                    ", Y = " + Y +
-                    '}';
-        }
-    }
-
-    /**
-     * @param baseRef the heading to reference second heading from
-     * @param secRef the heading to calculate offset of from baseRef
-     * @return double value of difference between two headings that are (originally) referenced to true north
-     * return is within +/- 180 to have full range and denote quadrant
-     */
-    public double calcHeadingDifference(double baseRef, double secRef) {
-        double finalOut = 0;
-
-        finalOut = secRef - baseRef;
-
-        // flip angle for finalOut if greater than 180 for clockwise angling issue
-        if (finalOut > 180) {
-            finalOut -= 360;
-        }
-
-        return finalOut;
-    }
-
-    /**
-     * @return double value in meters between origin point and target point with header
-     */
-    public XYValues getXYOffsetBetweenPointsNormalToOriginHeading (LatLng origin, double originHeading, LatLng target) {
-        try {
-            // output values
-            double x = 0;
-            double y = 0;
-
-            // x and y quadrant correction (set to 1 or -1 ONLY by correction conditionals)
-            int xCorrector = 1;
-            int yCorrector = 1;
-
-            // calculate hypotenuse
-            double hypotenuseDistance = SphericalUtil.computeDistanceBetween(origin, target);
-            double hypotenuseHeading = SphericalUtil.computeHeading(origin, target);
-
-            // raw heading difference
-            double rawHeadingDifference = calcHeadingDifference(originHeading, hypotenuseHeading);
-            double correctedHeadingDifference = abs(rawHeadingDifference);
-
-            // heading difference calculations to normalize for different quadrants
-            /* quadrant notations [0] = x, [1] = y, P = positive, N = negative
-                NP    |    PP
-                      ^
-              ----- drone -----
-                      |
-                NN    |    PN
-             */
-            // if rawheading dif angle is negative (raw), negative xCorrector (Nx quadrants)
-            if (rawHeadingDifference < 0) {
-                xCorrector = -1;
-            }
-            // if heading difference is more than 90, negative yCorrector (xN quadrants)
-            if (correctedHeadingDifference > 90) {
-                yCorrector = -1;
-                correctedHeadingDifference -= 90;
-            }
-            // otherwise defaults (PP quadrant)
-
-            x = xCorrector * (sin(toRadians(correctedHeadingDifference)) * hypotenuseDistance);
-            y = yCorrector * (cos(toRadians(correctedHeadingDifference)) * hypotenuseDistance);
-
-            LocalDateTime now = LocalDateTime.now();
-            int secBetweenLogs = 2;
-            // set of ifs to ensure values are only logged once in the 5 seconds (func is called 10x/s)
-            if (now.getSecond() % secBetweenLogs != 0 && !mXYIfLogValues) {
-                mXYIfLogValues = true;
-            }
-            else if (now.getSecond() % secBetweenLogs == 0 && mXYIfLogValues) {
-                ma.debug.log("\nIN : \n" +
-                        "origin lat = " + origin.latitude + "\n" +
-                        "origin lon = " + origin.longitude + "\n" +
-                        "originheading = " + originHeading + "\n" +
-                        "target lat = " + target.latitude + "\n" +
-                        "target lon = " + target.longitude + "\n" +
-                        "OUT : \n" +
-                        "X = " + x + "\n" +
-                        "Y = " + y + "\n");
-                mXYIfLogValues = false;
-            }
-
-            return new XYValues(x, y);
-        }
-        catch (Exception e) {
-            ma.debug.errlog(e, "xyoffsetcalc");
-        }
-        return new XYValues(0, 0);
     }
 
 }

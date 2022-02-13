@@ -14,13 +14,16 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
+import dji.sdk.flighthub.model.User;
+
 /**
  * Main Activity for all student code -- should interact with AircraftController only
  */
 public class MainActivity extends Activity implements View.OnClickListener {
 
-    private AircraftController airC;
+    private AircraftController air;
     public DebugClient debug;
+    private UserInterfaces ui;
 
     /**
      * necessary stuff dont touch! VVVVV
@@ -32,9 +35,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        airC = new AircraftController(this);
+        air = new AircraftController(this);
+        ui = new UserInterfaces(this, air);
 
-        airC.onCreate();
+        air.onCreate();
+        ui.onCreate();
         loadUI();
         debug = new DebugClient(this.getBaseContext());
     }
@@ -44,30 +49,30 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        airC.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        air.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
     public void onResume () {
         super.onResume();
-        airC.onResume();
+        air.onResume();
     }
 
     @Override
     public void onPause () {
-        airC.onPause();
+        air.onPause();
         super.onPause();
     }
 
     @Override
     public void onStop () {
-        airC.onStop();
+        air.onStop();
         super.onStop();
     }
 
     @Override
     protected void onDestroy () {
-        airC.onDestroy();
+        air.onDestroy();
         super.onDestroy();
     }
 
