@@ -10,7 +10,7 @@ import android.widget.ToggleButton;
 
 import java.util.regex.Pattern;
 
-public class UserInterfaces implements View.OnClickListener{
+public class ClickInterfaces implements View.OnClickListener{
 
     private MainActivity ma;
     private AircraftController air;
@@ -18,7 +18,7 @@ public class UserInterfaces implements View.OnClickListener{
     private boolean mVirtualStickControlState = false;
     private boolean mTakeoffEnabledState = false;
 
-    public UserInterfaces (MainActivity maIN, AircraftController airIN) {
+    public ClickInterfaces(MainActivity maIN, AircraftController airIN) {
         ma = maIN;
         air = airIN;
     }
@@ -245,7 +245,7 @@ public class UserInterfaces implements View.OnClickListener{
 
                         if (ifip && ifport) {
                             ma.debug.setPath(ip, port);
-                            ma.debug.log("Opened Debugger");
+                            ma.debug.log("Opened Debugger, App Version: " + R.string.version);
                         }
                     }
 

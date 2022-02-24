@@ -4,17 +4,10 @@ import static java.lang.Math.abs;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
-
-import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.SphericalUtil;
-
-import dji.sdk.flighthub.model.User;
 
 /**
  * Main Activity for all student code -- should interact with AircraftController only
@@ -23,7 +16,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private AircraftController air;
     public DebugClient debug;
-    private UserInterfaces ui;
+    private ClickInterfaces ui;
 
     /**
      * necessary stuff dont touch! VVVVV
@@ -36,7 +29,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         air = new AircraftController(this);
-        ui = new UserInterfaces(this, air);
+        ui = new ClickInterfaces(this, air);
 
         air.onCreate();
         ui.onCreate();
