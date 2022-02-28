@@ -39,25 +39,17 @@ public class AircraftPositionalData {
     public double getAircraftRoll () { return aircraftCurrentAttitude.roll; }
 
     /**
-     * @return single positive value in degrees clockwise from true north
+     * @return single pos/neg value with range +/- 180 in degrees clockwise from true north
      */
-    public double getAircraftYaw () {
-        // make yaw single positive value clockwise from true north
-        double yaw;
-        if (aircraftCurrentAttitude.yaw < 0) {
-            yaw = 360 + aircraftCurrentAttitude.yaw; // add here because negative value for subtract
-        }
-        else {
-            yaw = aircraftCurrentAttitude.yaw;
-        }
-        return yaw;
+    public double getAircraftRawYaw() {
+        return aircraftCurrentAttitude.yaw;
     }
 
     /**
      * @return double value of aircraft yaw from its home heading (pos/neg 180deg)
      */
     public double getAircraftHeadingRefHome() {
-        return Calc.calcHeadingDifference(aircraftHomeHeading, getAircraftYaw());
+        return Calc.calcHeadingDifference(aircraftHomeHeading, getAircraftRawYaw());
     }
 
     public double getHomeLatitude () { return aircraftHomeLocation.getLatitude(); }

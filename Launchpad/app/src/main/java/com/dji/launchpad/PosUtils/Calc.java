@@ -59,19 +59,28 @@ public class Calc {
     }
 
     /**
-     * @param baseRef the heading to reference second heading from
-     * @param secRef the heading to calculate offset of from baseRef
+     * @param baseRef the heading to reference second heading from (+/- 180)
+     * @param secRef the heading to calculate offset of from baseRef (+/- 180)
      * @return double value of difference between two headings that are (originally) referenced to true north
      * return is within +/- 180 to have full range and denote quadrant
      */
     public static double calcHeadingDifference(double baseRef, double secRef) {
-        double finalOut = 0;
 
-        finalOut = secRef - baseRef;
+        if (baseRef < 0) {
+            baseRef += 360;
+        }
+        if (secRef < 0) {
+            secRef += 360;
+        }
 
-        // flip angle for finalOut if greater than 180 for clockwise angling issue
+        double finalOut = baseRef - secRef;
+
+        //TODO make finalout absolute val and assume based on if base or sec is bigger
         if (finalOut > 180) {
             finalOut -= 360;
+        }
+        if (finalOut < -180) {
+            finalOut += 360;
         }
 
         return finalOut;

@@ -331,7 +331,8 @@ public class AircraftController {
                             try {
                                 mHomeLat = locationCoordinate2D.getLatitude();
                                 mHomeLong = locationCoordinate2D.getLongitude();
-                                mAircraftHomeHeading = getLocation().getAircraftYaw();
+
+                                mAircraftHomeHeading = getLocation().getAircraftRawYaw();
 
                                 mTextViewHome.setText("Latitude : " + mHomeLat + "\nLongitude : " + mHomeLong + "\nAltitude: " +
                                         "Home ref to North : " + mAircraftHomeHeading);
@@ -368,9 +369,9 @@ public class AircraftController {
                 if (mFlightController == null) {
                     mFlightController = aircraft.getFlightController();
                     mFlightController.setRollPitchControlMode(RollPitchControlMode.ANGLE);
-                    mFlightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
+                    mFlightController.setYawControlMode(YawControlMode.ANGLE);
                     mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
-                    mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
+                    mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.GROUND);
                 }
 
                 setFlightControllerStateCallback();
@@ -389,29 +390,17 @@ public class AircraftController {
                 AircraftPositionalData flight = getLocation();
                 XYValues offset = flight.getAircraftMeterOffsetFromHome();
 
+                String pitch = String.format("%.3f", flight.getAircraftPitch());
+                String roll = String.format("%.3f", flight.getAircraftRoll());
+                String yaw = String.format("%.3f", flight.getAircraftHeadingRefHome());
 
-                String pitch = String.format("%.2f", flight.getAircraftPitch());
-                String roll = String.format("%.2f", flight.getAircraftRoll());
-                String yaw = String.format("%.2f", flight.getAircraftHeadingRefHome());
-
-
-                String positionX = String.format("%.2f", offset.X);
-                String positionY = String.format("%.2f", offset.Y);
-                String positionZ = String.format("%.2f", flight.getAircraftAltitude());
-
-                // necessary components for the xyoffset func, readout for testing
-                double hypotenuseDistance = SphericalUtil.computeDistanceBetween(flight.homeLatLng, flight.aircraftLatLng);
-                double hypotenuseHeading = SphericalUtil.computeHeading(flight.homeLatLng, flight.aircraftLatLng);
-                double rawHeadingDifference = calcHeadingDifference(flight.getHomeHeading(), hypotenuseHeading);
-
-                String hypDis = String.format("%.2f", hypotenuseDistance);
-                String hypHea = String.format("%.2f", hypotenuseHeading);
-                String heaDif = String.format("%.2f", rawHeadingDifference);
+                String positionX = String.format("%.3f", offset.X);
+                String positionY = String.format("%.3f", offset.Y);
+                String positionZ = String.format("%.3f", flight.getAircraftAltitude());
 
                 mTextViewPosition.setText(
                         "\nPitch : " + pitch + "\nRoll : " + roll + "\nYaw : " + yaw +
-                                "\nPosX : " + positionX + "\nPosY : " + positionY + "\nPosZ : " + positionZ +
-                                "\nHypDis : " + hypDis + "\nHypHea : " + hypHea + "\nheaDif : " + heaDif);
+                                "\nPosX : " + positionX + "\nPosY : " + positionY + "\nPosZ : " + positionZ);
 
                 LocalDateTime now = LocalDateTime.now();
                 int secBetweenLogs = 2;
@@ -426,6 +415,7 @@ public class AircraftController {
                             "originheading = " + mAircraftHomeHeading + "\n" +
                             "target lat = " + flight.aircraftLatLng.latitude + "\n" +
                             "target lon = " + flight.aircraftLatLng.longitude + "\n" +
+                            "curheading = " + flight.getAircraftRawYaw() + "\n" +
                             "OUT : \n" +
                             "X = " + offset.X + "\n" +
                             "Y = " + offset.Y + "\n");
@@ -443,41 +433,7 @@ public class AircraftController {
     /*
      * API Control Methods VVVVV
      */
-    /**
-     * input float degree -180 to 180 to set pitch angle of craft
-     * deprecated in lieu of FlightControlData and PID control
-     */
-    public void setPitch (float deg) {
-        mPitch = deg;
-        startFlightManagementTasks();
-    }
 
-    /**
-     * input float degree -180 to 180 to set roll angle of craft
-     * deprecated in lieu of FlightControlData and PID control
-     */
-    public void setRoll (float deg) {
-        mRoll = deg;
-        startFlightManagementTasks();
-    }
-
-    /**
-     * input float velocity for deg/second rotation of craft on yaw axis
-     * deprecated in lieu of FlightControlData and PID control
-     */
-    public void setYaw (float vel) {
-        mYaw = vel;
-        startFlightManagementTasks();
-    }
-
-    /**
-     * input float value for target velocity on z axis (positive results in craft ascend)
-     * deprecated in lieu of FlightControlData and PID control
-     */
-    public void setThrottle (float vel) {
-        mThrottle = vel;
-        startFlightManagementTasks();
-    }
 
     /**
      * resets craft orientation on pitch roll yaw and throttle
@@ -505,31 +461,6 @@ public class AircraftController {
         return new AircraftPositionalData(mFlightControllerState.getAircraftLocation(),
                 mFlightControllerState.getAttitude(), new LocationCoordinate2D(mHomeLat, mHomeLong), mAircraftHomeHeading);
     }
-
-    /**
-     * set target future position value with LatLng class
-     */
-    public void setTargetFuturePosition (LatLng target) {
-        mTargetFuturePosition = target;
-    }
-
-    /**
-     * call to return to home location, pass height in meters for craft altitude while returning
-     * to home (relative to takeoff location)
-     */
-    /*TODO write smarter return to home protocol, fly at specified altitude back to home point
-        through cardinal directions and return to takeoff attitude (including yaw),
-        because default RTH has minimum height of 20m, check with winter if this is wanted*/
-
-    // TODO write indoor/outdoor toggle switch to set return to home height
-
-    // TODO write forward/back method for basic movement in base app
-
-    /*
-     * API Control Methods ^^^^
-     */
-
-
 
     public void startFlightManagementTasks() {
         // starting send flight data
