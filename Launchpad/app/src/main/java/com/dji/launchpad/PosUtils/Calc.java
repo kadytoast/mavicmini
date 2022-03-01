@@ -73,14 +73,24 @@ public class Calc {
             secRef += 360;
         }
 
+        // both refs are now single positive value 0-359
+
         double finalOut = baseRef - secRef;
 
-        //TODO make finalout absolute val and assume based on if base or sec is bigger
+        finalOut = abs(finalOut);
+
+        if (baseRef < secRef) {
+            finalOut *= -1;
+        }
+
+        // set finalout back to +/- 180 value
         if (finalOut > 180) {
             finalOut -= 360;
+            finalOut *= -1;
         }
         if (finalOut < -180) {
             finalOut += 360;
+            finalOut *= -1;
         }
 
         return finalOut;
