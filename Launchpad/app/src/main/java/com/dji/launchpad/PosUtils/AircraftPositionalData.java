@@ -12,8 +12,8 @@ public class AircraftPositionalData {
     private final Attitude aircraftCurrentAttitude;
     private final LocationCoordinate2D aircraftHomeLocation;
     private final double aircraftHomeHeading;
-    public final LatLng aircraftLatLng;
-    public final LatLng homeLatLng;
+    private final LatLng aircraftLatLng;
+    private final LatLng homeLatLng;
 
     public AircraftPositionalData (LocationCoordinate3D aircraftCurrentLocationIN,
                                    Attitude aircraftCurrentAttitudeIN,
@@ -31,17 +31,35 @@ public class AircraftPositionalData {
                 aircraftHomeLocation.getLongitude());
     }
 
-    public double getAircraftLatitude () { return aircraftCurrentLocation.getLatitude(); }
-    public double getAircraftLongitude () { return aircraftCurrentLocation.getLongitude(); }
+    /**
+     * @return current aircraft lat/long
+     */
+    public LatLng getAircraftLatLng () { return aircraftLatLng; }
+
+    /**
+     * @return aircraft's home position
+     */
+    public LatLng getHomeLatLng () { return homeLatLng;}
+
+    /**
+     * @return current aircraft altitude
+     */
     public float getAircraftAltitude () { return aircraftCurrentLocation.getAltitude(); }
 
+    /**
+     * @return current aircraft pitch in +/- degrees
+     */
     public double getAircraftPitch () { return aircraftCurrentAttitude.pitch; }
+
+    /**
+     * @return current aircraft roll in +/- degrees
+     */
     public double getAircraftRoll () { return aircraftCurrentAttitude.roll; }
 
     /**
      * @return single pos/neg value with range +/- 180 in degrees clockwise from true north
      */
-    public double getAircraftRawYaw() {
+    public double getAircraftHeading() {
         return aircraftCurrentAttitude.yaw;
     }
 
@@ -49,15 +67,12 @@ public class AircraftPositionalData {
      * @return double value of aircraft yaw from its home heading (pos/neg 180deg)
      */
     public double getAircraftHeadingRefHome() {
-        return Calc.calcHeadingDifference(aircraftHomeHeading, getAircraftRawYaw());
+        return Calc.calcHeadingDifference(aircraftHomeHeading, getAircraftHeading());
     }
 
-    public double getHomeLatitude () { return aircraftHomeLocation.getLatitude(); }
-    public double getHomeLongitude () { return aircraftHomeLocation.getLongitude(); }
-    public double getHomeHeading () { return aircraftHomeHeading;}
-
     /**
-     * @return double value in meters of current position relative to home (from right of craft)
+     * @return double value in meters of current XY position relative to home
+     * (positive xy is forward-right of home)
      */
     public XYValues getAircraftMeterOffsetFromHome() {
         return Calc.getXYOffsetBetweenPointsNormalToOriginHeading(

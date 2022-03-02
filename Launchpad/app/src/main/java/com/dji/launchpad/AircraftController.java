@@ -1,6 +1,5 @@
 package com.dji.launchpad;
 
-import static com.dji.launchpad.PosUtils.Calc.calcHeadingDifference;
 import com.dji.launchpad.PosUtils.XYValues;
 import com.dji.launchpad.PosUtils.AircraftPositionalData;
 
@@ -12,17 +11,12 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.SphericalUtil;
 
 
 import androidx.annotation.NonNull;
@@ -35,12 +29,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Pattern;
 
 import dji.common.error.DJISDKError;
-import dji.common.flightcontroller.Attitude;
 import dji.common.flightcontroller.FlightControllerState;
-import dji.common.flightcontroller.LocationCoordinate3D;
 import dji.common.flightcontroller.virtualstick.FlightControlData;
 import dji.common.flightcontroller.virtualstick.FlightCoordinateSystem;
 import dji.common.flightcontroller.virtualstick.RollPitchControlMode;
@@ -109,8 +100,6 @@ public class AircraftController {
     private double mHomeLat;
     private double mHomeLong;
     private double mAircraftHomeHeading;
-
-    public double rth_default_height;
 
     private static boolean mXYIfLogValues = true;
 
@@ -332,7 +321,7 @@ public class AircraftController {
                                 mHomeLat = locationCoordinate2D.getLatitude();
                                 mHomeLong = locationCoordinate2D.getLongitude();
 
-                                mAircraftHomeHeading = getLocation().getAircraftRawYaw();
+                                mAircraftHomeHeading = getLocation().getAircraftHeading();
 
                                 mTextViewHome.setText("Latitude : " + mHomeLat + "\nLongitude : " + mHomeLong + "\nAltitude: " +
                                         "Home ref to North : " + mAircraftHomeHeading);
@@ -410,12 +399,12 @@ public class AircraftController {
                 }
                 else if (now.getSecond() % secBetweenLogs == 0 && mXYIfLogValues) {
                     ma.debug.log("\nIN : \n" +
-                            "origin lat = " + flight.homeLatLng.latitude + "\n" +
-                            "origin lon = " + flight.homeLatLng.longitude + "\n" +
+                            "origin lat = " + flight.getHomeLatLng().latitude + "\n" +
+                            "origin lon = " + flight.getHomeLatLng().longitude + "\n" +
                             "originheading = " + mAircraftHomeHeading + "\n" +
-                            "target lat = " + flight.aircraftLatLng.latitude + "\n" +
-                            "target lon = " + flight.aircraftLatLng.longitude + "\n" +
-                            "curheading = " + flight.getAircraftRawYaw() + "\n" +
+                            "target lat = " + flight.getAircraftLatLng().latitude + "\n" +
+                            "target lon = " + flight.getAircraftLatLng().longitude + "\n" +
+                            "curheading = " + flight.getAircraftHeading() + "\n" +
                             "OUT : \n" +
                             "X = " + offset.X + "\n" +
                             "Y = " + offset.Y + "\n");

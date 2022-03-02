@@ -14,7 +14,11 @@ public class Calc {
 
 
     /**
-     * @return double value in meters between origin point and target point with header
+     * static method to return XY position of target relative to origin and origin heading
+     * @param origin LatLng object containing position of origin
+     * @param originHeading double value containing origin's heading offset from north !! +/- 180 clockwise !!
+     * @param target LatLng object containing position of target
+     * @return XYvalues of cardinal offset of target from origin in meters
      */
     public static XYValues getXYOffsetBetweenPointsNormalToOriginHeading(LatLng origin, double originHeading, LatLng target) {
         // output values
@@ -31,29 +35,30 @@ public class Calc {
 
         // raw heading difference
         double rawHeadingDifference = calcHeadingDifference(originHeading, hypotenuseHeading);
-        double correctedHeadingDifference = abs(rawHeadingDifference);
+        double absHeadingDifference = abs(rawHeadingDifference);
 
         // heading difference calculations to normalize for different quadrants
-        /* quadrant notations [0] = x, [1] = y, P = positive, N = negative
+        /* P = positive, N = negative
             NP    |    PP
                   ^
-          ----- drone -----
+          ----- origin -----
                   |
             NN    |    PN
          */
-        // if rawheading dif angle is negative (raw), negative xCorrector (Nx quadrants)
+        // if rawheading dif angle is negative, negative xCorrector (Nx quadrants)
         if (rawHeadingDifference < 0) {
             xCorrector = -1;
         }
         // if heading difference is more than 90, negative yCorrector (xN quadrants)
-        if (correctedHeadingDifference > 90) {
+        if (absHeadingDifference > 90) {
             yCorrector = -1;
-            correctedHeadingDifference -= 90;
+            absHeadingDifference -= 90;
         }
         // otherwise defaults (PP quadrant)
 
-        x = xCorrector * (sin(toRadians(correctedHeadingDifference)) * hypotenuseDistance);
-        y = yCorrector * (cos(toRadians(correctedHeadingDifference)) * hypotenuseDistance);
+        double theta = 90 - absHeadingDifference;
+        x = xCorrector * (sin(toRadians(theta)) * hypotenuseDistance);
+        y = yCorrector * (cos(toRadians(theta)) * hypotenuseDistance);
 
         return new XYValues(x, y);
     }
@@ -73,12 +78,11 @@ public class Calc {
             secRef += 360;
         }
 
-        // both refs are now single positive value 0-359
-
+        // both refs are now single positive value 0-359, subtract
         double finalOut = baseRef - secRef;
 
+        // ensure val is negative if left of baseref and positive if right of baseref
         finalOut = abs(finalOut);
-
         if (baseRef > secRef) {
             finalOut *= -1;
         }
