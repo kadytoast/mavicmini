@@ -79,18 +79,16 @@ public class Calc {
 
         finalOut = abs(finalOut);
 
-        if (baseRef < secRef) {
+        if (baseRef > secRef) {
             finalOut *= -1;
         }
 
         // set finalout back to +/- 180 value
         if (finalOut > 180) {
             finalOut -= 360;
-            finalOut *= -1;
         }
         if (finalOut < -180) {
             finalOut += 360;
-            finalOut *= -1;
         }
 
         return finalOut;

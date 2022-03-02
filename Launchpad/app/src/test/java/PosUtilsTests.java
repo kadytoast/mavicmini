@@ -12,11 +12,16 @@ public class PosUtilsTests {
                 {150, 30, -120},
                 {-180, 180, 0},
                 {0, 0, 0},
-                {-90, 90, 180},
+                {-90, 90, -180},
+                {0, 0, 0},
+                {116, 32, -84},
+                {130, -13, -143},
+                {-83, -21, 62},
+                {49, -98, -147}
         };
 
         for (int[] vals : testvals) {
-            System.out.println(vals[0] + ", " + vals[1]);
+            System.out.println(vals[0] + ", " + vals[1] + ", " + calcHeadingDifference(vals[0], vals[1]));
             assertEquals(vals[2], calcHeadingDifference(vals[0], vals[1]), 0);
         }
     }
