@@ -1,4 +1,4 @@
-package com.dji.launchpad.PosUtils;
+package com.dji.launchpad.Utils;
 
 import com.google.android.gms.maps.model.LatLng;
 

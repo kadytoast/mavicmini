@@ -1,4 +1,4 @@
-package com.dji.launchpad.PosUtils;
+package com.dji.launchpad.Utils;
 
 /**
  * simple class to hold two x y offset values (used for positioning offsets)

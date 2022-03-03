@@ -1,4 +1,4 @@
-package com.dji.launchpad.PosUtils;
+package com.dji.launchpad.Utils;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
@@ -7,8 +7,6 @@ import static java.lang.Math.toRadians;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
-
-import java.time.LocalDateTime;
 
 public class Calc {
 

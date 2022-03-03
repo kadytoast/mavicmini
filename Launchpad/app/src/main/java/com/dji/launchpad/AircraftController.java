@@ -1,7 +1,9 @@
 package com.dji.launchpad;
 
-import com.dji.launchpad.PosUtils.XYValues;
-import com.dji.launchpad.PosUtils.AircraftPositionalData;
+import com.dji.launchpad.Utils.FlightQueue;
+import com.dji.launchpad.Utils.FlightQueueData;
+import com.dji.launchpad.Utils.XYValues;
+import com.dji.launchpad.Utils.AircraftPositionalData;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -16,8 +18,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
-
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,6 +40,7 @@ import dji.common.flightcontroller.virtualstick.VerticalControlMode;
 import dji.common.flightcontroller.virtualstick.YawControlMode;
 import dji.common.model.LocationCoordinate2D;
 import dji.common.util.CommonCallbacks;
+import dji.flysafe.v3.License;
 import dji.log.DJILog;
 import dji.sdk.base.BaseComponent;
 import dji.sdk.base.BaseProduct;
@@ -82,8 +84,7 @@ public class AircraftController {
     private TimerTask mSendFlightDataTask = null;
     private Timer mSendFlightDataTimer = null;
 
-    private TimerTask mCheckFlightPositionTask = null;
-    private Timer mCheckFlightPositionTimer = null;
+    private FlightQueue mFlightQueue;
 
     /**
      * static flight control variables deprecated for FlightControlData and PID handler, but active
@@ -92,11 +93,7 @@ public class AircraftController {
     private float mRoll = 0;
     private float mYaw = 0;
     private float mThrottle = 0;
-    private float mTaskOnTime = 0;
-
-    private FlightControlData flightControlData = null;
-
-    private LatLng mTargetFuturePosition = null;
+    private float mResetFlightPositionAfter = 0;
 
     private double mHomeLat;
     private double mHomeLong;
@@ -363,6 +360,7 @@ public class AircraftController {
                     mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
                     mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.GROUND);
                     mFlightController.setVirtualStickAdvancedModeEnabled(true);
+                    mFlightQueue = new FlightQueue();
                 }
 
                 setFlightControllerStateCallback();
@@ -419,22 +417,20 @@ public class AircraftController {
         });
     }
 
-
-
     /*
      * API Control Methods VVVVV
      */
-
 
     /**
      * resets craft orientation on pitch roll yaw and throttle
      */
     public void resetAircraftOrientation () {
+        startFlightManagementTasks();
         mPitch = 0;
         mRoll = 0;
         mYaw = 0;
         mThrottle = 0;
-        startFlightManagementTasks();
+        mResetFlightPositionAfter = 0;
     }
 
     /**
@@ -460,12 +456,7 @@ public class AircraftController {
             mSendFlightDataTimer = new Timer();
             mSendFlightDataTimer.schedule(mSendFlightDataTask, 0, 100);
         }
-        // starting check flight data
-        if (null == mCheckFlightPositionTimer) {
-            mCheckFlightPositionTask = new checkFlightPositionTask();
-            mCheckFlightPositionTimer = new Timer();
-            mCheckFlightPositionTimer.schedule(mCheckFlightPositionTask, 0, 50);
-        }
+
     }
 
     public void killFlightManagementTasks() {
@@ -477,14 +468,6 @@ public class AircraftController {
             mSendFlightDataTimer.purge();
             mSendFlightDataTimer = null;
         }
-        // killing check flight data
-        if (null != mCheckFlightPositionTimer) {
-            mCheckFlightPositionTask.cancel();
-            mCheckFlightPositionTask = null;
-            mCheckFlightPositionTimer.cancel();
-            mCheckFlightPositionTimer.purge();
-            mCheckFlightPositionTimer = null;
-        }
     }
 
     class sendFlightDataTask extends TimerTask {
@@ -492,29 +475,13 @@ public class AircraftController {
         public void run() {
 
             if (ifFlightController()) {
-                // pass flight control data (set by pid handler), otherwise create new with zeroes
-                if(flightControlData != null) {
-                    mFlightController.sendVirtualStickFlightControlData(flightControlData,
-                            djiError -> {}
-                    );
-                }
-                else {
-                    mFlightController.sendVirtualStickFlightControlData(
-                            new FlightControlData(mPitch, mRoll, mYaw, mThrottle),
-                            djiError -> {}
-                    );
-                }
-            }
-        }
-    }
+                //TODO add next flightqueuedata handling stuff
 
-    class checkFlightPositionTask extends TimerTask {
-        @Override
-        public void run() {
 
-            if (ifFlightController()) {
-                // check position, act accordingly, use current targetpos class vars
-
+                mFlightController.sendVirtualStickFlightControlData(
+                        new FlightControlData(mPitch, mRoll, mYaw, mThrottle),
+                        djiError -> {}
+                );
             }
         }
     }
