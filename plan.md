@@ -6,4 +6,7 @@
 * Yaw
 	* Absolute angle (adjusted against north)
 
-possibly have to
+## Control layout
+* flight data is edited as class fields
+* timer is started to reset to flat after given ontime
+* 

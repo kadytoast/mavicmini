@@ -92,6 +92,7 @@ public class AircraftController {
     private float mRoll = 0;
     private float mYaw = 0;
     private float mThrottle = 0;
+    private float mTaskOnTime = 0;
 
     private FlightControlData flightControlData = null;
 
@@ -361,6 +362,7 @@ public class AircraftController {
                     mFlightController.setYawControlMode(YawControlMode.ANGLE);
                     mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
                     mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.GROUND);
+                    mFlightController.setVirtualStickAdvancedModeEnabled(true);
                 }
 
                 setFlightControllerStateCallback();
