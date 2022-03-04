@@ -13,13 +13,16 @@ public class FlightQueue {
 
     /**
      * constructs and adds flight data object to queue
-     * @param pitch float
-     * @param roll float
-     * @param yaw float
-     * @param throttle float
-     * @param time double
+     * @param pitch float angle +/- 30 degrees
+     * @param roll float angle +/- 30 degrees
+     * @param yaw float direct angle +/- 180 clockwise from true north
+     * @param throttle float max 4m/s
+     * @param time double less than 30 seconds
      */
     public void addFlightData (float pitch, float roll, float yaw, float throttle, double time) {
+        if (time > 30) {
+            time = 30;
+        }
         mFlightQueue.addLast(new FlightQueueData(pitch, roll, yaw, throttle, time));
     }
 

@@ -25,7 +25,6 @@ import androidx.core.content.ContextCompat;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,7 +39,6 @@ import dji.common.flightcontroller.virtualstick.VerticalControlMode;
 import dji.common.flightcontroller.virtualstick.YawControlMode;
 import dji.common.model.LocationCoordinate2D;
 import dji.common.util.CommonCallbacks;
-import dji.flysafe.v3.License;
 import dji.log.DJILog;
 import dji.sdk.base.BaseComponent;
 import dji.sdk.base.BaseProduct;
@@ -93,7 +91,8 @@ public class AircraftController {
     private float mRoll = 0;
     private float mYaw = 0;
     private float mThrottle = 0;
-    private float mResetFlightPositionAfter = 0;
+    private double mFlightEndTime = 0;
+    private LocalDateTime mFlightStartTime = null;
 
     private double mHomeLat;
     private double mHomeLong;
@@ -114,6 +113,7 @@ public class AircraftController {
         IntentFilter filter = new IntentFilter();
         filter.addAction(AircraftObjHandler.FLAG_CONNECTION_CHANGE);
         ma.registerReceiver(mReceiver, filter);
+        mFlightQueue = new FlightQueue();
     }
 
     /**
@@ -360,7 +360,7 @@ public class AircraftController {
                     mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
                     mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.GROUND);
                     mFlightController.setVirtualStickAdvancedModeEnabled(true);
-                    mFlightQueue = new FlightQueue();
+                    mFlightQueue.clearFlightData();
                 }
 
                 setFlightControllerStateCallback();
@@ -426,11 +426,13 @@ public class AircraftController {
      */
     public void resetAircraftOrientation () {
         startFlightManagementTasks();
+        mFlightQueue.clearFlightData();
         mPitch = 0;
         mRoll = 0;
         mYaw = 0;
         mThrottle = 0;
-        mResetFlightPositionAfter = 0;
+        mFlightStartTime = null;
+        mFlightEndTime = 0;
     }
 
     /**
@@ -476,12 +478,37 @@ public class AircraftController {
 
             if (ifFlightController()) {
                 //TODO add next flightqueuedata handling stuff
+                FlightQueueData flightData;
+                if (mFlightStartTime == null) {
+                    flightData = mFlightQueue.getNextFlightData();
+                    if (flightData != null) {
+                        mFlightStartTime = LocalDateTime.now();
+                        mFlightEndTime = flightData.getResetTime();
+                        mPitch = flightData.getPitch();
+                        mRoll = flightData.getRoll();
+                        mYaw = flightData.getYaw();
+                        mThrottle = flightData.getThrottle();
+                    }
+                    else {
+
+                    }
+                }
+                else {
+                    // checks if (start time) is less than (current time minus endtime), returns -1 if so
+                    if (mFlightStartTime.compareTo(LocalDateTime.now().minusSeconds((long) mFlightEndTime)) < 0) {
+                        // reset flight values for next task
+                        mFlightStartTime = null;
+                        mFlightEndTime = 0;
+                    }
 
 
-                mFlightController.sendVirtualStickFlightControlData(
-                        new FlightControlData(mPitch, mRoll, mYaw, mThrottle),
-                        djiError -> {}
-                );
+                    // if flight queue is empty, run 0 values
+                    mFlightController.sendVirtualStickFlightControlData(
+                            new FlightControlData(mPitch, mRoll, mYaw, mThrottle),
+                            djiError -> {
+                            }
+                    );
+                }
             }
         }
     }
