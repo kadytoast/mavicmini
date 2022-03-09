@@ -39,6 +39,13 @@ public class FlightQueue {
     }
 
     /**
+     * @return true if queue is empty
+     */
+    public boolean isQueueEmpty () {
+        return mFlightQueue.isEmpty();
+    }
+
+    /**
      * clears queue of all flight data objects
      */
     public void clearFlightData () {

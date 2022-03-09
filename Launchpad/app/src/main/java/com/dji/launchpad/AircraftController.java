@@ -81,6 +81,7 @@ public class AircraftController {
 
     private TimerTask mSendFlightDataTask = null;
     private Timer mSendFlightDataTimer = null;
+    private boolean mTaskRunning = false;
 
     private FlightQueue mFlightQueue;
 
@@ -420,19 +421,61 @@ public class AircraftController {
     /*
      * API Control Methods VVVVV
      */
+    //TODO write bodies for control methdos
+    /**
+     * @param angle to hold while pitching forward, max 30 degrees
+     * @param time seconds to travel at this angle
+     */
+    public void pitchFoward(float angle, double time) {
+
+    }
+
+    /**
+     * @param angle to hold while pitching backward, max 30 degrees
+     * @param time seconds to travel at this angle
+     */
+    public void pitchBackward(float angle, double time) {
+
+    }
+
+    /**
+     * @param angle to hold while rolling left, max 30 degrees
+     * @param time seconds to travel at this angle
+     */
+    public void rollLeft(float angle, double time) {
+
+    }
+
+    /**
+     * @param angle to hold while rolling to right of craft, max 30 degrees
+     * @param time seconds to travel at this angle
+     */
+    public void rollRight(float angle, double time) {
+
+    }
+
+    /**
+     * @param angle to yaw to, +/- 180 degrees from !! true north !!
+     */
+    public void yawTo (float angle) {
+
+    }
+
+    /**
+     * @param velocity +/- 4 m/s up or down, respectively
+     * @param time seconds to travel at this velocity
+     */
+    public void throttleTo (float velocity, double time) {
+
+    }
 
     /**
      * resets craft orientation on pitch roll yaw and throttle
      */
-    public void resetAircraftOrientation () {
+    public void clearCurrentFlight () {
         startFlightManagementTasks();
         mFlightQueue.clearFlightData();
-        mPitch = 0;
-        mRoll = 0;
-        mYaw = 0;
-        mThrottle = 0;
         mFlightStartTime = null;
-        mFlightEndTime = 0;
     }
 
     /**
@@ -475,12 +518,12 @@ public class AircraftController {
     class sendFlightDataTask extends TimerTask {
         @Override
         public void run() {
-
+            // TODO clean up and ensure that tasks will auto stop and restart when needed
             if (ifFlightController()) {
-                //TODO add next flightqueuedata handling stuff
                 FlightQueueData flightData;
-                if (mFlightStartTime == null) {
+                if (!mTaskRunning) {
                     flightData = mFlightQueue.getNextFlightData();
+                    mTaskRunning = true;
                     if (flightData != null) {
                         mFlightStartTime = LocalDateTime.now();
                         mFlightEndTime = flightData.getResetTime();
@@ -490,17 +533,32 @@ public class AircraftController {
                         mThrottle = flightData.getThrottle();
                     }
                     else {
-
+                        mFlightStartTime = null;
+                        mFlightEndTime = 0;
+                        mPitch = 0;
+                        mRoll = 0;
+                        mYaw = 0;
+                        mThrottle = 0;
                     }
                 }
                 else {
-                    // checks if (start time) is less than (current time minus endtime), returns -1 if so
-                    if (mFlightStartTime.compareTo(LocalDateTime.now().minusSeconds((long) mFlightEndTime)) < 0) {
-                        // reset flight values for next task
-                        mFlightStartTime = null;
-                        mFlightEndTime = 0;
+                    try {
+                        // checks if (start time) is less than (current time minus endtime), returns -1 if so
+                        if (mFlightStartTime.compareTo(LocalDateTime.now().minusSeconds((long) mFlightEndTime)) < 0) {
+                            // reset flight values for next task
+                            mFlightStartTime = null;
+                            mFlightEndTime = 0;
+                            mPitch = 0;
+                            mRoll = 0;
+                            mYaw = 0;
+                            mThrottle = 0;
+                        }
                     }
-
+                    catch (NullPointerException e) {
+                        if (mFlightQueue.isQueueEmpty()){
+                            mTaskRunning = false;
+                        }
+                    }
 
                     // if flight queue is empty, run 0 values
                     mFlightController.sendVirtualStickFlightControlData(
