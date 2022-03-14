@@ -1,5 +1,7 @@
 package com.dji.launchpad;
 
+import static java.lang.Math.abs;
+
 import com.dji.launchpad.Utils.FlightQueue;
 import com.dji.launchpad.Utils.FlightQueueData;
 import com.dji.launchpad.Utils.XYValues;
@@ -427,7 +429,9 @@ public class AircraftController {
      * @param time seconds to travel at this angle
      */
     public void pitchFoward(float angle, double time) {
-
+        startFlightManagementTasks();
+        angle = -1 * (abs(angle));
+        mFlightQueue.addFlightData(angle, 0, 0, time);
     }
 
     /**
@@ -435,6 +439,9 @@ public class AircraftController {
      * @param time seconds to travel at this angle
      */
     public void pitchBackward(float angle, double time) {
+        startFlightManagementTasks();
+        angle = abs(angle);
+        mFlightQueue.addFlightData(angle, 0, 0, time);
 
     }
 
@@ -443,7 +450,9 @@ public class AircraftController {
      * @param time seconds to travel at this angle
      */
     public void rollLeft(float angle, double time) {
-
+        startFlightManagementTasks();
+        angle = -1 * (abs(angle));
+        mFlightQueue.addFlightData(0, angle, 0, time);
     }
 
     /**
@@ -451,14 +460,17 @@ public class AircraftController {
      * @param time seconds to travel at this angle
      */
     public void rollRight(float angle, double time) {
-
+        startFlightManagementTasks();
+        angle = abs(angle);
+        mFlightQueue.addFlightData(0, angle, 0, time);
     }
 
     /**
      * @param angle to yaw to, +/- 180 degrees from !! true north !!
      */
     public void yawTo (float angle) {
-
+        startFlightManagementTasks();
+        mYaw = angle;
     }
 
     /**
@@ -466,6 +478,7 @@ public class AircraftController {
      * @param time seconds to travel at this velocity
      */
     public void throttleTo (float velocity, double time) {
+        startFlightManagementTasks();
 
     }
 
@@ -529,7 +542,6 @@ public class AircraftController {
                         mFlightEndTime = flightData.getResetTime();
                         mPitch = flightData.getPitch();
                         mRoll = flightData.getRoll();
-                        mYaw = flightData.getYaw();
                         mThrottle = flightData.getThrottle();
                     }
                     else {
@@ -537,7 +549,6 @@ public class AircraftController {
                         mFlightEndTime = 0;
                         mPitch = 0;
                         mRoll = 0;
-                        mYaw = 0;
                         mThrottle = 0;
                     }
                 }
@@ -550,7 +561,6 @@ public class AircraftController {
                             mFlightEndTime = 0;
                             mPitch = 0;
                             mRoll = 0;
-                            mYaw = 0;
                             mThrottle = 0;
                         }
                     }
