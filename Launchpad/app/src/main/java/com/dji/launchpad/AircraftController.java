@@ -492,6 +492,17 @@ public class AircraftController {
     }
 
     /**
+     * kills tasks related to controlling flight over queue
+     */
+    public void killFlightTasks () {
+        killFlightManagementTasks();
+        mPitch = 0;
+        mRoll = 0;
+        mYaw = 0;
+        mThrottle = 0;
+    }
+
+    /**
      * checks to ensure a valid flight controller object is active, use before interaction
      */
     public boolean ifFlightController() {
@@ -554,29 +565,27 @@ public class AircraftController {
                 }
                 else {
                     try {
-                        // checks if (start time) is less than (current time minus endtime), returns -1 if so
-                        if (mFlightStartTime.compareTo(LocalDateTime.now().minusSeconds((long) mFlightEndTime)) < 0) {
+                        // checks if (start time) is less than or equal to (current time minus endtime), returns -1 or 0 if so
+                        if (mFlightStartTime.compareTo(LocalDateTime.now().minusSeconds((long) mFlightEndTime)) <= 0) {
                             // reset flight values for next task
                             mFlightStartTime = null;
-                            mFlightEndTime = 0;
-                            mPitch = 0;
-                            mRoll = 0;
-                            mThrottle = 0;
-                        }
-                    }
-                    catch (NullPointerException e) {
-                        if (mFlightQueue.isQueueEmpty()){
                             mTaskRunning = false;
                         }
                     }
-
-                    // if flight queue is empty, run 0 values
-                    mFlightController.sendVirtualStickFlightControlData(
-                            new FlightControlData(mPitch, mRoll, mYaw, mThrottle),
-                            djiError -> {
-                            }
-                    );
+                    catch (NullPointerException e) {
+                        // queue has another item, stop idle and start next task
+                        if (!mFlightQueue.isQueueEmpty()){
+                            mFlightStartTime = null;
+                            mTaskRunning = false;
+                        }
+                    }
                 }
+                // send data regardless
+                // if flight queue is empty, run 0 values
+                mFlightController.sendVirtualStickFlightControlData(
+                        new FlightControlData(mPitch, mRoll, mYaw, mThrottle),
+                        djiError -> {}
+                    );
             }
         }
     }
