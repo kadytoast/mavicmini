@@ -500,6 +500,7 @@ public class AircraftController {
         mRoll = 0;
         mYaw = 0;
         mThrottle = 0;
+        // TODO make this better ?
     }
 
     /**
