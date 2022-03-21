@@ -191,7 +191,7 @@ public class ClickInterfaces implements View.OnClickListener{
 
             case R.id.btn_set_craft_flat:
                 if (air.ifFlightController()) {
-                    air.resetAircraftOrientation();
+                    // TODO complete
                 }
                 break;
 

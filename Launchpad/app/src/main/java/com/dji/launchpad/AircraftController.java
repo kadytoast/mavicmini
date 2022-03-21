@@ -477,9 +477,9 @@ public class AircraftController {
      * @param velocity +/- 4 m/s up or down, respectively
      * @param time seconds to travel at this velocity
      */
-    public void throttleTo (float velocity, double time) {
+    public void throttleFor (float velocity, double time) {
         startFlightManagementTasks();
-
+        mFlightQueue.addFlightData(0, 0, velocity, time);
     }
 
     /**
