@@ -5,27 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_yaw_right"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textview_homecoords"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_toEndOf="@+id/btn_ascend"
-        android:text="R" />
-
-    <Button
-        android:id="@+id/btn_fly_backward_1m"
-        android:layout_width="120dp"
-        android:layout_height="80dp"
-        android:layout_below="@+id/btn_fly_forward_1m"
-        android:layout_alignStart="@+id/btn_fly_forward_1m"
-        android:layout_marginTop="10dp"
-        android:text="back 1m" />
-
     <RelativeLayout
         android:id="@+id/main_title_rl"
         android:layout_width="fill_parent"
@@ -111,10 +90,10 @@
         android:id="@+id/textview_homecoords"
         android:layout_width="153dp"
         android:layout_height="107dp"
-        android:layout_alignTop="@+id/btn_rth"
-        android:layout_alignBottom="@+id/btn_rth"
+        android:layout_alignTop="@+id/btn_killtasks"
+        android:layout_alignBottom="@+id/btn_killtasks"
         android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/btn_rth"
+        android:layout_toEndOf="@+id/btn_killtasks"
         android:text="home not set"
         android:textAlignment="viewStart" />
 
@@ -147,15 +126,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btn_land"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="10dp"
-        android:layout_toEndOf="@+id/btn_yaw_right"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="27dp"
+        android:layout_toEndOf="@+id/tog_takeoff_enable"
         android:text="Virtual Sticks:"
         android:textSize="16sp"
         tools:textAlignment="center" />
 
     <Button
-        android:id="@+id/btn_rth"
+        android:id="@+id/btn_killtasks"
         style="@style/common_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -164,7 +143,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="0dp"
         android:layout_toEndOf="@+id/btn_set_home"
-        android:text="RTHTEMP" />
+        android:text="Kill Flight Tasks" />
 
     <Button
         android:id="@+id/btn_set_craft_flat"
@@ -178,47 +157,6 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:text="Reset Orientation" />
-
-    <Button
-        android:id="@+id/btn_fly_forward_1m"
-        android:layout_width="120dp"
-        android:layout_height="80dp"
-        android:layout_below="@+id/textview_position"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="10dp"
-        android:layout_toEndOf="@+id/btn_set_craft_flat"
-        android:text="forward 1m" />
-
-    <Button
-        android:id="@+id/btn_ascend"
-        android:layout_width="120dp"
-        android:layout_height="80dp"
-        android:layout_alignTop="@+id/btn_yaw_left"
-        android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/btn_yaw_left"
-        android:text="ascend" />
-
-    <Button
-        android:id="@+id/btn_descend"
-        android:layout_width="120dp"
-        android:layout_height="80dp"
-        android:layout_below="@+id/btn_ascend"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_toEndOf="@+id/btn_yaw_left"
-        android:text="descend" />
-
-    <Button
-        android:id="@+id/btn_yaw_left"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textview_homecoords"
-        android:layout_alignStart="@+id/btn_land"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="120dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:text="L" />
 
     <EditText
         android:id="@+id/editText_debugaddress"
@@ -268,6 +206,15 @@
         android:text="ToggleButton"
         android:textOff="takeoff disabled"
         android:textOn="takeoff enabled" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textView"
+        android:layout_marginStart="40dp"
+        android:layout_toEndOf="@+id/textView"
+        android:text="Button" />
 
 
 </RelativeLayout>

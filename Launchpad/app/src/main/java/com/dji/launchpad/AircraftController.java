@@ -492,15 +492,15 @@ public class AircraftController {
     }
 
     /**
-     * kills tasks related to controlling flight over queue
+     * kills tasks related to controlling flight over queue, reset values
      */
     public void killFlightTasks () {
+        clearCurrentFlight();
         killFlightManagementTasks();
         mPitch = 0;
         mRoll = 0;
         mYaw = 0;
         mThrottle = 0;
-        // TODO make this better ?
     }
 
     /**
@@ -519,7 +519,7 @@ public class AircraftController {
                 mFlightControllerState.getAttitude(), new LocationCoordinate2D(mHomeLat, mHomeLong), mAircraftHomeHeading);
     }
 
-    public void startFlightManagementTasks() {
+    private void startFlightManagementTasks() {
         // starting send flight data
         if (null == mSendFlightDataTimer) {
             mSendFlightDataTask = new sendFlightDataTask();
@@ -529,7 +529,7 @@ public class AircraftController {
 
     }
 
-    public void killFlightManagementTasks() {
+    private void killFlightManagementTasks() {
         // killing send flight data
         if (null != mSendFlightDataTimer) {
             mSendFlightDataTask.cancel();
@@ -550,6 +550,7 @@ public class AircraftController {
                     flightData = mFlightQueue.getNextFlightData();
                     mTaskRunning = true;
                     if (flightData != null) {
+                        // task values
                         mFlightStartTime = LocalDateTime.now();
                         mFlightEndTime = flightData.getResetTime();
                         mPitch = flightData.getPitch();
@@ -557,6 +558,7 @@ public class AircraftController {
                         mThrottle = flightData.getThrottle();
                     }
                     else {
+                        // idle values
                         mFlightStartTime = null;
                         mFlightEndTime = 0;
                         mPitch = 0;

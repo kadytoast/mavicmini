@@ -111,10 +111,10 @@
         android:id="@+id/textview_homecoords"
         android:layout_width="153dp"
         android:layout_height="107dp"
-        android:layout_alignTop="@+id/btn_rth"
-        android:layout_alignBottom="@+id/btn_rth"
+        android:layout_alignTop="@+id/btn_killtasks"
+        android:layout_alignBottom="@+id/btn_killtasks"
         android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/btn_rth"
+        android:layout_toEndOf="@+id/btn_killtasks"
         android:text="home not set"
         android:textAlignment="viewStart" />
 
@@ -155,7 +155,7 @@
         tools:textAlignment="center" />
 
     <Button
-        android:id="@+id/btn_rth"
+        android:id="@+id/btn_killtasks"
         style="@style/common_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

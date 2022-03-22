@@ -38,11 +38,11 @@ public class ClickInterfaces implements View.OnClickListener{
     private void initUI() {
         // sets up click listener for buttons and global textviews
         // variable definitions for buttons and textviews
-        Button mBtnTakeOff = (Button) ma.findViewById(R.id.btn_take_off);
-        Button mBtnLand = (Button) ma.findViewById(R.id.btn_land);
+        Button mBtnTakeOff = ma.findViewById(R.id.btn_take_off);
+        Button mBtnLand = ma.findViewById(R.id.btn_land);
         Button mBtnReset = ma.findViewById(R.id.btn_set_craft_flat);
-        Button mBtnSetHome = (Button) ma.findViewById(R.id.btn_set_home);
-        Button mBtnGoHome = ma.findViewById(R.id.btn_rth);
+        Button mBtnSetHome = ma.findViewById(R.id.btn_set_home);
+        Button mBtnGoHome = ma.findViewById(R.id.btn_killtasks);
         Button mBtnReload = ma.findViewById(R.id.btn_reload);
         Button mBtnDebug = ma.findViewById(R.id.btn_debugenter);
 
@@ -99,7 +99,7 @@ public class ClickInterfaces implements View.OnClickListener{
                             // show toast and updated control
                             mVirtualStickControlState = false;
                             showToast("Virtual Sticks Disabled");
-                            air.killFlightManagementTasks();
+                            air.killFlightTasks();
                         }
                     });
                 }
@@ -183,15 +183,15 @@ public class ClickInterfaces implements View.OnClickListener{
                 }
                 break;
 
-            case R.id.btn_rth: // special return to home
+            case R.id.btn_killtasks: // special return to home
                 if (air.ifFlightController()) {
-                    //TODO write this lmao
+                    air.killFlightTasks();
                 }
                 break;
 
             case R.id.btn_set_craft_flat:
                 if (air.ifFlightController()) {
-                    // TODO complete
+                    air.clearCurrentFlight();
                 }
                 break;
 
