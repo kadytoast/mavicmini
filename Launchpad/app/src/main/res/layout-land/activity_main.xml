@@ -208,13 +208,13 @@
         android:textOn="takeoff enabled" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btn_startpath"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/textView"
         android:layout_marginStart="40dp"
         android:layout_toEndOf="@+id/textView"
-        android:text="Button" />
+        android:text="Start Flight Path" />
 
 
 </RelativeLayout>

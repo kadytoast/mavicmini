@@ -79,52 +79,28 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     // method to initialize buttons and add to click listener
     private void loadUI() {
-        findViewById(R.id.btn_fly_forward_1m).setOnClickListener(this);
-        findViewById(R.id.btn_fly_backward_1m).setOnClickListener(this);
+        findViewById(R.id.btn_startpath).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
-        /*
         switch (view.getId()) {
-
-            case R.id.btn_fly_forward_1m:
-                if (airC.ifFlightController()) {
-                    // reset attitude before starting
-                    airC.resetAircraftOrientation();
-
-                    // get current data, compute new lat long, then update class targ val
-                    AircraftController.AircraftPositionalData locData = airC.getLocation();
-                    LatLng curLatLng = new LatLng(locData.getAircraftLatitude(),
-                            locData.getAircraftLongitude());
-                    double curHeading = locData.getAircraftYaw();
-                    double targOffset = 1;
-                    airC.setmTargetFuturePosition(SphericalUtil.computeOffset(curLatLng, targOffset, curHeading));
-
-                    // set pitch to fly forward, management task should stop when point is reached
-                    airC.setPitch(-3);
-                }
+            case R.id.btn_startpath:
+                // write your primary flight code here, to be initiated after takeoff
+                air.pitchFoward(2, 1);
+                air.pitchBackward(2, 1);
+                air.rollRight(3, 1);
+                air.rollLeft(3, 1);
+                air.throttleFor(1, 1);
+                air.throttleFor(-1, 1);
+                air.yawTo(0);
+                air.yawTo(180);
+                air.yawTo(0);
                 break;
 
-            case R.id.btn_fly_backward_1m:
-                if (airC.ifFlightController()) {
-                    // reset attitude before starting
-                    airC.resetAircraftOrientation();
-
-                    // get current data, compute new lat long, then update class targ val
-                    AircraftController.AircraftPositionalData locData = airC.getLocation();
-                    LatLng curLatLng = new LatLng(locData.getAircraftLatitude(),
-                            locData.getAircraftLongitude());
-                    double curHeading = abs(locData.getAircraftYaw() - 360); // with opposite heading for backwards
-                    double targOffset = 1;
-                    airC.setmTargetFuturePosition(SphericalUtil.computeOffset(curLatLng, targOffset, curHeading));
-
-                    // set pitch to fly backward, management task should stop when point is reached
-                    airC.setPitch(3);
-                }
+            default:
                 break;
         }
-        */
     }
 
 }
