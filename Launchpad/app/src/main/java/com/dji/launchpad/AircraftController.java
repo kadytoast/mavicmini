@@ -483,7 +483,7 @@ public class AircraftController {
     }
 
     /**
-     * resets craft orientation on pitch roll yaw and throttle
+     * wipes current flight queue
      */
     public void clearCurrentFlight () {
         startFlightManagementTasks();
@@ -496,11 +496,11 @@ public class AircraftController {
      */
     public void killFlightTasks () {
         clearCurrentFlight();
-        killFlightManagementTasks();
         mPitch = 0;
         mRoll = 0;
         mYaw = 0;
         mThrottle = 0;
+        killFlightManagementTasks();
     }
 
     /**

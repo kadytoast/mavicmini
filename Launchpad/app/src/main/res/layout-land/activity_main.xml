@@ -216,5 +216,15 @@
         android:layout_toEndOf="@+id/textView"
         android:text="Start Flight Path" />
 
+    <Button
+        android:id="@+id/btn_stoppath"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_startpath"
+        android:layout_alignStart="@+id/btn_startpath"
+        android:layout_alignEnd="@+id/btn_startpath"
+        android:layout_marginTop="10dp"
+        android:text="End flight path" />
+
 
 </RelativeLayout>

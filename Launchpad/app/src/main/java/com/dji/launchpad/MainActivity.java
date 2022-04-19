@@ -80,6 +80,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     // method to initialize buttons and add to click listener
     private void loadUI() {
         findViewById(R.id.btn_startpath).setOnClickListener(this);
+        findViewById(R.id.btn_stoppath).setOnClickListener(this);
     }
 
     @Override
@@ -96,6 +97,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 air.yawTo(0);
                 air.yawTo(180);
                 air.yawTo(0);
+                break;
+
+            case R.id.btn_stoppath:
+                air.clearCurrentFlight();
                 break;
 
             default:
