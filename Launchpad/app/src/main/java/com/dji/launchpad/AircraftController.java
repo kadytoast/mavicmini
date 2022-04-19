@@ -496,6 +496,7 @@ public class AircraftController {
      */
     public void killFlightTasks () {
         clearCurrentFlight();
+        mTaskRunning = false;
         mPitch = 0;
         mRoll = 0;
         mYaw = 0;
