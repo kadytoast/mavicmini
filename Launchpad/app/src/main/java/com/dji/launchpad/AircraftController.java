@@ -88,9 +88,6 @@ public class AircraftController {
 
     private FlightQueue mFlightQueue;
 
-    /**
-     * static flight control variables deprecated for FlightControlData and PID handler, but active
-     */
     private float mPitch = 0;
     private float mRoll = 0;
     private float mYaw = 0;
@@ -402,7 +399,7 @@ public class AircraftController {
                     mXYIfLogValues = true;
                 }
                 else if (now.getSecond() % secBetweenLogs == 0 && mXYIfLogValues) {
-                    ma.debug.log("\nIN : \n" +
+                    /* ma.debug.log("\nIN : \n" +
                             "origin lat = " + flight.getHomeLatLng().latitude + "\n" +
                             "origin lon = " + flight.getHomeLatLng().longitude + "\n" +
                             "originheading = " + mAircraftHomeHeading + "\n" +
@@ -411,7 +408,7 @@ public class AircraftController {
                             "curheading = " + flight.getAircraftHeading() + "\n" +
                             "OUT : \n" +
                             "X = " + offset.X + "\n" +
-                            "Y = " + offset.Y + "\n");
+                            "Y = " + offset.Y + "\n"); */
                     mXYIfLogValues = false;
                 }
             }

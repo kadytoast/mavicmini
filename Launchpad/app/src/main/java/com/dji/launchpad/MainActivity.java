@@ -89,19 +89,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.btn_startpath:
                 // write your primary flight code here, to be initiated after takeoff
                 air.yawTo(0);
-                air.flyForward(1, 1);
-                air.flyBackward(1, 1);
-                air.flyStarboard(1, 1);
-                air.flyPort(1, 1);
-                air.throttleFor(1, 1);
-                air.pauseFlight(1);
-                air.throttleFor(-1, 1);
                 air.yawTo(180);
-                air.pauseFlight(2);
+                air.pauseFlight(5);
                 air.yawTo(90);
-                air.pauseFlight(2);
+                air.pauseFlight(5);
                 air.yawTo(-90);
-                air.pauseFlight(2);
+                air.pauseFlight(5);
                 air.yawTo(0);
                 break;
 
