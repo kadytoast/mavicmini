@@ -2,6 +2,7 @@ package com.dji.launchpad;
 
 import static java.lang.Math.abs;
 
+import com.dji.launchpad.Utils.Calc;
 import com.dji.launchpad.Utils.FlightQueue;
 import com.dji.launchpad.Utils.FlightQueueData;
 import com.dji.launchpad.Utils.XYValues;
@@ -358,10 +359,10 @@ public class AircraftController {
                 // reinit flight controller only if needed
                 if (mFlightController == null) {
                     mFlightController = aircraft.getFlightController();
-                    mFlightController.setRollPitchControlMode(RollPitchControlMode.ANGLE);
+                    mFlightController.setRollPitchControlMode(RollPitchControlMode.VELOCITY);
                     mFlightController.setYawControlMode(YawControlMode.ANGLE);
                     mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
-                    mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.GROUND);
+                    mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
                     mFlightController.setVirtualStickAdvancedModeEnabled(true);
                     mFlightQueue.clearFlightData();
                 }
@@ -423,54 +424,64 @@ public class AircraftController {
     /*
      * API Control Methods VVVVV
      */
-    //TODO write bodies for control methdos
     /**
-     * @param angle to hold while pitching forward, max 30 degrees
-     * @param time seconds to travel at this angle
+     * @param velocity to hold while pitching forward, max 15 m/s
+     * @param time seconds to travel at this velocity
      */
-    public void pitchFoward(float angle, double time) {
-        startFlightManagementTasks();
-        angle = -1 * (abs(angle));
-        mFlightQueue.addFlightData(angle, 0, 0, time);
+    public void flyForward(float velocity, double time) {
+        if (ifFlightController()) {
+            startFlightManagementTasks();
+            velocity = -1 * (abs(velocity));
+            mFlightQueue.addFlightData(velocity, 0, mYaw, 0, time);
+        }
     }
 
     /**
-     * @param angle to hold while pitching backward, max 30 degrees
-     * @param time seconds to travel at this angle
+     * @param velocity to hold while pitching backward, max 15 m/s
+     * @param time seconds to travel at this velocity
      */
-    public void pitchBackward(float angle, double time) {
-        startFlightManagementTasks();
-        angle = abs(angle);
-        mFlightQueue.addFlightData(angle, 0, 0, time);
+    public void flyBackward(float velocity, double time) {
+        if (ifFlightController()) {
+            startFlightManagementTasks();
+            velocity = abs(velocity);
+            mFlightQueue.addFlightData(velocity, 0, mYaw, 0, time);
+        }
 
     }
 
     /**
-     * @param angle to hold while rolling left, max 30 degrees
-     * @param time seconds to travel at this angle
+     * @param velocity to hold while rolling left, max 15 m/s
+     * @param time seconds to travel at this velocity
      */
-    public void rollLeft(float angle, double time) {
-        startFlightManagementTasks();
-        angle = -1 * (abs(angle));
-        mFlightQueue.addFlightData(0, angle, 0, time);
+    public void flyPort(float velocity, double time) {
+        if (ifFlightController()) {
+            startFlightManagementTasks();
+            velocity = -1 * (abs(velocity));
+            mFlightQueue.addFlightData(0, velocity, mYaw, 0, time);
+        }
     }
 
     /**
-     * @param angle to hold while rolling to right of craft, max 30 degrees
-     * @param time seconds to travel at this angle
+     * @param velocity to hold while rolling to right of craft, max 15 m/s
+     * @param time seconds to travel at this velocity
      */
-    public void rollRight(float angle, double time) {
-        startFlightManagementTasks();
-        angle = abs(angle);
-        mFlightQueue.addFlightData(0, angle, 0, time);
+    public void flyStarboard(float velocity, double time) {
+        if (ifFlightController()) {
+            startFlightManagementTasks();
+            velocity = abs(velocity);
+            mFlightQueue.addFlightData(0, velocity, mYaw, 0, time);
+        }
     }
 
     /**
-     * @param angle to yaw to, +/- 180 degrees from !! true north !!
+     * @param angle to yaw to, +/- 180 degrees from home heading
      */
     public void yawTo (float angle) {
-        startFlightManagementTasks();
-        mYaw = angle;
+        if (ifFlightController()) {
+            startFlightManagementTasks();
+            angle = (float) Calc.calcHeadingDifference(getLocation().getAircraftHeadingRefHome(), angle);
+            mFlightQueue.addFlightData(0, 0, angle, 0, 0);
+        }
     }
 
     /**
@@ -478,17 +489,35 @@ public class AircraftController {
      * @param time seconds to travel at this velocity
      */
     public void throttleFor (float velocity, double time) {
-        startFlightManagementTasks();
-        mFlightQueue.addFlightData(0, 0, velocity, time);
+        if (ifFlightController()) {
+            startFlightManagementTasks();
+            mFlightQueue.addFlightData(0, 0, mYaw, velocity, time);
+        }
+    }
+
+    /**
+     * @param time to pause flight for, in seconds
+     */
+    public void pauseFlight (double time) {
+        if (ifFlightController()) {
+            startFlightManagementTasks();
+            mFlightQueue.addFlightData(0, 0, mYaw, 0, time);
+        }
     }
 
     /**
      * wipes current flight queue
      */
     public void clearCurrentFlight () {
-        startFlightManagementTasks();
-        mFlightQueue.clearFlightData();
-        mFlightStartTime = null;
+        if (ifFlightController()) {
+            startFlightManagementTasks();
+            mFlightQueue.clearFlightData();
+            mFlightStartTime = null;
+            mPitch = 0;
+            mRoll = 0;
+            mYaw = 0;
+            mThrottle = 0;
+        }
     }
 
     /**
@@ -526,6 +555,8 @@ public class AircraftController {
             mSendFlightDataTask = new sendFlightDataTask();
             mSendFlightDataTimer = new Timer();
             mSendFlightDataTimer.schedule(mSendFlightDataTask, 0, 100);
+            mFlightQueue.clearFlightData();
+            mFlightStartTime = null;
         }
 
     }
@@ -556,6 +587,7 @@ public class AircraftController {
                         mFlightEndTime = flightData.getResetTime();
                         mPitch = flightData.getPitch();
                         mRoll = flightData.getRoll();
+                        mYaw = flightData.getYaw();
                         mThrottle = flightData.getThrottle();
                     }
                     else {

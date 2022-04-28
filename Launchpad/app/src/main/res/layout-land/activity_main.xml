@@ -145,19 +145,6 @@
         android:layout_toEndOf="@+id/btn_set_home"
         android:text="Kill Flight Tasks" />
 
-    <Button
-        android:id="@+id/btn_set_craft_flat"
-        style="@style/common_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tog_virtual_sticks"
-        android:layout_alignStart="@+id/tog_virtual_sticks"
-        android:layout_alignEnd="@+id/tog_virtual_sticks"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:text="Reset Orientation" />
-
     <EditText
         android:id="@+id/editText_debugaddress"
         android:layout_width="wrap_content"

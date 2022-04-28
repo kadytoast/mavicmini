@@ -40,7 +40,6 @@ public class ClickInterfaces implements View.OnClickListener{
         // variable definitions for buttons and textviews
         Button mBtnTakeOff = ma.findViewById(R.id.btn_take_off);
         Button mBtnLand = ma.findViewById(R.id.btn_land);
-        Button mBtnReset = ma.findViewById(R.id.btn_set_craft_flat);
         Button mBtnSetHome = ma.findViewById(R.id.btn_set_home);
         Button mBtnGoHome = ma.findViewById(R.id.btn_killtasks);
         Button mBtnReload = ma.findViewById(R.id.btn_reload);
@@ -50,7 +49,6 @@ public class ClickInterfaces implements View.OnClickListener{
         mBtnTakeOff.setOnClickListener(this);
         mBtnLand.setOnClickListener(this);
         mBtnSetHome.setOnClickListener(this);
-        mBtnReset.setOnClickListener(this);
         mBtnGoHome.setOnClickListener(this);
         mBtnReload.setOnClickListener(this);
         mBtnDebug.setOnClickListener(this);
@@ -186,12 +184,6 @@ public class ClickInterfaces implements View.OnClickListener{
             case R.id.btn_killtasks: // special return to home
                 if (air.ifFlightController()) {
                     air.killFlightTasks();
-                }
-                break;
-
-            case R.id.btn_set_craft_flat:
-                if (air.ifFlightController()) {
-                    air.clearCurrentFlight();
                 }
                 break;
 
