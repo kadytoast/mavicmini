@@ -40,18 +40,13 @@ public class ClickInterfaces implements View.OnClickListener{
         // variable definitions for buttons and textviews
         Button mBtnTakeOff = ma.findViewById(R.id.btn_take_off);
         Button mBtnLand = ma.findViewById(R.id.btn_land);
-        Button mBtnSetHome = ma.findViewById(R.id.btn_set_home);
-        Button mBtnGoHome = ma.findViewById(R.id.btn_killtasks);
-        Button mBtnReload = ma.findViewById(R.id.btn_reload);
-        Button mBtnDebug = ma.findViewById(R.id.btn_debugenter);
 
         // regular button listener for <onClick> method
         mBtnTakeOff.setOnClickListener(this);
         mBtnLand.setOnClickListener(this);
-        mBtnSetHome.setOnClickListener(this);
-        mBtnGoHome.setOnClickListener(this);
-        mBtnReload.setOnClickListener(this);
-        mBtnDebug.setOnClickListener(this);
+        ma.findViewById(R.id.btn_set_home).setOnClickListener(this);
+        ma.findViewById(R.id.btn_reload).setOnClickListener(this);
+        ma.findViewById(R.id.btn_debugenter).setOnClickListener(this);
 
         mTakeoffEnabledState = false;
         mBtnTakeOff.setVisibility(Button.INVISIBLE);
@@ -181,12 +176,6 @@ public class ClickInterfaces implements View.OnClickListener{
                 }
                 break;
 
-            case R.id.btn_killtasks: // special return to home
-                if (air.ifFlightController()) {
-                    air.killFlightTasks();
-                }
-                break;
-
             case R.id.btn_reload:
                 try {
                     Button reload = ma.findViewById(R.id.btn_reload);
@@ -206,7 +195,6 @@ public class ClickInterfaces implements View.OnClickListener{
                 catch (Exception e) {
                     ma.debug.errlog(e, "btn_reload");
                 }
-
                 break;
 
             case R.id.btn_debugenter:

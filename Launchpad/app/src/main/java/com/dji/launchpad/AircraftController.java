@@ -409,6 +409,13 @@ public class AircraftController {
                             "OUT : \n" +
                             "X = " + offset.X + "\n" +
                             "Y = " + offset.Y + "\n"); */
+                    ma.debug.log(
+                            "\nHome Heading: " + getLocation().getAircraftHeadingRefHome() +
+                            "Pitch: " + mPitch +
+                            "Roll: " + mRoll +
+                            "Yaw: " + mYaw +
+                            "Throttle: " + mThrottle +
+                            "Task Length: " + mFlightEndTime);
                     mXYIfLogValues = false;
                 }
             }
@@ -617,7 +624,7 @@ public class AircraftController {
                 // if flight queue is empty, run 0 values
                 mFlightController.sendVirtualStickFlightControlData(
                         new FlightControlData(mPitch, mRoll, mYaw, mThrottle),
-                        djiError -> {}
+                        djiError -> {ma.debug.log(djiError.toString());}
                     );
             }
         }
