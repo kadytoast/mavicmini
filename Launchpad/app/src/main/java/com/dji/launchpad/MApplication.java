@@ -7,22 +7,22 @@ import com.secneo.sdk.Helper;
 
 
 public class MApplication extends Application {
-    // attaches base context to use with dji sdk and loads necessary classes with <Helper>
-    private AircraftHandler simulatorApplication;
+
+    private AircraftObjHandler objHandler;
     @Override
     protected void attachBaseContext(Context paramContext) {
         super.attachBaseContext(paramContext);
         Helper.install(MApplication.this);
-        if (simulatorApplication == null) {
-            simulatorApplication = new AircraftHandler();
-            simulatorApplication.setContext(this);
+        if (objHandler == null) {
+            objHandler = new AircraftObjHandler();
+            objHandler.setContext(this);
         }
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        simulatorApplication.onCreate();
+        objHandler.onCreate();
     }
 
 }

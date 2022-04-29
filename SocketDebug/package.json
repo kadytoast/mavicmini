@@ -1,0 +1,14 @@
+{
+	"name": "socketdebug",
+	"description": "lightweight wireless debugging client using socket.io, built for LaunchPad app development",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/kadytoast/mavicmini.git",
+		"directory": "SocketDebug"
+	},
+	"dependencies": {
+		"express": "^4.17.2",
+		"ip": "^1.1.5"
+	}
+}

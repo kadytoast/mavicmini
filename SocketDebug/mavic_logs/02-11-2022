@@ -1,0 +1,54 @@
+2022-02-11T12:44:57.687 : Opened Debugger2022-02-11T12:46:33.064 : Opened Debugger2022-02-11T12:47:15.203 : Opened Debugger2022-02-11T12:47:19.387 : Opened Debugger2022-02-11T12:47:57.486 : Opened Debugger2022-02-11T12:47:59.201 : Opened Debugger2022-02-11T12:49:06.713 : Opened Debugger2022-02-11T12:49:07.357 : Opened Debugger2022-02-11T12:50:29.731 : Opened Debugger2022-02-11T12:50:30.493 : Opened Debugger2022-02-11T12:51:24.450 : Opened Debugger2022-02-11T12:51:40.227 : IN : 
+origin lat = 0.0
+origin lon = 0.0
+originheading = 0.0
+target lat = 47.868961849200275
+target lon = -122.13471610707298
+OUT : 
+X = -7498981.989344145
+Y = 9790100.74173389
+2022-02-11T12:51:40.432 : IN : 
+origin lat = 0.0
+origin lon = 0.0
+originheading = 0.0
+target lat = 47.868962205715924
+target lon = -122.13471650724905
+OUT : 
+X = -7498981.915773155
+Y = 9790100.811085138
+2022-02-11T12:51:40.510 : IN : 
+origin lat = 0.0
+origin lon = 0.0
+originheading = 0.0
+target lat = 47.86896227164368
+target lon = -122.13471662915853
+OUT : 
+X = -7498981.90165578
+Y = 9790100.828382712
+2022-02-11T12:51:40.688 : IN : 
+origin lat = 0.0
+origin lon = 0.0
+originheading = 0.0
+target lat = 47.86896224287925
+target lon = -122.13471703354405
+OUT : 
+X = -7498981.902920773
+Y = 9790100.86355769
+2022-02-11T12:51:40.817 : IN : 
+origin lat = 0.0
+origin lon = 0.0
+originheading = 0.0
+target lat = 47.86896227371201
+target lon = -122.13471711421363
+OUT : 
+X = -7498981.896065399
+Y = 9790100.873855961
+2022-02-11T12:51:40.969 : IN : 
+origin lat = 0.0
+origin lon = 0.0
+originheading = 0.0
+target lat = 47.8689624086231
+target lon = -122.13471723394338
+OUT : 
+X = -7498981.8685641
+Y = 9790100.897139557

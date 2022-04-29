@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/main_title_rl"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:background="@color/black_overlay">
+
+        <TextView
+            android:id="@+id/ConnectStatusTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="SimulatorDemo"
+            android:textColor="@android:color/white"
+            android:textSize="19sp" />
+
+        <Button
+            android:id="@+id/btn_reload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/ConnectStatusTextView"
+            android:text="RELOAD" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="10dp"
+            android:text="@string/version"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/textview_position"
+        android:layout_width="119dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textview_homecoords"
+        android:layout_alignBottom="@+id/textview_homecoords"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="-180dp"
+        android:text="position not set" />
+
+    <Button
+        android:id="@+id/btn_take_off"
+        style="@style/common_button"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="50dp"
+        android:text="Take Off" />
+
+    <Button
+        android:id="@+id/btn_land"
+        style="@style/common_button"
+        android:layout_width="82dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/btn_take_off"
+        android:layout_alignStart="@+id/btn_take_off"
+        android:layout_alignEnd="@+id/btn_take_off"
+        android:layout_marginTop="10dp"
+        android:text="Land" />
+
+    <Button
+        android:id="@+id/btn_set_home"
+        style="@style/common_button"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/btn_take_off"
+        android:layout_alignBottom="@+id/btn_land"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/btn_take_off"
+        android:text="Set Home (to cur location)" />
+
+    <TextView
+        android:id="@+id/textview_homecoords"
+        android:layout_width="153dp"
+        android:layout_height="107dp"
+        android:layout_alignTop="@+id/btn_killtasks"
+        android:layout_alignBottom="@+id/btn_killtasks"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/btn_killtasks"
+        android:text="home not set"
+        android:textAlignment="viewStart" />
+
+    <ImageButton
+        android:id="@+id/ReturnBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_marginLeft="8dp"
+        android:adjustViewBounds="true"
+        android:background="@android:color/transparent"
+        android:onClick="onReturn"
+        android:scaleType="centerInside"
+        android:src="@drawable/selector_back_button" />
+
+    <ToggleButton
+        android:id="@+id/tog_virtual_sticks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_alignStart="@+id/textView"
+        android:layout_alignEnd="@+id/textView"
+        android:layout_marginTop="10dp"
+        android:checked="false"
+        android:text="ToggleButton"
+        android:textOff="Disabled"
+        android:textOn="Enabled" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_land"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="27dp"
+        android:layout_toEndOf="@+id/tog_takeoff_enable"
+        android:text="Virtual Sticks:"
+        android:textSize="16sp"
+        tools:textAlignment="center" />
+
+    <Button
+        android:id="@+id/btn_killtasks"
+        style="@style/common_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/btn_take_off"
+        android:layout_alignBottom="@+id/btn_set_home"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/btn_set_home"
+        android:text="Kill Flight Tasks" />
+
+    <EditText
+        android:id="@+id/editText_debugaddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_debug"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_toStartOf="@+id/textview_position"
+        android:layout_toEndOf="@+id/textview_homecoords"
+        android:ems="10"
+        android:inputType="text" />
+
+    <TextView
+        android:id="@+id/text_debug"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textview_homecoords"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_toStartOf="@+id/textview_position"
+        android:layout_toEndOf="@+id/textview_homecoords"
+        android:text="debug ip:port"
+        android:textAlignment="center"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/btn_debugenter"
+        style="@style/common_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editText_debugaddress"
+        android:layout_alignStart="@+id/editText_debugaddress"
+        android:layout_alignEnd="@+id/editText_debugaddress"
+        android:layout_alignBottom="@+id/textview_homecoords"
+        android:text="Connect"
+        android:textSize="15sp" />
+
+    <ToggleButton
+        android:id="@+id/tog_takeoff_enable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_land"
+        android:layout_alignStart="@+id/btn_land"
+        android:layout_alignEnd="@+id/btn_land"
+        android:layout_marginTop="10dp"
+        android:text="ToggleButton"
+        android:textOff="takeoff disabled"
+        android:textOn="takeoff enabled" />
+
+    <Button
+        android:id="@+id/btn_startpath"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textView"
+        android:layout_marginStart="40dp"
+        android:layout_toEndOf="@+id/textView"
+        android:text="Start Flight Path" />
+
+    <Button
+        android:id="@+id/btn_stoppath"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_startpath"
+        android:layout_alignStart="@+id/btn_startpath"
+        android:layout_alignEnd="@+id/btn_startpath"
+        android:layout_marginTop="10dp"
+        android:text="End flight path" />
+
+
+</RelativeLayout>

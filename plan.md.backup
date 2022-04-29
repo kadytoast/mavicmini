@@ -1,27 +1,12 @@
-## Plan Page for Launchpad App
-### Steps
+## Current Control Schema
+* Vertical
+	* Velocity over Time
+* Roll/Pitch
+	* Angle over Time
+* Yaw
+	* Absolute angle (adjusted against north)
 
-* start with sdk registration, then move to binding to aircraft and takeoff
-* add in basic buttons to control (takeoff, home, land, set home)
-* add page for video feed?
-
-
-### Notes
-* mavic mini original
-* wifi communication direct with device, should not need controller
-* class wifilink is used to change drone's wifi settings
-* **AS IT SEEMS** you can just connect to drones wifi and then call some of the on product connect methods to initialize product
-
-### SDK Class/Method Tree
-* DJISDKManager
-	* register app
-	* sdk manager instance
-	* get product connection
-	
-### Methodology
-* use virtual stick control with position checking to have set forward/backward distance buttons (on button press, set threshold, tilt craft, check until threshold is met, flatten craft, tilt in opposite direction to correct unless craft does this automatically)
-
-## Simulator
-### DJI Assistant 2 has Simulator Capability
-* essentially the flight controller on the drone has a built in simulator, and when connected to pc over usb one can test the sdk app
-* try removing the simulator capability in the app as i dont think its necessary for function when connected to dji assistant
+## Control layout
+* class containes flightqueue, a linked list holding flightqueuedata objects
+* to put a command in the queue, add a flightqueuedata object to the queue, and it will execute on time sequentially
+* emergency level button will empty the queue, reset any timings, and set all flight positional data to 0
