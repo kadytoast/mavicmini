@@ -79,14 +79,16 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     // method to initialize buttons and add to click listener
     private void loadUI() {
-        findViewById(R.id.btn_startpath).setOnClickListener(this);
+        findViewById(R.id.btn_startpath_1).setOnClickListener(this);
+        findViewById(R.id.btn_startpath_2).setOnClickListener(this);
+        findViewById(R.id.btn_startpath_3).setOnClickListener(this);
         findViewById(R.id.btn_killtasks).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_startpath:
+            case R.id.btn_startpath_1:
                 // write your primary flight code here, to be initiated after takeoff
                 air.yawTo(0);
                 air.yawTo(180);
@@ -98,10 +100,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 air.yawTo(0);
                 break;
 
-            case R.id.btn_killtasks: // special return to home
-                if (air.ifFlightController()) {
-                    air.killFlightTasks();
-                }
+            case R.id.btn_startpath_2:
+                air.flyForward(0.5F, 2);
+                air.flyBackward(0.5F, 2);
+                air.throttleFor(0.5F, 2);
+                air.pauseFlight(2);
+                air.throttleFor(-0.5F, 2);
+                break;
+
+            case R.id.btn_startpath_3:
+                air.yawTo(0);
+                air.yawTo(120);
+                air.pauseFlight(6);
+                air.yawTo(0);
+                break;
+
+            case R.id.btn_killtasks:
+                air.killFlightTasks();
                 break;
 
             default:

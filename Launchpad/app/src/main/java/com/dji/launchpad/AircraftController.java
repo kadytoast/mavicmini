@@ -530,10 +530,6 @@ public class AircraftController {
     public void killFlightTasks () {
         clearCurrentFlight();
         mTaskRunning = false;
-        mPitch = 0;
-        mRoll = 0;
-        mYaw = 0;
-        mThrottle = 0;
         killFlightManagementTasks();
     }
 
@@ -610,6 +606,7 @@ public class AircraftController {
                             // reset flight values for next task
                             mFlightStartTime = null;
                             mTaskRunning = false;
+                            ma.debug.log("out of time check");
                         }
                     }
                     catch (NullPointerException e) {
@@ -617,11 +614,12 @@ public class AircraftController {
                         if (!mFlightQueue.isQueueEmpty()){
                             mFlightStartTime = null;
                             mTaskRunning = false;
+                            ma.debug.errlog(e, "null catch and queue not empty");
                         }
+                        ma.debug.errlog(e, "null catch");
                     }
                 }
                 // send data regardless
-                // if flight queue is empty, run 0 values
                 mFlightController.sendVirtualStickFlightControlData(
                         new FlightControlData(mPitch, mRoll, mYaw, mThrottle),
                         djiError -> {ma.debug.log(djiError.toString());}

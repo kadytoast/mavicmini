@@ -26,5 +26,5 @@ app.post('/debug', (req, res) => {
 })
 
 app.listen(port, () => {
-    console.log(`Example app listening on ${ip.address()}:${port}`)
+    console.log(`debug server listening on ${ip.address()}:${port}`)
 })

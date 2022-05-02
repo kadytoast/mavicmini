@@ -5,6 +5,26 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <Button
+        android:id="@+id/btn_startpath_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textView"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="-10dp"
+        android:layout_toEndOf="@+id/textView"
+        android:text="Start Flight Path 2" />
+
+    <Button
+        android:id="@+id/btn_startpath_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textView"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="40dp"
+        android:layout_toEndOf="@+id/textView"
+        android:text="Start Flight Path 3" />
+
     <RelativeLayout
         android:id="@+id/main_title_rl"
         android:layout_width="fill_parent"
@@ -49,7 +69,6 @@
         android:layout_alignTop="@+id/textview_homecoords"
         android:layout_alignBottom="@+id/textview_homecoords"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="-180dp"
         android:text="position not set" />
 
     <Button
@@ -88,10 +107,9 @@
 
     <TextView
         android:id="@+id/textview_homecoords"
-        android:layout_width="153dp"
-        android:layout_height="107dp"
+        android:layout_width="148dp"
+        android:layout_height="228dp"
         android:layout_alignTop="@+id/btn_killtasks"
-        android:layout_alignBottom="@+id/btn_killtasks"
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/btn_killtasks"
         android:text="home not set"
@@ -126,8 +144,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btn_land"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="27dp"
+        android:layout_marginStart="-104dp"
+        android:layout_marginTop="74dp"
         android:layout_toEndOf="@+id/tog_takeoff_enable"
         android:text="Virtual Sticks:"
         android:textSize="16sp"
@@ -195,13 +213,14 @@
         android:textOn="takeoff enabled" />
 
     <Button
-        android:id="@+id/btn_startpath"
+        android:id="@+id/btn_startpath_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/textView"
         android:layout_marginStart="40dp"
+        android:layout_marginTop="-60dp"
         android:layout_toEndOf="@+id/textView"
-        android:text="Start Flight Path" />
+        android:text="Start Flight Path 1" />
 
 
 </RelativeLayout>
