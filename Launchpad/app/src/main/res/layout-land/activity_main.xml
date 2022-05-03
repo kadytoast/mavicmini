@@ -10,20 +10,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/textView"
+        android:layout_alignEnd="@+id/btn_startpath_1"
         android:layout_marginStart="40dp"
         android:layout_marginTop="-10dp"
         android:layout_toEndOf="@+id/textView"
-        android:text="Start Flight Path 2" />
+        android:text="launch/land path" />
 
     <Button
         android:id="@+id/btn_startpath_3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/textView"
+        android:layout_alignEnd="@+id/btn_startpath_2"
         android:layout_marginStart="40dp"
         android:layout_marginTop="40dp"
         android:layout_toEndOf="@+id/textView"
-        android:text="Start Flight Path 3" />
+        android:text="short yaw path" />
 
     <RelativeLayout
         android:id="@+id/main_title_rl"
@@ -217,10 +219,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/textView"
+        android:layout_alignEnd="@+id/btn_killtasks"
         android:layout_marginStart="40dp"
         android:layout_marginTop="-60dp"
+        android:layout_marginEnd="20dp"
         android:layout_toEndOf="@+id/textView"
-        android:text="Start Flight Path 1" />
+        android:text="long yaw path" />
 
 
 </RelativeLayout>

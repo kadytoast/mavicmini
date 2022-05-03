@@ -101,11 +101,16 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 break;
 
             case R.id.btn_startpath_2:
+                air.takeOff();
                 air.flyForward(0.5F, 2);
                 air.flyBackward(0.5F, 2);
                 air.throttleFor(0.5F, 2);
                 air.pauseFlight(2);
                 air.throttleFor(-0.5F, 2);
+                air.flyPort(0.5F, 2);
+                air.flyStarboard(0.5F, 4);
+                air.flyPort(0.5F, 2);
+                air.land();
                 break;
 
             case R.id.btn_startpath_3:

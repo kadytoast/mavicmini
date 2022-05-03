@@ -125,33 +125,11 @@ public class ClickInterfaces implements View.OnClickListener{
         switch (v.getId()) {
 
             case R.id.btn_take_off:
-                if (air.ifFlightController()){
-                    showToast("Takeoff Started");
-                    air.mFlightController.startTakeoff(
-                            djiError -> {
-                                if (djiError != null) {
-                                    showToast(djiError.getDescription());
-                                } else {
-                                    showToast("Takeoff Complete");
-                                }
-                            }
-                    );
-                }
+                air.takeOff();
                 break;
 
             case R.id.btn_land:
-                if (air.ifFlightController()){
-                    showToast("Landing Started");
-                    air.mFlightController.startLanding(
-                            djiError -> {
-                                if (djiError != null) {
-                                    showToast(djiError.getDescription());
-                                } else {
-                                    showToast("Start Landing");
-                                }
-                            }
-                    );
-                }
+                air.land();
                 break;
 
             case R.id.btn_set_home:  // set home case
@@ -225,7 +203,7 @@ public class ClickInterfaces implements View.OnClickListener{
 
                         if (ifip && ifport) {
                             ma.debug.setPath(ip, port);
-                            ma.debug.log("Opened Debugger, App Version: " + R.string.version);
+                            ma.debug.log("OPEN - Opened Debugger, App Version: " + R.string.version);
                         }
                     }
 

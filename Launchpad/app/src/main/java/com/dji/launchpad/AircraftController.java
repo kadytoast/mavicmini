@@ -399,7 +399,7 @@ public class AircraftController {
                     mXYIfLogValues = true;
                 }
                 else if (now.getSecond() % secBetweenLogs == 0 && mXYIfLogValues) {
-                    /* ma.debug.log("\nIN : \n" +
+                    /* ma.debug.log("\n POSVALS \n" +
                             "origin lat = " + flight.getHomeLatLng().latitude + "\n" +
                             "origin lon = " + flight.getHomeLatLng().longitude + "\n" +
                             "originheading = " + mAircraftHomeHeading + "\n" +
@@ -409,13 +409,13 @@ public class AircraftController {
                             "OUT : \n" +
                             "X = " + offset.X + "\n" +
                             "Y = " + offset.Y + "\n"); */
-                    ma.debug.log(
-                            "\nHome Heading: " + getLocation().getAircraftHeadingRefHome() +
+                    ma.debug.log("\n FLIGHTVALS \n" +
+                            "Home Heading: " + getLocation().getAircraftHeadingRefHome() +
                             "Pitch: " + mPitch +
                             "Roll: " + mRoll +
                             "Yaw: " + mYaw +
                             "Throttle: " + mThrottle +
-                            "Task Length: " + mFlightEndTime);
+                            "Task Length: " + mFlightEndTime + "\n");
                     mXYIfLogValues = false;
                 }
             }
@@ -506,6 +506,42 @@ public class AircraftController {
         if (ifFlightController()) {
             startFlightManagementTasks();
             mFlightQueue.addFlightData(0, 0, mYaw, 0, time);
+        }
+    }
+
+    /**
+     * launches the aircraft
+     */
+    public void takeOff () {
+        if (ifFlightController()){
+            showToast("Takeoff Started");
+            mFlightController.startTakeoff(
+                    djiError -> {
+                        if (djiError != null) {
+                            showToast(djiError.getDescription());
+                        } else {
+                            showToast("Takeoff Complete");
+                        }
+                    }
+            );
+        }
+    }
+
+    /**
+     * lands the aircraft
+     */
+    public void land() {
+        if (ifFlightController()){
+            showToast("Landing Started");
+            mFlightController.startLanding(
+                    djiError -> {
+                        if (djiError != null) {
+                            showToast(djiError.getDescription());
+                        } else {
+                            showToast("Start Landing");
+                        }
+                    }
+            );
         }
     }
 
