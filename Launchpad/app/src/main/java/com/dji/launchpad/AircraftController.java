@@ -660,7 +660,10 @@ public class AircraftController {
                 // send data regardless
                 mFlightController.sendVirtualStickFlightControlData(
                         new FlightControlData(mPitch, mRoll, mYaw, mThrottle),
-                        djiError -> {ma.debug.log(djiError.toString());}
+                        djiError -> {
+                            if (djiError != null){
+                            ma.debug.log(djiError.toString());}
+                        }
                     );
             }
         }

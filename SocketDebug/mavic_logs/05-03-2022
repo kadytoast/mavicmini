@@ -1,0 +1,112 @@
+2022-05-03T15:23:03.541 : OPEN - Opened Debugger, App Version: 21318222662022-05-03T15:23:05.309 : OPEN - Opened Debugger, App Version: 21318222662022-05-03T15:23:32.389 : WITH fc state callback : 
+[android.view.ViewRootImpl.checkThread(ViewRootImpl.java:9328), android.view.ViewRootImpl.requestLayout(ViewRootImpl.java:1789), android.view.View.requestLayout(View.java:25698), android.view.View.requestLayout(View.java:25698), android.view.View.requestLayout(View.java:25698), android.view.View.requestLayout(View.java:25698), android.widget.RelativeLayout.requestLayout(RelativeLayout.java:380), android.view.View.requestLayout(View.java:25698), android.widget.TextView.checkForRelayout(TextView.java:9815), android.widget.TextView.setText(TextView.java:6398), android.widget.TextView.setText(TextView.java:6227), android.widget.TextView.setText(TextView.java:6179), com.dji.launchpad.AircraftController.lambda$setFlightControllerStateCallback$0(:391), com.dji.launchpad.AircraftController.b(Unknown Source:0), com.dji.launchpad.a.onUpdate(Unknown Source:2), dji.sdk.flightcontroller.dgh.gfd(Unknown Source:8), dji.sdk.flightcontroller.dgh.access$lambda$2(Unknown Source:0), dji.sdk.flightcontroller.dgh$$Lambda$3.run(Unknown Source:2), android.os.Handler.handleCallback(Handler.java:938), android.os.Handler.dispatchMessage(Handler.java:99), android.os.Looper.loopOnce(Looper.java:201), android.os.Looper.loop(Looper.java:288), android.os.HandlerThread.run(HandlerThread.java:67)]
+Only the original thread that created a view hierarchy can touch its views.
+no cause found2022-05-03T15:23:32.528 : 
+ FLIGHTVALS 
+Home Heading: -120.4Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:23:34.135 : 
+ FLIGHTVALS 
+Home Heading: -120.4Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:23:36.017 : 
+ FLIGHTVALS 
+Home Heading: -120.4Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:23:38.023 : 
+ FLIGHTVALS 
+Home Heading: -120.4Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:23:40.020 : 
+ FLIGHTVALS 
+Home Heading: -120.4Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:23:42.008 : 
+ FLIGHTVALS 
+Home Heading: -120.4Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:23:44.033 : 
+ FLIGHTVALS 
+Home Heading: -120.4Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:23:46.030 : 
+ FLIGHTVALS 
+Home Heading: 72.1Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:23:48.110 : 
+ FLIGHTVALS 
+Home Heading: 100.4Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:23:50.025 : 
+ FLIGHTVALS 
+Home Heading: -79.30000000000001Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:23:52.022 : 
+ FLIGHTVALS 
+Home Heading: 152.0Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:23:54.017 : 
+ FLIGHTVALS 
+Home Heading: 159.3Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:23:56.045 : 
+ FLIGHTVALS 
+Home Heading: -148.9Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:23:58.024 : 
+ FLIGHTVALS 
+Home Heading: 152.2Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:24:00.147 : 
+ FLIGHTVALS 
+Home Heading: -118.0Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:24:02.016 : 
+ FLIGHTVALS 
+Home Heading: -118.0Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:24:04.021 : 
+ FLIGHTVALS 
+Home Heading: -118.0Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:24:06.040 : 
+ FLIGHTVALS 
+Home Heading: -117.9Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:24:08.125 : 
+ FLIGHTVALS 
+Home Heading: -117.9Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:24:10.057 : 
+ FLIGHTVALS 
+Home Heading: -117.9Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:24:12.030 : 
+ FLIGHTVALS 
+Home Heading: -117.9Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:24:14.100 : 
+ FLIGHTVALS 
+Home Heading: -117.9Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:24:16.106 : 
+ FLIGHTVALS 
+Home Heading: -117.9Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:24:18.026 : 
+ FLIGHTVALS 
+Home Heading: -117.9Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:24:20.050 : 
+ FLIGHTVALS 
+Home Heading: -118.30000000000001Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:24:22.012 : 
+ FLIGHTVALS 
+Home Heading: -117.5Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:24:24.033 : 
+ FLIGHTVALS 
+Home Heading: -116.4Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:24:26.018 : 
+ FLIGHTVALS 
+Home Heading: -116.1Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:24:27.270 : flightdata is valid in send flight data2022-05-03T15:24:27.370 : out of time check in send flight data2022-05-03T15:24:27.469 : flightdata is valid in send flight data2022-05-03T15:24:27.571 : out of time check in send flight data2022-05-03T15:25:09.789 : OPEN - Opened Debugger, App Version: 21318222662022-05-03T15:25:16.101 : 
+ FLIGHTVALS 
+Home Heading: -115.19999999999999Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:25:18.013 : 
+ FLIGHTVALS 
+Home Heading: -115.19999999999999Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:25:18.407 : WITH fc state callback : 
+[android.view.ViewRootImpl.checkThread(ViewRootImpl.java:9328), android.view.ViewRootImpl.requestLayout(ViewRootImpl.java:1789), android.view.View.requestLayout(View.java:25698), android.view.View.requestLayout(View.java:25698), android.view.View.requestLayout(View.java:25698), android.view.View.requestLayout(View.java:25698), android.widget.RelativeLayout.requestLayout(RelativeLayout.java:380), android.view.View.requestLayout(View.java:25698), android.widget.TextView.checkForRelayout(TextView.java:9815), android.widget.TextView.setText(TextView.java:6398), android.widget.TextView.setText(TextView.java:6227), android.widget.TextView.setText(TextView.java:6179), com.dji.launchpad.AircraftController.lambda$setFlightControllerStateCallback$0(:391), com.dji.launchpad.AircraftController.b(Unknown Source:0), com.dji.launchpad.a.onUpdate(Unknown Source:2), dji.sdk.flightcontroller.dgh.gfd(Unknown Source:8), dji.sdk.flightcontroller.dgh.access$lambda$2(Unknown Source:0), dji.sdk.flightcontroller.dgh$$Lambda$3.run(Unknown Source:2), android.os.Handler.handleCallback(Handler.java:938), android.os.Handler.dispatchMessage(Handler.java:99), android.os.Looper.loopOnce(Looper.java:201), android.os.Looper.loop(Looper.java:288), android.os.HandlerThread.run(HandlerThread.java:67)]
+Only the original thread that created a view hierarchy can touch its views.
+no cause found2022-05-03T15:25:20.022 : 
+ FLIGHTVALS 
+Home Heading: 0.0Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:25:22.022 : 
+ FLIGHTVALS 
+Home Heading: 0.0Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:25:24.019 : 
+ FLIGHTVALS 
+Home Heading: 0.0Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:25:26.028 : 
+ FLIGHTVALS 
+Home Heading: 0.5Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:25:28.023 : 
+ FLIGHTVALS 
+Home Heading: -0.20000000000001705Pitch: 0.0Roll: 0.0Yaw: 0.0Throttle: 0.0Task Length: 0.0
+2022-05-03T15:25:29.391 : flightdata is valid in send flight data2022-05-03T15:25:29.492 : out of time check in send flight data2022-05-03T15:25:29.594 : flightdata is valid in send flight data2022-05-03T15:25:29.690 : out of time check in send flight data2022-05-03T15:25:29.804 : flightdata is valid in send flight data
