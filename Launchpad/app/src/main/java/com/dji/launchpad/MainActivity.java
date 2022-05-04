@@ -79,10 +79,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     // method to initialize buttons and add to click listener
     private void loadUI() {
+        findViewById(R.id.btn_killtasks).setOnClickListener(this);
         findViewById(R.id.btn_startpath_1).setOnClickListener(this);
         findViewById(R.id.btn_startpath_2).setOnClickListener(this);
         findViewById(R.id.btn_startpath_3).setOnClickListener(this);
-        findViewById(R.id.btn_killtasks).setOnClickListener(this);
+        //TODO add button listeners for new buttons here
     }
 
     @Override

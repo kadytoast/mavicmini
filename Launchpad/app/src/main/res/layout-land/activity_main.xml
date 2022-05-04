@@ -198,7 +198,6 @@
         android:layout_below="@+id/editText_debugaddress"
         android:layout_alignStart="@+id/editText_debugaddress"
         android:layout_alignEnd="@+id/editText_debugaddress"
-        android:layout_alignBottom="@+id/textview_homecoords"
         android:text="Connect"
         android:textSize="15sp" />
 
