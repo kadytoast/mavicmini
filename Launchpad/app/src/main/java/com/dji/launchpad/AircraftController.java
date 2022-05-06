@@ -410,11 +410,11 @@ public class AircraftController {
                             "X = " + offset.X + "\n" +
                             "Y = " + offset.Y + "\n"); */
                     ma.debug.log("\n FLIGHTVALS \n" +
-                            "Home Heading: " + getLocation().getAircraftHeadingRefHome() +
-                            "Pitch: " + mPitch +
-                            "Roll: " + mRoll +
-                            "Yaw: " + mYaw +
-                            "Throttle: " + mThrottle +
+                            "Home Heading: " + getLocation().getAircraftHeadingRefHome() + "\n" +
+                            "Pitch: " + mPitch + "\n" +
+                            "Roll: " + mRoll + "\n" +
+                            "Yaw: " + mYaw + "\n" +
+                            "Throttle: " + mThrottle + "\n" +
                             "Task Length: " + mFlightEndTime + "\n");
                     mXYIfLogValues = false;
                 }
@@ -625,7 +625,7 @@ public class AircraftController {
                         mRoll = flightData.getRoll();
                         mYaw = flightData.getYaw();
                         mThrottle = flightData.getThrottle();
-                        ma.debug.log("flightdata is valid in send flight data");
+                        ma.debug.log("\nflightdata is valid in send flight data\n");
                     }
                     else {
                         // idle values
@@ -634,7 +634,7 @@ public class AircraftController {
                         mPitch = 0;
                         mRoll = 0;
                         mThrottle = 0;
-                        ma.debug.log("flightdata is null in send flight data");
+                        //ma.debug.log("flightdata is null in send flight data");
                     }
                 }
                 else {
@@ -644,7 +644,7 @@ public class AircraftController {
                             // reset flight values for next task
                             mFlightStartTime = null;
                             mTaskRunning = false;
-                            ma.debug.log("out of time check in send flight data");
+                            //ma.debug.log("out of time check in send flight data");
                         }
                     }
                     catch (NullPointerException e) {
@@ -652,19 +652,14 @@ public class AircraftController {
                         if (!mFlightQueue.isQueueEmpty()){
                             mFlightStartTime = null;
                             mTaskRunning = false;
-                            ma.debug.errlog(e, "null catch and queue not empty in send flight data");
+                            //ma.debug.errlog(e, "null catch and queue not empty in send flight data");
                         }
-                        ma.debug.errlog(e, "null catch in send flight data");
+                        //ma.debug.errlog(e, "null catch in send flight data");
                     }
                 }
                 // send data regardless
                 mFlightController.sendVirtualStickFlightControlData(
-                        new FlightControlData(mPitch, mRoll, mYaw, mThrottle),
-                        djiError -> {
-                            if (djiError != null){
-                            ma.debug.log(djiError.toString());}
-                        }
-                    );
+                        new FlightControlData(mPitch, mRoll, mYaw, mThrottle), djiError -> {});
             }
         }
     }
