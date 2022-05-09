@@ -91,6 +91,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.btn_startpath_1:
                 // write your primary flight code here, to be initiated after takeoff
+                debug.log("path 1 started");
                 air.yawTo(0);
                 air.yawTo(180);
                 air.pauseFlight(5);
@@ -102,7 +103,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 break;
 
             case R.id.btn_startpath_2:
-                air.takeOff();
+                debug.log("path 2 started");
                 air.flyForward(0.5F, 2);
                 air.flyBackward(0.5F, 2);
                 air.throttleFor(0.5F, 2);
@@ -111,10 +112,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 air.flyPort(0.5F, 2);
                 air.flyStarboard(0.5F, 4);
                 air.flyPort(0.5F, 2);
-                air.land();
                 break;
 
             case R.id.btn_startpath_3:
+                debug.log("path 3 started");
                 air.yawTo(0);
                 air.yawTo(120);
                 air.pauseFlight(6);

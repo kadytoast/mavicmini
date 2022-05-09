@@ -14,7 +14,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="-10dp"
         android:layout_toEndOf="@+id/textView"
-        android:text="launch/land path" />
+        android:text="short cardinal path" />
 
     <Button
         android:id="@+id/btn_startpath_3"
