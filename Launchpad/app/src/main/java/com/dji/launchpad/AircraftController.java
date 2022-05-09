@@ -357,7 +357,7 @@ public class AircraftController {
                 if (mFlightController == null) {
                     mFlightController = aircraft.getFlightController();
                     mFlightController.setRollPitchControlMode(RollPitchControlMode.VELOCITY);
-                    mFlightController.setYawControlMode(YawControlMode.ANGLE);
+                    mFlightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
                     mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
                     mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
                     mFlightController.setVirtualStickAdvancedModeEnabled(true);
@@ -499,7 +499,7 @@ public class AircraftController {
     }
 
     /**
-     * launches the aircraft
+     * launches the aircraft, not queue synced
      */
     public void takeOff () {
         if (ifFlightController()){
@@ -517,7 +517,7 @@ public class AircraftController {
     }
 
     /**
-     * lands the aircraft
+     * lands the aircraft, not queue synced
      */
     public void land() {
         if (ifFlightController()){
@@ -535,9 +535,9 @@ public class AircraftController {
     }
 
     /**
-     * wipes current flight queue
+     * kills tasks related to controlling flight over queue, reset values
      */
-    public void clearCurrentFlight () {
+    public void killFlightTasks () {
         if (ifFlightController()) {
             startFlightManagementTasks();
             mFlightQueue.clearFlightData();
@@ -547,13 +547,6 @@ public class AircraftController {
             mYaw = 0;
             mThrottle = 0;
         }
-    }
-
-    /**
-     * kills tasks related to controlling flight over queue, reset values
-     */
-    public void killFlightTasks () {
-        clearCurrentFlight();
         mTaskRunning = false;
         killFlightManagementTasks();
     }
@@ -600,7 +593,6 @@ public class AircraftController {
     class sendFlightDataTask extends TimerTask {
         @Override
         public void run() {
-            // TODO clean up and ensure that tasks will auto stop and restart when needed
             if (ifFlightController()) {
                 FlightQueueData flightData;
                 if (!mTaskRunning) {

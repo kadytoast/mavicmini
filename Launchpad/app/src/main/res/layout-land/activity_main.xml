@@ -9,21 +9,21 @@
         android:id="@+id/btn_startpath_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/textView"
+        android:layout_below="@+id/btn_startpath_1"
         android:layout_alignEnd="@+id/btn_startpath_1"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="-10dp"
+        android:layout_marginTop="10dp"
         android:layout_toEndOf="@+id/textView"
-        android:text="short cardinal path" />
+        android:text="empty" />
 
     <Button
         android:id="@+id/btn_startpath_3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/textView"
+        android:layout_below="@+id/btn_startpath_2"
         android:layout_alignEnd="@+id/btn_startpath_2"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="10dp"
         android:layout_toEndOf="@+id/textView"
         android:text="empty" />
 
@@ -145,10 +145,10 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_land"
-        android:layout_marginStart="-104dp"
-        android:layout_marginTop="74dp"
-        android:layout_toEndOf="@+id/tog_takeoff_enable"
+        android:layout_below="@+id/tog_takeoff_enable"
+        android:layout_alignStart="@+id/tog_takeoff_enable"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
         android:text="Virtual Sticks:"
         android:textSize="16sp"
         tools:textAlignment="center" />
@@ -217,13 +217,12 @@
         android:id="@+id/btn_startpath_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/textView"
+        android:layout_alignTop="@+id/tog_takeoff_enable"
         android:layout_alignEnd="@+id/btn_killtasks"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="-60dp"
         android:layout_marginEnd="20dp"
         android:layout_toEndOf="@+id/textView"
-        android:text="empty" />
+        android:text="short cardinal path 1.5m" />
 
 
 </RelativeLayout>
