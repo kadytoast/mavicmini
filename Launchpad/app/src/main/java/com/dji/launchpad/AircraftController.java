@@ -478,17 +478,6 @@ public class AircraftController {
     }
 
     /**
-     * @param angle to yaw to, +/- 180 degrees from home heading
-     */
-    public void yawTo (float angle) {
-        if (ifFlightController()) {
-            startFlightManagementTasks();
-            angle = (float) Calc.calcHeadingDifference(getLocation().getAircraftHeadingRefHome(), angle);
-            mFlightQueue.addFlightData(0, 0, angle, 0, 0);
-        }
-    }
-
-    /**
      * @param velocity +/- 4 m/s up or down, respectively
      * @param time seconds to travel at this velocity
      */
