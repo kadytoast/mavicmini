@@ -35,6 +35,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import dji.common.error.DJISDKError;
 import dji.common.flightcontroller.FlightControllerState;
+import dji.common.flightcontroller.FlightOrientationMode;
 import dji.common.flightcontroller.virtualstick.FlightControlData;
 import dji.common.flightcontroller.virtualstick.FlightCoordinateSystem;
 import dji.common.flightcontroller.virtualstick.RollPitchControlMode;
@@ -360,6 +361,8 @@ public class AircraftController {
                     mFlightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
                     mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
                     mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
+                    mFlightController.setFlightOrientationMode(FlightOrientationMode.AIRCRAFT_HEADING,
+                            djiError -> {showToast(djiError.getDescription());});
                     mFlightController.setVirtualStickAdvancedModeEnabled(true);
                     mFlightQueue.clearFlightData();
                 }
