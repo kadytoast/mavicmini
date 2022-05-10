@@ -361,8 +361,6 @@ public class AircraftController {
                     mFlightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
                     mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
                     mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
-                    mFlightController.setFlightOrientationMode(FlightOrientationMode.AIRCRAFT_HEADING,
-                            djiError -> {showToast(djiError.getDescription());});
                     mFlightController.setVirtualStickAdvancedModeEnabled(true);
                     mFlightQueue.clearFlightData();
                 }
@@ -438,7 +436,7 @@ public class AircraftController {
     public void flyForward(float velocity, double time) {
         if (ifFlightController()) {
             startFlightManagementTasks();
-            velocity = -1 * (abs(velocity));
+            velocity = abs(velocity);
             mFlightQueue.addFlightData(velocity, 0, mYaw, 0, time);
         }
     }
@@ -450,7 +448,7 @@ public class AircraftController {
     public void flyBackward(float velocity, double time) {
         if (ifFlightController()) {
             startFlightManagementTasks();
-            velocity = abs(velocity);
+            velocity = -1 * (abs(velocity));
             mFlightQueue.addFlightData(velocity, 0, mYaw, 0, time);
         }
 
@@ -605,8 +603,9 @@ public class AircraftController {
                         // task values
                         mFlightStartTime = LocalDateTime.now();
                         mFlightEndTime = flightData.getResetTime();
-                        mPitch = flightData.getPitch();
-                        mRoll = flightData.getRoll();
+                        // roll and pitch are flipped, not sure why but it had to work this way
+                        mPitch = flightData.getRoll();
+                        mRoll = flightData.getPitch();
                         mYaw = flightData.getYaw();
                         mThrottle = flightData.getThrottle();
                         ma.debug.log("\nflightdata is valid in send flight data\n");
