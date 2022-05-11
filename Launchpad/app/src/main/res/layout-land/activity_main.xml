@@ -14,7 +14,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="10dp"
         android:layout_toEndOf="@+id/textView"
-        android:text="empty" />
+        android:text="p/s/p 1m/s" />
 
     <Button
         android:id="@+id/btn_startpath_3"
@@ -25,7 +25,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="10dp"
         android:layout_toEndOf="@+id/textView"
-        android:text="empty" />
+        android:text="s/p/s 2m/s" />
 
     <RelativeLayout
         android:id="@+id/main_title_rl"

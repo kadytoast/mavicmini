@@ -90,12 +90,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_startpath_1:
-                // write your primary flight code here, to be initiated after takeoff
+                //TODO write your paths out here, to be activated on button press
                 debug.log("path 1 started");
                 air.flyForward(0.75F, 2);
                 air.flyBackward(0.75F, 2);
                 air.throttleFor(0.75F, 2);
-                air.pauseFlight(2);
+                air.pauseFlight(1);
                 air.throttleFor(-0.75F, 2);
                 air.flyPort(0.75F, 2);
                 air.flyStarboard(0.75F, 4);
@@ -104,11 +104,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
             case R.id.btn_startpath_2:
                 debug.log("path 2 started");
+                air.flyPort(1F, 1);
+                air.pauseFlight(1);
+                air.flyStarboard(1F, 2);
+                air.pauseFlight(1);
+                air.flyPort(1F, 1);
                 break;
 
             case R.id.btn_startpath_3:
                 debug.log("path 3 started");
+                air.flyStarboard(2F, 1);
+                air.pauseFlight(1);
+                air.flyPort(2F, 2);
+                air.pauseFlight(1);
+                air.flyStarboard(2F, 1);
                 break;
+
+            //TODO add cases for new buttons here
 
             case R.id.btn_killtasks:
                 air.killFlightTasks();
