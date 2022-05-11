@@ -603,9 +603,8 @@ public class AircraftController {
                         // task values
                         mFlightStartTime = LocalDateTime.now();
                         mFlightEndTime = flightData.getResetTime();
-                        // roll and pitch are flipped, not sure why but it had to work this way
-                        mPitch = flightData.getRoll();
-                        mRoll = flightData.getPitch();
+                        mPitch = flightData.getPitch();
+                        mRoll = flightData.getRoll();
                         mYaw = flightData.getYaw();
                         mThrottle = flightData.getThrottle();
                         ma.debug.log("\nflightdata is valid in send flight data\n");
@@ -642,7 +641,8 @@ public class AircraftController {
                 }
                 // send data regardless
                 mFlightController.sendVirtualStickFlightControlData(
-                        new FlightControlData(mPitch, mRoll, mYaw, mThrottle), djiError -> {});
+                        // shouldve been pitch first and roll second, but this is the only way it worked?
+                        new FlightControlData(mRoll, mPitch, mYaw, mThrottle), djiError -> {});
             }
         }
     }
