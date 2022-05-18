@@ -17,11 +17,14 @@ public class FlightQueue {
      * @param roll float velocity +/- 15 m/s
      * @param yaw float angle +/- 180 ref home heading
      * @param throttle float max 4m/s
-     * @param time double less than 30 seconds
+     * @param time double less than 10 seconds
      */
     public void addFlightData (float pitch, float roll, float yaw, float throttle, double time) {
-        if (time > 30) {
-            time = 30;
+        if (time > 10) {
+            time = 10;
+        }
+        else if (time < 0) {
+            time = 0;
         }
         mFlightQueue.addLast(new FlightQueueData(pitch, roll, yaw, throttle, time));
     }

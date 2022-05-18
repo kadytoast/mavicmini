@@ -104,11 +104,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
             case R.id.btn_startpath_2:
                 debug.log("path 2 started");
-                air.flyPort(1F, 1);
+                air.yawLeft(45, 2);
                 air.pauseFlight(1);
-                air.flyStarboard(1F, 2);
+                air.yawLeft(45, 2);
                 air.pauseFlight(1);
-                air.flyPort(1F, 1);
+                air.yawRight(45, 2);
+                air.yawLeft(45, 4);
+                air.pauseFlight(1);
+                air.yawLeft(45, 2);
                 break;
 
             case R.id.btn_startpath_3:

@@ -14,7 +14,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="10dp"
         android:layout_toEndOf="@+id/textView"
-        android:text="p/s/p 1m/s" />
+        android:text="turn test 45d/s" />
 
     <Button
         android:id="@+id/btn_startpath_3"

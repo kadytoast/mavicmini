@@ -437,7 +437,7 @@ public class AircraftController {
         if (ifFlightController()) {
             startFlightManagementTasks();
             velocity = abs(velocity);
-            mFlightQueue.addFlightData(velocity, 0, mYaw, 0, time);
+            mFlightQueue.addFlightData(velocity, 0, 0, 0, time);
         }
     }
 
@@ -449,7 +449,7 @@ public class AircraftController {
         if (ifFlightController()) {
             startFlightManagementTasks();
             velocity = -1 * (abs(velocity));
-            mFlightQueue.addFlightData(velocity, 0, mYaw, 0, time);
+            mFlightQueue.addFlightData(velocity, 0, 0, 0, time);
         }
 
     }
@@ -462,7 +462,7 @@ public class AircraftController {
         if (ifFlightController()) {
             startFlightManagementTasks();
             velocity = -1 * (abs(velocity));
-            mFlightQueue.addFlightData(0, velocity, mYaw, 0, time);
+            mFlightQueue.addFlightData(0, velocity, 0, 0, time);
         }
     }
 
@@ -474,7 +474,31 @@ public class AircraftController {
         if (ifFlightController()) {
             startFlightManagementTasks();
             velocity = abs(velocity);
-            mFlightQueue.addFlightData(0, velocity, mYaw, 0, time);
+            mFlightQueue.addFlightData(0, velocity, 0, 0, time);
+        }
+    }
+
+    /**
+     * @param velocity to yaw in degrees per second, max 100
+     * @param time seconds to yaw at this velocity
+     */
+    public void yawRight (float velocity, double time) {
+        if (ifFlightController()) {
+            startFlightManagementTasks();
+            velocity = abs(velocity);
+            mFlightQueue.addFlightData(0, 0, velocity, 0, time);
+        }
+    }
+
+    /**
+     * @param velocity to yaw in degrees per second, max 100
+     * @param time seconds to yaw at this velocity
+     */
+    public void yawLeft (float velocity, double time) {
+        if (ifFlightController()) {
+            startFlightManagementTasks();
+            velocity = -1 * abs(velocity);
+            mFlightQueue.addFlightData(0, 0, velocity, 0, time);
         }
     }
 
@@ -485,7 +509,7 @@ public class AircraftController {
     public void throttleFor (float velocity, double time) {
         if (ifFlightController()) {
             startFlightManagementTasks();
-            mFlightQueue.addFlightData(0, 0, mYaw, velocity, time);
+            mFlightQueue.addFlightData(0, 0, 0, velocity, time);
         }
     }
 
@@ -495,7 +519,7 @@ public class AircraftController {
     public void pauseFlight (double time) {
         if (ifFlightController()) {
             startFlightManagementTasks();
-            mFlightQueue.addFlightData(0, 0, mYaw, 0, time);
+            mFlightQueue.addFlightData(0, 0, 0, 0, time);
         }
     }
 
@@ -615,6 +639,7 @@ public class AircraftController {
                         mFlightEndTime = 0;
                         mPitch = 0;
                         mRoll = 0;
+                        mYaw = 0;
                         mThrottle = 0;
                         //ma.debug.log("flightdata is null in send flight data");
                     }
