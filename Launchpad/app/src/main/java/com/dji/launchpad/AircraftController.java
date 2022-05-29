@@ -430,6 +430,20 @@ public class AircraftController {
      * API Control Methods VVVVV
      */
     /**
+     * constructs and adds flight data object to queue
+     * @param pitch float velocity +/- forward/backward 15 m/s
+     * @param roll float velocity +/- starboard/port 15 m/s
+     * @param yaw float angle +/- right/left 100 deg/s
+     * @param throttle float max 4 m/s
+     * @param time double less than 10 seconds
+     */
+    public void addTask (float pitch, float roll, float yaw, float throttle, double time) {
+        if (ifFlightController()) {
+            mFlightQueue.addFlightData(pitch, roll, yaw, throttle, time);
+        }
+    }
+
+    /**
      * @param velocity to hold while pitching forward, max 15 m/s
      * @param time seconds to travel at this velocity
      */

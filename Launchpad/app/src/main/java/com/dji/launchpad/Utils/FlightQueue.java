@@ -15,8 +15,8 @@ public class FlightQueue {
      * constructs and adds flight data object to queue
      * @param pitch float velocity +/- 15 m/s
      * @param roll float velocity +/- 15 m/s
-     * @param yaw float angle +/- 180 ref home heading
-     * @param throttle float max 4m/s
+     * @param yaw float angle +/- 100 deg/s
+     * @param throttle float max 4 m/s
      * @param time double less than 10 seconds
      */
     public void addFlightData (float pitch, float roll, float yaw, float throttle, double time) {
