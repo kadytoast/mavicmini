@@ -44,7 +44,6 @@ public class ClickInterfaces implements View.OnClickListener{
         // regular button listener for <onClick> method
         mBtnTakeOff.setOnClickListener(this);
         mBtnLand.setOnClickListener(this);
-        ma.findViewById(R.id.btn_set_home).setOnClickListener(this);
         ma.findViewById(R.id.btn_reload).setOnClickListener(this);
         ma.findViewById(R.id.btn_debugenter).setOnClickListener(this);
 
@@ -55,7 +54,6 @@ public class ClickInterfaces implements View.OnClickListener{
         ToggleButton mTogVirtualSticks = ma.findViewById(R.id.tog_virtual_sticks);
         ToggleButton mTogTakeoffEnable = ma.findViewById(R.id.tog_takeoff_enable);
         air.mTextViewPosition = (TextView) ma.findViewById(R.id.textview_position);
-        air.mTextViewHome = ma.findViewById(R.id.textview_homecoords);
         air.mConnectStatusTextView = (TextView) ma.findViewById(R.id.ConnectStatusTextView);
 
         // toggle button for virtual flight control enable/disable
@@ -130,28 +128,6 @@ public class ClickInterfaces implements View.OnClickListener{
 
             case R.id.btn_land:
                 air.land();
-                break;
-
-            case R.id.btn_set_home:  // set home case
-                try {
-                    if (air.ifFlightController()) {
-                        air.mFlightController.setHomeLocationUsingAircraftCurrentLocation(
-                                // nullable callback
-                                djiError -> {
-                                    if (djiError != null) {
-                                        showToast(djiError.getDescription());
-                                    } else {
-                                        showToast("Home Set!");
-                                        // get new home coordinates and update to textview
-                                        air.updateHomePos();
-                                    }
-                                }
-                        );
-                    }
-                }
-                catch (Exception e) {
-                    ma.debug.errlog(e, "sethome");
-                }
                 break;
 
             case R.id.btn_reload:

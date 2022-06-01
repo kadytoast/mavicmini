@@ -36,4 +36,13 @@ public class FlightQueueData {
     public double getResetTime() {
         return resetTime;
     }
+
+    public String toString() {
+        return "Current Task\n" +
+                "Pitch: " + pitch + "\n" +
+                "Roll: " + roll + "\n" +
+                "Yaw: " + yaw + "\n" +
+                "Throttle: " + throttle + "\n" +
+                "Time: " + resetTime;
+    }
 }

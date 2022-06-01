@@ -81,7 +81,6 @@ public class AircraftController {
     protected TextView mConnectStatusTextView;
 
     public TextView mTextViewPosition;
-    public TextView mTextViewHome;
 
     private TimerTask mSendFlightDataTask = null;
     private Timer mSendFlightDataTimer = null;
@@ -95,10 +94,6 @@ public class AircraftController {
     private float mThrottle = 0;
     private double mFlightEndTime = 0;
     private LocalDateTime mFlightStartTime = null;
-
-    private double mHomeLat;
-    private double mHomeLong;
-    private double mAircraftHomeHeading;
 
     private static boolean mXYIfLogValues = true;
 
@@ -115,7 +110,7 @@ public class AircraftController {
         IntentFilter filter = new IntentFilter();
         filter.addAction(AircraftObjHandler.FLAG_CONNECTION_CHANGE);
         ma.registerReceiver(mReceiver, filter);
-        mFlightQueue = new FlightQueue();
+        mFlightQueue = new FlightQueue(ma);
     }
 
     /**
@@ -306,46 +301,6 @@ public class AircraftController {
         killFlightManagementTasks();
     }
 
-
-    // method that updates the textview with the current home position, as well as global vars
-    void updateHomePos() {
-        try {
-            // call function with callback implementation
-            mFlightController.getHomeLocation(
-                    new CommonCallbacks.CompletionCallbackWith<LocationCoordinate2D>() {
-
-                        // callback overrides
-                        @Override
-                        public void onSuccess(LocationCoordinate2D locationCoordinate2D) {
-                            try {
-                                mHomeLat = locationCoordinate2D.getLatitude();
-                                mHomeLong = locationCoordinate2D.getLongitude();
-
-                                mAircraftHomeHeading = getLocation().getAircraftHeading();
-
-                                mTextViewHome.setText("Latitude : " + mHomeLat + "\nLongitude : " + mHomeLong + "\nAltitude: " +
-                                        "Home ref to North : " + mAircraftHomeHeading);
-                            }
-                            catch (Exception e) {
-                                ma.debug.errlog(e, "update home pos success");
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(DJIError djiError) {
-                            if (djiError != null) {
-                                showToast(djiError.getDescription());
-                            }
-                        }
-
-                    }
-            );
-        }
-        catch (Exception e) {
-            ma.debug.errlog(e, "updatehomepos");
-        }
-    }
-
     void initFlightController() {
         try {
             Aircraft aircraft = AircraftObjHandler.getAircraftInstance();
@@ -379,19 +334,14 @@ public class AircraftController {
             try {
                 mFlightControllerState = stateData;
                 AircraftPositionalData flight = getLocation();
-                XYValues offset = flight.getAircraftMeterOffsetFromHome();
 
                 String pitch = String.format("%.3f", flight.getAircraftPitch());
                 String roll = String.format("%.3f", flight.getAircraftRoll());
-                String yaw = String.format("%.3f", flight.getAircraftHeadingRefHome());
+                String yaw = String.format("%.3f", flight.getAircraftHeading());
 
-                String positionX = String.format("%.3f", offset.X);
-                String positionY = String.format("%.3f", offset.Y);
-                String positionZ = String.format("%.3f", flight.getAircraftAltitude());
 
                 mTextViewPosition.setText(
-                        "\nPitch : " + pitch + "\nRoll : " + roll + "\nYaw : " + yaw +
-                                "\nPosX : " + positionX + "\nPosY : " + positionY + "\nPosZ : " + positionZ);
+                        "\nPitch : " + pitch + "\nRoll : " + roll + "\nYaw : " + yaw );
 
                 LocalDateTime now = LocalDateTime.now();
                 int secBetweenLogs = 2;
@@ -400,18 +350,7 @@ public class AircraftController {
                     mXYIfLogValues = true;
                 }
                 else if (now.getSecond() % secBetweenLogs == 0 && mXYIfLogValues) {
-                    /* ma.debug.log("\n POSVALS \n" +
-                            "origin lat = " + flight.getHomeLatLng().latitude + "\n" +
-                            "origin lon = " + flight.getHomeLatLng().longitude + "\n" +
-                            "originheading = " + mAircraftHomeHeading + "\n" +
-                            "target lat = " + flight.getAircraftLatLng().latitude + "\n" +
-                            "target lon = " + flight.getAircraftLatLng().longitude + "\n" +
-                            "curheading = " + flight.getAircraftHeading() + "\n" +
-                            "OUT : \n" +
-                            "X = " + offset.X + "\n" +
-                            "Y = " + offset.Y + "\n"); */
                     ma.debug.log("\n FLIGHTVALS \n" +
-                            "Home Heading: " + getLocation().getAircraftHeadingRefHome() + "\n" +
                             "Pitch: " + mPitch + "\n" +
                             "Roll: " + mRoll + "\n" +
                             "Yaw: " + mYaw + "\n" +
@@ -439,6 +378,7 @@ public class AircraftController {
      */
     public void addTask (float pitch, float roll, float yaw, float throttle, double time) {
         if (ifFlightController()) {
+            startFlightManagementTasks();
             mFlightQueue.addFlightData(pitch, roll, yaw, throttle, time);
         }
     }
@@ -603,7 +543,7 @@ public class AircraftController {
      */
     public synchronized AircraftPositionalData getLocation () {
         return new AircraftPositionalData(mFlightControllerState.getAircraftLocation(),
-                mFlightControllerState.getAttitude(), new LocationCoordinate2D(mHomeLat, mHomeLong), mAircraftHomeHeading);
+                mFlightControllerState.getAttitude());
     }
 
     private void startFlightManagementTasks() {
@@ -655,6 +595,8 @@ public class AircraftController {
                         mRoll = 0;
                         mYaw = 0;
                         mThrottle = 0;
+                        TextView queue = ma.findViewById(R.id.textview_flightqueue);
+                        queue.setText("task null, queue empty");
                         //ma.debug.log("flightdata is null in send flight data");
                     }
                 }

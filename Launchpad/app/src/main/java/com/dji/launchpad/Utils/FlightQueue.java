@@ -1,14 +1,21 @@
 package com.dji.launchpad.Utils;
 
+import android.widget.TextView;
+
+import com.dji.launchpad.MainActivity;
+import com.dji.launchpad.R;
+
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 public class FlightQueue {
 
     private final LinkedList<FlightQueueData> mFlightQueue;
+    private MainActivity ma;
 
-    public FlightQueue () {
+    public FlightQueue (MainActivity maIN) {
         mFlightQueue = new LinkedList<>();
+        ma = maIN;
     }
 
     /**
@@ -34,7 +41,12 @@ public class FlightQueue {
      */
     public FlightQueueData getNextFlightData () {
         try {
-            return mFlightQueue.removeFirst();
+            TextView queue = ma.findViewById(R.id.textview_flightqueue);
+            // get task
+            FlightQueueData nextTask = mFlightQueue.removeFirst();
+            // set textview
+            queue.setText(nextTask.toString());
+            return nextTask;
         }
         catch (NoSuchElementException e) {
             return null;

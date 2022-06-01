@@ -14,7 +14,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="10dp"
         android:layout_toEndOf="@+id/textView"
-        android:text="turn test 45d/s" />
+        android:text="Path 2" />
 
     <Button
         android:id="@+id/btn_startpath_3"
@@ -25,7 +25,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="10dp"
         android:layout_toEndOf="@+id/textView"
-        android:text="s/p/s 2m/s" />
+        android:text="Path 3" />
 
     <RelativeLayout
         android:id="@+id/main_title_rl"
@@ -68,8 +68,8 @@
         android:id="@+id/textview_position"
         android:layout_width="119dp"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/textview_homecoords"
-        android:layout_alignBottom="@+id/textview_homecoords"
+        android:layout_alignTop="@+id/textview_flightqueue"
+        android:layout_alignBottom="@+id/textview_flightqueue"
         android:layout_alignParentEnd="true"
         android:text="position not set" />
 
@@ -95,26 +95,14 @@
         android:layout_marginTop="10dp"
         android:text="Land" />
 
-    <Button
-        android:id="@+id/btn_set_home"
-        style="@style/common_button"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/btn_take_off"
-        android:layout_alignBottom="@+id/btn_land"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="0dp"
-        android:layout_toEndOf="@+id/btn_take_off"
-        android:text="Set Home (to cur location)" />
-
     <TextView
-        android:id="@+id/textview_homecoords"
+        android:id="@+id/textview_flightqueue"
         android:layout_width="148dp"
         android:layout_height="228dp"
         android:layout_alignTop="@+id/btn_killtasks"
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/btn_killtasks"
-        android:text="home not set"
+        android:text="flight queue empty"
         android:textAlignment="viewStart" />
 
     <ImageButton
@@ -156,13 +144,13 @@
     <Button
         android:id="@+id/btn_killtasks"
         style="@style/common_button"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/btn_take_off"
-        android:layout_alignBottom="@+id/btn_set_home"
+        android:layout_alignBottom="@+id/btn_land"
         android:layout_marginStart="10dp"
         android:layout_marginTop="0dp"
-        android:layout_toEndOf="@+id/btn_set_home"
+        android:layout_toEndOf="@+id/btn_take_off"
         android:text="Kill Flight Tasks" />
 
     <EditText
@@ -173,7 +161,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_toStartOf="@+id/textview_position"
-        android:layout_toEndOf="@+id/textview_homecoords"
+        android:layout_toEndOf="@+id/textview_flightqueue"
         android:ems="10"
         android:inputType="text" />
 
@@ -181,11 +169,11 @@
         android:id="@+id/text_debug"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/textview_homecoords"
+        android:layout_alignTop="@+id/textview_flightqueue"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_toStartOf="@+id/textview_position"
-        android:layout_toEndOf="@+id/textview_homecoords"
+        android:layout_toEndOf="@+id/textview_flightqueue"
         android:text="debug ip:port"
         android:textAlignment="center"
         android:textSize="18sp" />
@@ -222,7 +210,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginEnd="20dp"
         android:layout_toEndOf="@+id/textView"
-        android:text="short cardinal path 1.5m" />
+        android:text="Path 1" />
 
 
 </RelativeLayout>
